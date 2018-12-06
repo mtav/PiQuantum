@@ -1,0 +1,21 @@
+main.c:
+1) Call setup routines for all necessary subsystems (including the oscillator frequency, input/output, etc.)
+2) Execute the main program. Programs are executed by reading and writing to a global variable, defined in global.h. Tasks are executed using the routines in system.c
+
+global.h:
+1) Contains a single global variable (a struct maybe?) which contains all the information needed for the application to control the simulator and read the status of the program. It needs to contain variables for
+* requesting single and controlled qubit operations
+* setting the display mode
+* buffering operations
+* turning error correction mode on and off
+* setting the 'qubit error' level
+* reading the status of the simulator
+* reading the state of control buttons
+* Other things?
+2) It should be the only global variable in the program (or at least the only one available to main)
+
+trap.c:
+1) Contains all the hardware traps implemented by the microcontroller. We should put some kind of LED flash in the interrupt routines to make it obvious if an error has occurred.
+
+config.h:
+1) Contains the configuration bits for the microcontroller
