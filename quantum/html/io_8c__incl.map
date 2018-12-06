@@ -1,6 +1,0 @@
-<map id="dspic33e/qcomp&#45;sim&#45;c.X/io.c" name="dspic33e/qcomp&#45;sim&#45;c.X/io.c">
-<area shape="rect" id="node2" href="$io_8h.html" title="Description: Header file for input output functions. " alt="" coords="57,95,100,121"/>
-<area shape="rect" id="node3" href="$time_8h.html" title="Description: Header file containing all the timing functions. " alt="" coords="5,169,64,196"/>
-<area shape="rect" id="node6" href="$consts_8h.html" title="header file for (global) constants " alt="" coords="88,169,160,196"/>
-<area shape="rect" id="node4" href="$spi_8h.html" title="Description: SPI communication functions. " alt="" coords="9,244,60,271"/>
-</map>
