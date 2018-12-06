@@ -167,8 +167,15 @@ return&#160;</td><td class="memItemRight" valign="bottom"><b>select_op</b></td><
 
 <p>End of qubit select. </p>
 <p>function returns integer label used in switch statement in main </p>
+<<<<<<< HEAD
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>this is a temp fix to avoid getting stuck waiting for a user input. </dd></dl>
 <p>Check for the reset button, returns 1 for pressed, 0 for not</p>
+=======
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo:</a></b></dt><dd>this is a temp fix to avoid getting stuck waiting for a user input. </dd></dl>
+<p>Check for the reset button</p>
+<p>Turn <a class="el" href="structLED.html" title="Each LED has the following type. ">LED</a> on to signify reset</p>
+<p>Turn <a class="el" href="structLED.html" title="Each LED has the following type. ">LED</a> off and return</p>
+>>>>>>> 371f3e430b4cc3c92a5df7934dccfa0a028619bc
 <p>-2 means reset </p>
 
 </div>
@@ -192,8 +199,16 @@ return&#160;</td><td class="memItemRight" valign="bottom"><b>select_op</b></td><
 <dl class="section return"><dt>Returns</dt><dd>int select_qubit (-1 if no qubit is selected) </dd></dl>
 <dl class="bug"><dt><b><a class="el" href="bug.html#_bug000002">Bug:</a></b></dt><dd>problem with sampling, will cause the program to hang while waiting for qubit input </dd></dl>
 <dl class="bug"><dt><b><a class="el" href="bug.html#_bug000001">Bug:</a></b></dt><dd>this probably shouldn't be an infinite loop. the counter lets the loop exit after some time to check if the 'reset' button is pressed </dd></dl>
+<<<<<<< HEAD
 <p>Check for the reset button Check for the reset button, returns 1 for pressed, 0 for not</p>
 <p>-2 means reset </p>
+=======
+<p>Check for the reset button</p>
+<p>Turn <a class="el" href="structLED.html" title="Each LED has the following type. ">LED</a> on to signify reset</p>
+<p>Turn <a class="el" href="structLED.html" title="Each LED has the following type. ">LED</a> off and return</p>
+<p>-2 means reset</p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>we need button debouncing here </dd></dl>
+>>>>>>> 371f3e430b4cc3c92a5df7934dccfa0a028619bc
 
 </div>
 </div>
@@ -307,6 +322,10 @@ return&#160;</td><td class="memItemRight" valign="bottom"><b>select_op</b></td><
 <p>Z</p>
 <p>H</p>
 <p>SWAP</p>
+<<<<<<< HEAD
+=======
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo:</a></b></dt><dd>need a check for zero button </dd></dl>
+>>>>>>> 371f3e430b4cc3c92a5df7934dccfa0a028619bc
 <p>Do nothing</p>
 <p>End of switch </p>
 
@@ -340,7 +359,11 @@ return&#160;</td><td class="memItemRight" valign="bottom"><b>select_op</b></td><
 
 <p>repetition code </p>
 <p>added repetition_code for bit flip errors, currently only shows a fixed error which is a failed X on one of the ancillas.</p>
+<<<<<<< HEAD
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo:</a></b></dt><dd>this </dd></dl>
+=======
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo:</a></b></dt><dd>this </dd></dl>
+>>>>>>> 371f3e430b4cc3c92a5df7934dccfa0a028619bc
 <pre class="fragment">///       a  b     c     d  e  f 
 /// |q2&gt; ----X--|-----|-----X--o--
 ///          |  |     |     |  |
@@ -353,7 +376,11 @@ return&#160;</td><td class="memItemRight" valign="bottom"><b>select_op</b></td><
 <p>do the gates, without displaying the intermediate steps?</p>
 <p>step a</p>
 <p>step b</p>
+<<<<<<< HEAD
 <p>now up to U step c as a test I have hardcoded in only 2 X's corresponding to an error on q2 </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo:</a></b></dt><dd>generalise this, we should either have pseudo-random errors or the user should be able to choose which gates to do here </dd></dl>
+=======
+<p>now up to U step c as a test I have hardcoded in only 2 X's corresponding to an error on q2 </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000007">Todo:</a></b></dt><dd>generalise this, we should either have pseudo-random errors or the user should be able to choose which gates to do here </dd></dl>
+>>>>>>> 371f3e430b4cc3c92a5df7934dccfa0a028619bc
 <p>decoding steps d-f</p>
 <p>step d</p>
 <p>step e</p>
@@ -485,7 +512,11 @@ return&#160;</td><td class="memItemRight" valign="bottom"><b>select_op</b></td><
 <pre class="fragment">/// H Rz Rz --------
 /// ---o--|---H Rz---
 /// ------o------o-H-
+<<<<<<< HEAD
 /// </pre> <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo:</a></b></dt><dd>Fancy non-blocking Interrupt routine { if(no button) return;</dd></dl>
+=======
+/// </pre> <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo:</a></b></dt><dd>Fancy non-blocking Interrupt routine { if(no button) return;</dd></dl>
+>>>>>>> 371f3e430b4cc3c92a5df7934dccfa0a028619bc
 <p>pause and do display cycling();</p>
 <p>Make this a low priority interrupt so that everything else can interrupt it.</p>
 <p>Do stuff for a while</p>
