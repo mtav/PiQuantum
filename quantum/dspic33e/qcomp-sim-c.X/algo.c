@@ -110,7 +110,7 @@ int check_qubit(){
 
 
 // Check whether a qubit has been selected
-int check_op(){
+int check_op(Complex state[]){
     int select_op=-1;
     /// \todo this is a temp fix to avoid getting stuck waiting for a user input.
     while(select_op == -1) {
@@ -120,10 +120,20 @@ int check_op(){
                 set_led(green, on); /// Turn LED on to signify reset
             }
             set_led(green, off); /// Turn LED off and return
+            /// before returning turn off display cycle 
+            T6CONbits.TON = 0;/// @todo CURRENTLY CYCLING IS OFF
             return -2; /// -2 means reset
         /// Check for the reset button, returns 1 for pressed, 0 for not
        // if(reset_button() == 1) return -2; /// -2 means reset
         }
+        else if(read_btn(sw1) == 1) {
+            /// start the timer and display cycle
+            if(T6CONbits.TON == 0) display_cycle(state);
+            else if(T6CONbits.TON ==1) display_average(state);
+            while(read_btn(sw1) == 1);
+            delay();
+            }
+        
         read_external_buttons();
         for (int n = 0; n < 4; n++) {
             if (read_func_btn(n) == 1) {
@@ -131,6 +141,8 @@ int check_op(){
             }
         }
     }
+/// before returning turn off display cycle
+     T6CONbits.TON = 0;/// @todo CURRENTLY CYCLING IS OFF
 return select_op;
 }
 

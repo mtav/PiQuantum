@@ -36,6 +36,11 @@ extern "C" {
 // number of button drivers
 #define BTN_CHIP_NUM 2
     
+// max led brightness  
+#define RED_ON 0.99
+#define GREEN_ON 0.5
+#define BLUE_ON 0.5
+    
 /// Basic fractional time
 typedef signed _Fract Q15; 
     

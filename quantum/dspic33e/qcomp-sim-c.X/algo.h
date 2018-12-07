@@ -29,7 +29,7 @@ int check_qubit();
 
 /// function returns integer label used in switch statement in main
 /// \bug same as above^
-int check_op();
+int check_op(Complex state[]);
 
 /// function returns 1 if the sw3 is pressed or 0 if not.
 int reset_button();

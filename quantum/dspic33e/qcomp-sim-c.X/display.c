@@ -15,6 +15,7 @@ void display_average(Complex state[]) {
     /// @todo Bring all constants out of the loops. Don't use pow.
     /// @bug there is a phase bug when cycling the gates 
     /// Loop over all qubits k = 0, 1, 2, ... N-1
+     T6CONbits.TON = 0;/// @todo CURRENTLY CYCLING IS OFF
     for (int k = 0; k < NUM_QUBITS; k ++) {
         /// Compute powers of 2
         int root_max = pow2(k);
@@ -74,11 +75,12 @@ void display_average(Complex state[]) {
         }
         /// write phase
         /// update leds for each qubits average zero and one amps
-        one_amp = 0.2 * one_amp;
-        zero_amp = 0.2 * zero_amp;
+        one_amp = BLUE_ON * one_amp;
+        zero_amp = RED_ON * zero_amp;
         if (phase != 0.0) phase = 0.99;
         else phase = 0.0;
-        set_external_led(k, phase, one_amp, zero_amp);
+        phase=phase*GREEN_ON;
+        set_external_led(k, zero_amp,phase, one_amp);
     }
 }
 
@@ -87,7 +89,7 @@ void display_average(Complex state[]) {
  * @param N The length of the state vector
  */
 void display_cycle(Complex state[]) {
-    
+     T6CONbits.TON = 1;/// @todo CURRENTLY CYCLING IS OFF 
     int output[STATE_LENGTH];
     
     /// Filter the state
@@ -104,9 +106,9 @@ void display_cycle(Complex state[]) {
             colors[k][j].B = 0;
             /// Look at the jth bit
             if((output[k] & (1 << j)) == 0) {
-                colors[k][j].G = ONE_Q15;
+                colors[k][j].R = RED_ON;
             } else {
-                colors[k][j].B = ONE_Q15;
+                colors[k][j].B = BLUE_ON;
             }
         }
     }
