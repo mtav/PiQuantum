@@ -67,7 +67,6 @@ VACUUM:zero_state(state);
      * 
      */
     while (1) {
-
         /// Wait for a qubit operation to be selected
         int select_op = check_op();
         if (select_op == -2) goto VACUUM;
@@ -75,7 +74,6 @@ VACUUM:zero_state(state);
         /// Perform operation
         int op_result = op_routine(select_op, state);
         if (op_result == -2) goto VACUUM;
-
     }
 
     while (1); ///< @note Really important!
