@@ -28,9 +28,10 @@
 
 int main(void) {
 
+    /// \bug this causes the program to crash after 2mins, in time.c
     // Change clock speed
     setup_clock();
-    
+ 
     // Setup input/output (LEDs and buttons)
     setup_io();
 
@@ -48,7 +49,8 @@ int main(void) {
 
     Complex state[STATE_LENGTH]; // Make a 3 qubit state vector of length
     
-    
+
+   
     // set to vacuum
 VACUUM:zero_state(state);
     display_average(state);
@@ -56,16 +58,15 @@ VACUUM:zero_state(state);
     /// Test single qubit gates
     /// @todo fix this menu system
     /// @todo add a button for switching between display average and cycle modes
-    /** In this test the qubit buttons (0 - 3) will be used to select a qubit 
-     * and the function buttons (4 - 6) will be used to perform an operation
-     * on the selected qubit (X, Z or H).
-     * 
-     * The loop is made of two parts. The first waits for a qubit to be
-     * selected and the second chooses a single qubit operation for that
-     * qubit. Once the gate has been pressed the operation is immediately
-     * executed and the loop repeats.
-     * 
-     */
+    /// In this test the qubit buttons (0 - 3) will be used to select a qubit 
+    /// and the function buttons (4 - 6) will be used to perform an operation
+    /// on the selected qubit (X, Z or H). 
+     /// The loop is made of two parts. The first waits for a qubit to be
+     /// selected and the second chooses a single qubit operation for that
+     /// qubit. Once the gate has been pressed the operation is immediately
+     /// executed and the loop repeats.
+      
+     
     while (1) {
         /// Wait for a qubit operation to be selected
         int select_op = check_op(state);
