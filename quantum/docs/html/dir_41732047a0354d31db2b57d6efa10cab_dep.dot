@@ -1,0 +1,9 @@
+digraph "/home/jrs/Documentos/work/git-projects/qcomp-design/quantum/dspic33e/qcomp-sim-c.X" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_15ff54b15d1e25f7ce738c9a3fe98b31 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="dspic33e" fontname="Helvetica", fontsize="10", URL="dir_15ff54b15d1e25f7ce738c9a3fe98b31.html"]
+  dir_41732047a0354d31db2b57d6efa10cab [shape=box, label="qcomp-sim-c.X", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_41732047a0354d31db2b57d6efa10cab.html"];
+  }
+}
