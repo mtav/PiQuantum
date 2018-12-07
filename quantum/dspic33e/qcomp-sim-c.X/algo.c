@@ -70,9 +70,16 @@ int check_qubit(){
     /// the counter lets the loop exit after some time to check if the 
     /// 'reset' button is pressed 
     while(select_qubit == -1) {
+                /// Check for the reset button
+        if (read_btn(sw3) == 1) {
+            while (read_btn(sw3) == 1) {
+                set_led(green, on); /// Turn LED on to signify reset
+            }
+            set_led(green, off); /// Turn LED off and return
+            return -2; /// -2 means reset
         /// Check for the reset button
         /// Check for the reset button, returns 1 for pressed, 0 for not
-        if(reset_button() == 1) return -2; /// -2 means reset
+       // if(reset_button() == 1) return -2; /// -2 means reset
         }
         // Read all the button state
         read_external_buttons();
@@ -107,8 +114,15 @@ int check_op(){
     int select_op=-1;
     /// \todo this is a temp fix to avoid getting stuck waiting for a user input.
     while(select_op == -1) {
+        /// Check for the reset button
+        if (read_btn(sw3) == 1) {
+            while (read_btn(sw3) == 1) {
+                set_led(green, on); /// Turn LED on to signify reset
+            }
+            set_led(green, off); /// Turn LED off and return
+            return -2; /// -2 means reset
         /// Check for the reset button, returns 1 for pressed, 0 for not
-        if(reset_button() == 1) return -2; /// -2 means reset
+       // if(reset_button() == 1) return -2; /// -2 means reset
         }
         read_external_buttons();
         for (int n = 0; n < 4; n++) {
