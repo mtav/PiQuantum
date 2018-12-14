@@ -3,21 +3,22 @@ The epic classical/quantum computer outreach project
 
 ## `Where quantum information processing meets best coding practice`
 
-Our quantum computer currently has 4 qubits with corresponding Leds used to display their state and 4 quantum gates (operations available.
+Our quantum computer currently has 4 qubits with corresponding Leds used to display their state and 4 quantum gates (operations) available.
 
 Operations you can do on the quantum computer
 =====
 
+## Coherent Digital operations
 This is a list of the exisitng operations available:
-1. **NOT** gate (X)
-2. **XOR** gate (CNOT)
-3. **SWAP** gate (SWAP)
-4. **AND** gate (Toff)
+* **NOT** gate (X)
+* **XOR** gate (CNOT)
+* **SWAP** gate (SWAP)
+* **AND** gate (Toff)
 
-3. **HALF** gate (H)
-4. **PHASE** gate (Z)
-
-
+## Quantum only operations
+The operations are:
+* **HALF** gate (H)
+* **PHASE** gate (Z)
 
 
 Qubit state display (Read out)
