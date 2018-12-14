@@ -16,17 +16,17 @@ on a quantum computer.
 
 This is a list of the existing operations available:
 
-- **NOT** gate (X)
-- **XOR** gate (CNOT)
-- **SWAP** gate (SWAP)
-- **AND** gate (Toff)
+- **NOT** gate (X) - Changes between red & blue
+- **XOR** gate (CNOT) - Changes a 2nd qubit only if the 1st is blue
+- **SWAP** gate (SWAP) - Swaps two qubits colours with each other
+- **AND** gate (Toff) - A logical AND between two qubits
 
 ## Quantum only operations
 
 The operations are:
 
-- **HALF** gate (H)
-- **PHASE** gate (Z)
+- **HALF** gate (H) - Mixes the colours of a qubit
+- **PHASE** gate (Z) - Changes between the two colour mixes
 
 # Qubit state display (Read out)
 
@@ -38,8 +38,7 @@ operations are you able to see a difference.
 ## Displaying the average state
 
 The default mode is the display averaging state mode. The _coherent_ digital operations
-only ever show <span style="color:red">red</span> or <span
-style="color:blue">blue</span>. In this display mode we find that doing the **HALF**
+only ever show red or blue. In this display mode we find that doing the **HALF**
 operation on a qubit causes the light to change from red -> purple or blue -> white.
 
 ## Cycling through the superposition
