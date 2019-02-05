@@ -6,7 +6,8 @@
  * @detail SPI (serial peripheral interface) control using wiringPi. The wiringPi
  * library is available by cloning git://git.drogon.net/wiringPi and running 
  * ./build. It has two functions: a setup function and a read/write function.
- *
+ * The program needs sudo rights to run. Also the SPI needs to be enabled in
+ * raspi-config.
  */
 
 #include <wiringPiSPI.h>
