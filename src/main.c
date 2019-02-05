@@ -30,6 +30,6 @@ int main(void) {
     */
     
 
-    int glob[];
+    int glob[5];
 
 }
