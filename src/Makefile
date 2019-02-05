@@ -1,3 +1,7 @@
-# Run `make all' or just `make' to build
+# Run `make all', `make spi', etc.
 all: main.c
 	gcc main.c -o prog
+
+spi: spi.cpp
+	g++ spi.cpp -o spi -lwiringPi
+
