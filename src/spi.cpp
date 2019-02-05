@@ -14,11 +14,6 @@
 #include <errno.h>
 #include <string.h>
 
-enum class channel {
-  zero = 0,
-  one = 1,
-};
-
 int main() {
 
   // Select channel
@@ -33,12 +28,18 @@ int main() {
   // Some data to write
   int len = 2; // Length of buffer
   unsigned char * buffer = static_cast<unsigned char * >(malloc(sizeof(char)*len));
-  * buffer = 0;
+  * (buffer + 0) = 0;
   * (buffer + 1) = 1;
 
   // Simultaneous read/write data to the SPI interface
   // Pass the channel, a pointer to the buffer, and the length of the buffer
   result = wiringPiSPIDataRW(ch, buffer, 2);
   // Read data is put in buffer, overwriting the other data
-  std::cout << result << std::endl; // Number of bytes sent?
+  std::cout << "Bytes sent: "<< result << std::endl; // Number of bytes sent?
+
+  // Data returned
+  std::cout << "Data read: "
+	    << std::to_string(*(buffer+0))
+	    << std::to_string(*(buffer+1))
+	    << std::endl;
 }
