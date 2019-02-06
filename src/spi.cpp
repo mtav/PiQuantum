@@ -15,32 +15,58 @@
 #include <errno.h>
 #include <string.h>
 
+class SpiChannel {
+private:
+  int channel; // Either 0 or 1
+  double frequency; // in Hz
+
+public:
+  SpiChannel(int channel, double frequency)
+    : channel(channel), frequency(frequency) {
+    // Set up SPI channel
+    int result = wiringPiSPISetup(channel, frequency);
+    if(result == -1) {
+      std::cout << strerror(errno) << std::endl;
+    }
+  }
+
+  // Simultaneous read/write data to the SPI interface
+  // Pass a pointer to the buffer, and the length of the buffer
+  void ReadWrite(unsigned char * buffer, int len) {
+    int result = wiringPiSPIDataRW(channel, buffer, len);
+    if(result != len) {
+      std::cout << "SPI Error: wrong amount of data sent" << std::endl;
+    }
+  }
+  
+};
+
+
 int main() {
 
   // Select channel
   int ch = 0;
+  double frequency = 500000;
 
-  // Set up SPI channel 0 at a frequency 500,000 Hz
-  int result = wiringPiSPISetup(ch, 500000);
-  if(result == -1) {
-    std::cout << strerror(errno) << std::endl;
-  }
-
+  // SPI channel type
+  SpiChannel spi(ch, frequency);
+  
   // Some data to write
-  int len = 2; // Length of buffer
+  int len = 4; // Length of buffer
   unsigned char * buffer = static_cast<unsigned char * >(malloc(sizeof(char)*len));
   * (buffer + 0) = 0;
   * (buffer + 1) = 1;
+  * (buffer + 2) = 2;
+  * (buffer + 3) = 3;
 
-  // Simultaneous read/write data to the SPI interface
-  // Pass the channel, a pointer to the buffer, and the length of the buffer
-  result = wiringPiSPIDataRW(ch, buffer, 2);
-  // Read data is put in buffer, overwriting the other data
-  std::cout << "Bytes sent: "<< result << std::endl; // Number of bytes sent?
+  // Send data
+  spi.ReadWrite(buffer, len);
 
   // Data returned
   std::cout << "Data read: "
 	    << std::to_string(*(buffer+0))
 	    << std::to_string(*(buffer+1))
+	    << std::to_string(*(buffer+2))
+	    << std::to_string(*(buffer+3))
 	    << std::endl;
 }
