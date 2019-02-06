@@ -34,7 +34,7 @@ public:
 
   // Simultaneous read/write data to the SPI interface
   // Pass a pointer to the buffer, and the length of the buffer
-  std::vector<unsigned char> read_write(std::vector<unsigned char> write) {
+  std::vector<unsigned char> read_write(const std::vector<unsigned char> write) {
     // Allocate memory for a data buffer 
     int len = write.size();
     unsigned char * buffer =
@@ -72,26 +72,7 @@ int main() {
   std::vector<unsigned char> read = spi.read_write(write);
 
   // Print results
-  std::cout << "Data sent: " << write[0] << std::endl
-	    << "Data returned: " << read[1] << std::endl;
-  
-  // Some data to write
-  /*
-  * (buffer + 0) = 0;
-  * (buffer + 1) = 1;
-  * (buffer + 2) = 2;
-  * (buffer + 3) = 3;
-  */
-  // Send data
-  //spi.ReadWrite(buffer, len);
+  std::cout << "Data sent: " << std::to_string(write[0]) << std::endl
+	    << "Data returned: " << std::to_string(read[0]) << std::endl;
 
-  // Data returned
-  /*
-  std::cout << "Data read: "
-	    << std::to_string(*(buffer+0))
-	    << std::to_string(*(buffer+1))
-	    << std::to_string(*(buffer+2))
-	    << std::to_string(*(buffer+3))
-	    << std::endl;
-  */
 }
