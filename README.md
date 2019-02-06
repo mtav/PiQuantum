@@ -62,6 +62,13 @@ between the red and blue state which is why we see purple.
 - Buttons
 - Shift registers for serial to parallel 
 
+# Software
+
+using the ncurses library for terminal based graphics, 
+sudo apt-get install libncurses5-dev
+
+
+
 
 J Scott, john.scott@bristol.ac.uk
 O Thomas, oliver.thomas@bristol.ac.uk
