@@ -62,6 +62,15 @@ between the red and blue state which is why we see purple.
 - Buttons
 - Shift registers for serial to parallel 
 
+# Running the code
+
+## Libraries
+
+### WiringPi (for SPI interface)
+
+It might already be installed on the Raspberry Pi. If it's not, it can be install by
+cloning git://git.drogon.net/wiringPi and running ./build. The SPI interface also needs 
+to be enabled in raspi-config.
 
 J Scott, john.scott@bristol.ac.uk
 O Thomas, oliver.thomas@bristol.ac.uk
