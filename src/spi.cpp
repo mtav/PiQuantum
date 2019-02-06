@@ -9,7 +9,7 @@
 
 #include "spi.hpp"
 
-SpiChannel::SpiChannel(int channel, double frequency) : channel(channel) {
+SpiChannel::SpiChannel(int channel, int frequency) : channel(channel) {
   // Set up SPI channel
   int result = wiringPiSPISetup(channel, frequency);
   if(result == -1) {
@@ -52,8 +52,8 @@ unsigned char SpiChannel::read_write(const unsigned char write) {
   return buffer;
 }
 
-// Change frequency
-void SpiChannel::change_frequency(double frequency) {
+// Change frequency in Hz
+void SpiChannel::change_frequency(int frequency) {
   // Reset the SPI channel
   int result = wiringPiSPISetup(channel, frequency);
   if(result == -1) {

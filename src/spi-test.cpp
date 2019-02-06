@@ -9,9 +9,17 @@
 
 #include <iostream>
 #include "spi.hpp"
+#include <wiringPi.h>
+#include "leds.hpp"
 
 int main() {
 
+  // Setup pins
+  setup_pins();
+
+  // Set leds
+  set_leds();
+  
   // Select channel
   int ch = 0;
   double frequency = 500000;

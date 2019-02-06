@@ -38,7 +38,7 @@ private:
   
 public:
   // Constructor
-  SpiChannel(int channel, double frequency);
+  SpiChannel(int channel, int frequency);
   
   // Simultaneous read/write data to the SPI interface
   // Pass a std::vector to write. Read data is returned as a std::vector
@@ -48,7 +48,7 @@ public:
   // Read and write a single byte of data
   unsigned char read_write(const unsigned char write);
   
-  // Change frequency
-  void change_frequency(double frequency);
+  // Change frequency in Hz
+  void change_frequency(int frequency);
   
 };
