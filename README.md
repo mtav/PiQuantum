@@ -52,5 +52,16 @@ between the red and blue state which is why we see purple.
 
 # How it works
 
+
+# Parts list
+
+- Raspberry Pi
+- GPIO Jumper cables
+- Breadboard 
+- RGB LEDs 
+- Buttons
+- Shift registers for serial to parallel 
+
+
 J Scott, john.scott@bristol.ac.uk
 O Thomas, oliver.thomas@bristol.ac.uk
