@@ -23,12 +23,18 @@
  * SpiChannel class
  *
  * This class provides SPI read/write functions on a particular SPI channel
- * using the wiringPi SPI library.
+ * using the wiringPi SPI library. The channel is fixed for a particular object
+ * when it is constructed, but the frequency can be modified (not sure if that's)
+ * very helpful. 
+ *
+ * Use case: as part of an SPI device class to actually read and write data to the
+ * device. Other details (such as managing chip selects) would be handled by the
+ * higher level class.
  *
  */
 class SpiChannel {
 private:
-  int channel; // Either 0 or 1
+  const int channel; // Either 0 or 1
   
 public:
   // Constructor
