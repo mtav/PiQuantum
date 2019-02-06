@@ -2,8 +2,11 @@
 all: main.c
 	gcc main.c -o prog -lmenu -lncurses
 
-spi: spi.cpp
-	g++ spi.cpp -o spi -lwiringPi
+spi-test: spi.o
+	g++ spi-test.cpp spi.o -o spi-test -lwiringPi
+
+spi.o: spi.hpp
+	g++ -c spi.cpp -o spi.o
 
 clean:
-	rm -rf prog spi
+	rm -rf prog spi-test *.o

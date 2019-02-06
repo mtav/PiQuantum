@@ -62,6 +62,7 @@ between the red and blue state which is why we see purple.
 - Buttons
 - Shift registers for serial to parallel 
 
+<<<<<<< HEAD
 # Software
 
 using the ncurses library for terminal based graphics, 
@@ -69,6 +70,17 @@ sudo apt-get install libncurses5-dev
 
 
 
+=======
+# Running the code
+
+## Libraries
+
+### WiringPi (for SPI interface)
+
+It might already be installed on the Raspberry Pi. If it's not, it can be install by
+cloning git://git.drogon.net/wiringPi and running ./build. The SPI interface also needs 
+to be enabled in raspi-config.
+>>>>>>> a55a9730bc9fa07ca33ded86cf505cc2d25a7e6c
 
 J Scott, john.scott@bristol.ac.uk
 O Thomas, oliver.thomas@bristol.ac.uk
