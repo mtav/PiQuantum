@@ -5,3 +5,5 @@ all: main.c
 spi: spi.cpp
 	g++ spi.cpp -o spi -lwiringPi
 
+clean:
+	rm -rf prog spi
