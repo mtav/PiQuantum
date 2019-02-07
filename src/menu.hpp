@@ -252,7 +252,7 @@ public:
     } else if(result == E_BAD_ARGUMENT) {
       std::cerr << "Error: failed to free menu, bad argument" << std::endl;
     } else if(result == E_POSTED) {
-      std::cerr << "Error: failed to free menu, already argument" << std::endl;
+      std::cerr << "Error: failed to free menu, already posted" << std::endl;
     }
 
     // Reset the menu_items list
