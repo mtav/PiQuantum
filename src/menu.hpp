@@ -11,10 +11,23 @@
 #include <menu.h>
 #include <curses.h>
 #include <thread>
+#include <vector>
+#include <cerrno>
+#include <cstring>
 
+/**
+ * @brief Menu handling class
+ *
+ * @detail The point of this class is to make menu handling with ncurses easier
+ * and more c++ compatible. Making an object of the Menu type will take care 
+ * of setting up (and subsequently releasing) ncurses resources. It also 
+ * creates a thread which polls getch for characters and handles menu item
+ * navigation. 
+ *
+ */
 class Menu {
 private:
-  ITEM * menu_items[5]; // An array of 5 ITEM pointers
+  std::vector<ITEM * > menu_items;
   MENU * menu;
   std::thread background; 
   
@@ -24,7 +37,6 @@ private:
     clrtoeol();
     mvprintw(20, 0, "Item selected is : %s", name);
   }
-
 
   // Handle menu navigation and selection
   void navigate() {
@@ -38,8 +50,9 @@ private:
 	menu_driver(menu, REQ_UP_ITEM);
 	break;
       case 10: // Enter
-	{	  
+	{
 	  ITEM * cur = current_item(menu);
+	  if(cur == nullptr) break;
 	  void (* func)(char *) = (void(*)(char*))item_userptr(cur);
 	  func((char *)item_name(cur));
 	  pos_menu_cursor(menu);
@@ -49,12 +62,11 @@ private:
       }
     } // End of while
   }
-  
-  
+    
 public:
 
   // Constructor (called when object is made)
-  Menu() {
+  Menu() : menu_items(1) {
 
     // Initialize curses 
     initscr();
@@ -66,23 +78,17 @@ public:
     // enable F-keys and Arrow keys
     keypad(stdscr, TRUE);
 
-    // Populate the menu
-    menu_items[0] = new_item("Thing1", "Select1"); 
-    menu_items[1] = new_item("Thing2", "Select2");
-    menu_items[2] = new_item("Thing3", "Select3");
-    menu_items[3] = new_item("Thing4", "Select4");
-    menu_items[4] = nullptr; // Must be null terminated 
-
-    // Set the functions for each menu entry
-    set_item_userptr(menu_items[0], (void*)func);
-    set_item_userptr(menu_items[1], (void*)func);
-    set_item_userptr(menu_items[2], (void*)func);
-    set_item_userptr(menu_items[3], (void*)func);
+    // Initialise empty menu item list
+    menu_items[0] = nullptr;
 
     // Create new menu
-    menu = new_menu(menu_items);
+    // Since std::vector<ITEM*> stores elements contiguously in
+    // memory, so the required ITEM** is a pointer to the first element
+    // of menu_items
+    menu = new_menu(&menu_items[0]);
     if(menu == nullptr) {
       std::cerr << "Menu error: failed to create new menu" << std::endl;
+      std::cerr << strerror(errno) << std::endl;
     }
 
     // Post the menu
@@ -96,6 +102,62 @@ public:
     
   }
 
+  // Add a menu item
+  void add_item(const char * name, const char * description, void * action) {
+
+    // It seems like you have to free the menu before messing around
+    // with menu_items
+    if(menu == nullptr) {
+      std::cerr << "Error: menu unexpectedly null" << std::endl;
+    }
+    unpost_menu(menu);
+    int result = free_menu(menu);    
+    if(result == E_SYSTEM_ERROR) {
+      std::cerr << "Error: failed to free menu, system error" << std::endl;
+      std::cerr << strerror(errno) << std::endl;
+    } else if(result == E_BAD_ARGUMENT) {
+      std::cerr << "Error: failed to free menu, bad argument" << std::endl;
+    } else if(result == E_POSTED) {
+      std::cerr << "Error: failed to free menu, already argument" << std::endl;
+    }
+ 
+    
+    // Add the new item onto the end of menu list
+    menu_items.back() = new_item(name, description); // Overwriting nullptr
+
+    // Associate the new action to the last menu item
+    set_item_userptr(menu_items.back(), action);
+
+     // Add nullptr to the end of the list
+    menu_items.push_back(nullptr);
+
+    // Create new menu
+    // Since std::vector<ITEM*> stores elements contiguously in
+    // memory, the required argument ITEM** is a pointer to the first
+    // element of menu_items.
+    //
+    menu = new_menu(&menu_items[0]);
+    if(menu == nullptr) {
+      std::cerr << "Menu error: failed to create new menu" << std::endl;
+      switch(errno) {
+      case E_NOT_CONNECTED:
+	std::cerr << "No items are connected to the menu" << std::endl;	
+	break;
+      case E_SYSTEM_ERROR:
+	std::cerr << strerror(errno) << std::endl;
+	break;
+      default:
+	std::cerr << "Unknown error" << std::endl;
+      }
+    }
+    
+    // Post the menu
+    mvprintw(LINES - 3, 0, "Press <ENTER> to see the option selected");
+    mvprintw(LINES - 2, 0, "Up and Down arrow keys to naviage (F1 to Exit)");
+    post_menu(menu);
+    refresh();
+  }
+  
   // Destructor (called when object is deleted)
   ~Menu() {
     unpost_menu(menu);

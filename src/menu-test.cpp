@@ -9,11 +9,31 @@
 
 #include "menu.hpp"
 
+// Test action
+void action(char * name) {
+  move(20, 0);
+  clrtoeol();
+  mvprintw(20, 0, "Item selected is : %s", name);
+}
+
+
 int main() {
 
   // Menu object
   Menu menu;
 
+  // Add menu items
+  menu.add_item("Item 1", "Test item added dynamically", (void*)action);
+  menu.add_item("Item 2", "Test item added dynamically", (void*)action);
+  menu.add_item("Item 3", "Test item added dynamically", (void*)action);
+  menu.add_item("Item 4", "Test item added dynamically", (void*)action);
+  menu.add_item("Item 1", "Test item added dynamically", (void*)action);
+  menu.add_item("Item 2", "Test item added dynamically", (void*)action);
+  menu.add_item("Item 3", "Test item added dynamically", (void*)action);
+  menu.add_item("Item 4", "Test item added dynamically", (void*)action);
 
+  
+  
   while(1);
+  
 }
