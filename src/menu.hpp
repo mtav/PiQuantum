@@ -82,6 +82,7 @@ private:
   void hide() {
     if(menu == nullptr) {
       std::cerr << "Error: menu unexpectedly null" << std::endl;
+      return;
     }
     unpost_menu(menu);
   } 
@@ -105,16 +106,16 @@ private:
   void navigate() {
     int c = 0;
     while((c = getch()) != KEY_F(1)) {
-      if(stop_background == 1) return; // from thread 
-      switch(c) {
-      case KEY_DOWN:
-	menu_driver(menu, REQ_DOWN_ITEM);
-	break;
-      case KEY_UP:
-	menu_driver(menu, REQ_UP_ITEM);
-	break;
-      case 10: // Enter
-	{
+      if(menu != nullptr) {
+	if(stop_background == 1) return; // from thread 
+	switch(c) {
+	case KEY_DOWN:
+	  menu_driver(menu, REQ_DOWN_ITEM);
+	  break;
+	case KEY_UP:
+	  menu_driver(menu, REQ_UP_ITEM);
+	  break;
+	case 10: { // Enter
 	  ITEM * cur = current_item(menu);
 	  if(cur == nullptr) break;
 	  void (* func)(char *) = (void(*)(char*))item_userptr(cur);
@@ -122,7 +123,8 @@ private:
 	  pos_menu_cursor(menu);
 	  break;
 	}
-	break;
+	  break;
+	}
       }
     } // End of while
   }
@@ -144,7 +146,7 @@ public:
     // of menu_items
     menu = new_menu(&menu_items[0]);
     if(menu == nullptr) {
-      std::cerr << "Menu error: failed to create new menu" << std::endl;
+      std::cerr << "Menu error1: failed to create new menu" << std::endl;
       std::cerr << strerror(errno) << std::endl;
     }
 
@@ -156,6 +158,12 @@ public:
     
   }
 
+  // This method foregrounds the current menu, overwriting
+  // whichever menu is currently in view
+  static void foreground() {
+    show();
+  }
+  
   /** 
    * @brief Add a submenu item
    *
@@ -164,6 +172,18 @@ public:
   void add_submenu_item(const char * name,
 			const char * description,
 			Menu menu) {
+
+    // It seems like you have to free the menu before messing around
+    // with menu_items
+    hide();
+    remove();
+    
+    // Add the new item onto the end of menu list
+    menu_items.back() = new_item(name, description); // Overwriting nullptr
+
+    // Associate the foreground menu action with the item
+    set_item_userptr(menu_items.back(), menu.foreground);
+
     
   }
   
@@ -181,6 +201,7 @@ public:
     // It seems like you have to free the menu before messing around
     // with menu_items
     hide();
+    remove();
     
     // Add the new item onto the end of menu list
     menu_items.back() = new_item(name, description); // Overwriting nullptr
@@ -198,7 +219,7 @@ public:
     //
     menu = new_menu(&menu_items[0]);
     if(menu == nullptr) {
-      std::cerr << "Menu error: failed to create new menu" << std::endl;
+      std::cerr << "Menu error2: failed to create new menu" << std::endl;
       switch(errno) {
       case E_NOT_CONNECTED:
 	std::cerr << "No items are connected to the menu" << std::endl;	
