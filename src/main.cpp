@@ -1,5 +1,5 @@
 /** 
- * @file main.c
+ * @file main.cpp
  * @authors J Scott, O Thomas
  * @date Jan 2019 
  *
@@ -84,7 +84,7 @@ int main() {
      * user
      * pointer
      * */
-    set_item_userptr(my_items[i], func); // what item[i] calls when selected
+    set_item_userptr(my_items[i], (void*)func); // what item[i] calls when selected
   }
   my_items[n_choices] = (ITEM *)NULL;
 
@@ -112,13 +112,10 @@ int main() {
       menu_driver(my_menu, REQ_UP_ITEM);
       break;
     case 10: /* Enter */
-      {
-	ITEM * cur;
-	void (*p)(char *);
-	  
-	cur = current_item(my_menu);
-	p = item_userptr(cur);
-	p((char *)item_name(cur));
+      {	  
+	ITEM * cur = current_item(my_menu);
+        void (*func)(char *) = (void(*)(char*))item_userptr(cur);
+	func((char *)item_name(cur));
 	pos_menu_cursor(my_menu);
 	break;
       }

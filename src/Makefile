@@ -1,6 +1,6 @@
 # Run `make all', `make spi', etc.
-all: main.c
-	gcc main.c -o prog -lmenu -lncurses
+all: main.cpp
+	g++ main.cpp -o prog -lmenu -lncurses
 
 spi-test: spi.o leds.o spi-test.cpp
 	g++ spi-test.cpp spi.o leds.o -o spi-test -lwiringPi
