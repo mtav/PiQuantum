@@ -32,7 +32,13 @@ int main() {
   menu.add_item("Item 3", "Test item added dynamically", (void*)action);
   menu.add_item("Item 4", "Test item added dynamically", (void*)action);
 
-  
+  // Clear menu
+  menu.clear_all();
+
+  // Add new items
+  menu.add_item("New item 1", "Test item added dynamically", (void*)action);
+  menu.add_item("New item 2", "Test item added dynamically", (void*)action);
+
   
   while(1);
   

@@ -157,6 +157,60 @@ public:
     post_menu(menu);
     refresh();
   }
+
+    // Add a menu item
+  void clear_all() {
+
+    // It seems like you have to free the menu before messing around
+    // with menu_items
+    if(menu == nullptr) {
+      std::cerr << "Error: menu unexpectedly null" << std::endl;
+    }
+    unpost_menu(menu);
+    int result = free_menu(menu);    
+    if(result == E_SYSTEM_ERROR) {
+      std::cerr << "Error: failed to free menu, system error" << std::endl;
+      std::cerr << strerror(errno) << std::endl;
+    } else if(result == E_BAD_ARGUMENT) {
+      std::cerr << "Error: failed to free menu, bad argument" << std::endl;
+    } else if(result == E_POSTED) {
+      std::cerr << "Error: failed to free menu, already argument" << std::endl;
+    }
+
+    // Reset the menu_items list
+    menu_items.clear();
+
+     // Add nullptr to the end of the list
+    menu_items.push_back(nullptr);
+
+    // Create new menu
+    // Since std::vector<ITEM*> stores elements contiguously in
+    // memory, the required argument ITEM** is a pointer to the first
+    // element of menu_items.
+    //
+    menu = new_menu(&menu_items[0]);
+    if(menu == nullptr) {
+      std::cerr << "Menu error: failed to create new menu" << std::endl;
+      switch(errno) {
+      case E_NOT_CONNECTED:
+	std::cerr << "No items are connected to the menu" << std::endl;	
+	break;
+      case E_SYSTEM_ERROR:
+	std::cerr << strerror(errno) << std::endl;
+	break;
+      default:
+	std::cerr << "Unknown error" << std::endl;
+      }
+    }
+    
+    // Post the menu
+    mvprintw(LINES - 3, 0, "Press <ENTER> to see the option selected");
+    mvprintw(LINES - 2, 0, "Up and Down arrow keys to naviage (F1 to Exit)");
+    post_menu(menu);
+    refresh();
+  }
+
+
   
   // Destructor (called when object is deleted)
   ~Menu() {
