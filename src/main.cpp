@@ -58,7 +58,7 @@ int main() {
   int n_choices, i;
   ITEM * cur_item;
   
-  /* Initialize curses */ 
+  // Initialize curses 
   initscr();
   start_color();
   // read inputs without carrige return
@@ -72,31 +72,22 @@ int main() {
   init_pair(2, COLOR_GREEN, COLOR_BLACK);
   init_pair(3, COLOR_MAGENTA, COLOR_BLACK);
 
-  /* Initialize
-   * items */
+  // Initialize items
   n_choices = ARRAY_SIZE(choices);
   my_items = (ITEM **)calloc(n_choices + 1, sizeof(ITEM *));
     
   for(i = 0; i < n_choices; ++i) {
-    my_items[i] = new_item(choices[i], choices[i]); // _name_ _description_ pointers
-    /* Set
-     * the
-     * user
-     * pointer
-     * */
+    // arguments of new_item: _name_ _description_ pointers
+    my_items[i] = new_item(choices[i], choices[i]); 
+    // Set the user pointer
     set_item_userptr(my_items[i], (void*)func); // what item[i] calls when selected
   }
   my_items[n_choices] = (ITEM *)NULL;
 
-  /* Create
-   * menu
-   * */
+  // Create menu
   my_menu = new_menu((ITEM **)my_items);
 
-  /* Post
-   * the
-   * menu
-   * */
+  // Post the menu
   mvprintw(LINES - 3, 0, "Press <ENTER> to see the option selected");
   mvprintw(LINES - 2, 0, "Up and Down arrow keys to naviage (F1 to Exit)");
   post_menu(my_menu);
@@ -121,7 +112,9 @@ int main() {
       }
       break;
     }
-  }   
+  } // End of while
+
+  // Clean up
   unpost_menu(my_menu);
   for(i = 0; i < n_choices; ++i)
     free_item(my_items[i]);
