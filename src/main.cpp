@@ -102,10 +102,10 @@ int main() {
     case KEY_UP:
       menu_driver(my_menu, REQ_UP_ITEM);
       break;
-    case 10: /* Enter */
+    case 10: // Enter
       {	  
 	ITEM * cur = current_item(my_menu);
-        void (*func)(char *) = (void(*)(char*))item_userptr(cur);
+        void (* func)(char *) = (void(*)(char*))item_userptr(cur);
 	func((char *)item_name(cur));
 	pos_menu_cursor(my_menu);
 	break;
