@@ -10,6 +10,12 @@
 #include "spi.hpp"
 
 SpiChannel::SpiChannel(int channel, int frequency) : channel(channel) {
+  // Check channel
+  if((channel !=0) && (channel != 1)) {
+    std::cerr << "SPI Error: Channel must be 0 or 1" << std::endl;
+    abort();
+  }
+
   // Set up SPI channel
   int result = wiringPiSPISetup(channel, frequency);
   if(result == -1) {

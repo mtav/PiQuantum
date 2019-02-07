@@ -13,8 +13,13 @@
 #include "leds.hpp"
 
 int main() {
-
+  
   LedDriver leds;
 
-  leds.set({1,1});
+  unsigned char byte = 0;
+  while(1) {
+    byte ++;
+    delay(100);
+    leds.set({byte,byte});
+  }
 }

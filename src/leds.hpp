@@ -8,12 +8,31 @@
  */
 
 #include <wiringPi.h>
+#include <signal.h>
+#include <unistd.h>
 
+class Alarm {
+private:
+  // Alarm handler
+  static void handler(int sig_num) {
+    std::cout << "SIGALRM" << std::endl;
+  }
+  
+public:
+  Alarm() {
+    // Set up alarm handler
+    signal(SIGALRM, Alarm::handler);
+    
+    // Schedule alarm
+    ualarm(5000,5000);
+  }
+  
+};
 
 class PIN {
 public:
-  static const int LE = 7; // Physical pin 7
-  static const int OE = 0; // Physical pin 11
+  static const int LE = 0; // Physical pin 11
+  static const int OE = 1; // Physical pin 12
 };
 
 class LedDriver {
@@ -34,7 +53,7 @@ public:
 
     // Set up pins
     pinMode(PIN::LE, OUTPUT); // Set LE to output
-    pinMode(PIN::OE, OUTPUT); // Set OE to output
+    pinMode(PIN::OE, OUTPUT); // Set OE to output    
     
   }
 
