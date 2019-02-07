@@ -120,5 +120,6 @@ int main() {
     free_item(my_items[i]);
   free_menu(my_menu);
   endwin();
+
 }
 
