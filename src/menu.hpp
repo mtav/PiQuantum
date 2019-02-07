@@ -16,6 +16,35 @@
 #include <cstring>
 
 /**
+ * @brief Class for managing ncurses
+ *
+ * @detail 
+ */
+class FancyTerm {
+
+public:
+    // Constructor (called when object is made)
+  FancyTerm() {
+
+    // Initialize curses 
+    initscr();
+    start_color();
+    // read inputs without carrige return
+    cbreak();
+    // don't echo inputs to term
+    noecho();
+    // enable F-keys and Arrow keys
+    keypad(stdscr, TRUE);
+
+  }
+
+  // Destructor
+  ~FancyTerm() {
+    endwin();
+  }  
+};
+
+/**
  * @brief Menu handling class
  *
  * @detail The point of this class is to make menu handling with ncurses easier
@@ -29,7 +58,8 @@ class Menu {
 private:
   std::vector<ITEM * > menu_items;
   MENU * menu;
-  std::thread background; 
+  std::thread background;
+  int stop_background = 0; // Set to one to stop the thread
   
   // Probably needs to be static for compatibility with ncurses
   static void func(char * name) {
@@ -38,10 +68,44 @@ private:
     mvprintw(20, 0, "Item selected is : %s", name);
   }
 
+  // Make menu visible
+  void show() {
+    mvprintw(LINES - 3, 0, "Press <ENTER> to see the option selected");
+    mvprintw(LINES - 2, 0, "Up and Down arrow keys to naviage (F1 to Exit)");
+    if(menu != nullptr) post_menu(menu);
+    else std::cerr << "Error: no menu to post" << std::endl;
+    refresh();
+
+  }
+
+  // Hide the menu
+  void hide() {
+    if(menu == nullptr) {
+      std::cerr << "Error: menu unexpectedly null" << std::endl;
+    }
+    unpost_menu(menu);
+  } 
+
+  // Free the menu
+  void remove() {
+    int result = free_menu(menu);    
+    if(result == E_SYSTEM_ERROR) {
+      std::cerr << "Error: failed to free menu, system error" << std::endl;
+      std::cerr << strerror(errno) << std::endl;
+    } else if(result == E_BAD_ARGUMENT) {
+      std::cerr << "Error: failed to free menu, bad argument" << std::endl;
+    } else if(result == E_POSTED) {
+      std::cerr << "Error: failed to free menu, already argument" << std::endl;
+    }
+  }  
+  
   // Handle menu navigation and selection
+  // @todo I think there's a problem with when this function exits,
+  // ie. how to exit properly 
   void navigate() {
     int c = 0;
     while((c = getch()) != KEY_F(1)) {
+      if(stop_background == 1) return; // from thread 
       switch(c) {
       case KEY_DOWN:
 	menu_driver(menu, REQ_DOWN_ITEM);
@@ -68,16 +132,9 @@ public:
   // Constructor (called when object is made)
   Menu() : menu_items(1) {
 
-    // Initialize curses 
-    initscr();
-    start_color();
-    // read inputs without carrige return
-    cbreak();
-    // don't echo inputs to term
-    noecho();
-    // enable F-keys and Arrow keys
-    keypad(stdscr, TRUE);
-
+    // Need to make sure there is a FancyTerm object before doing
+    // any of this
+    
     // Initialise empty menu item list
     menu_items[0] = nullptr;
 
@@ -92,35 +149,38 @@ public:
     }
 
     // Post the menu
-    mvprintw(LINES - 3, 0, "Press <ENTER> to see the option selected");
-    mvprintw(LINES - 2, 0, "Up and Down arrow keys to naviage (F1 to Exit)");
-    post_menu(menu);
-    refresh();
+    show();
 
     // Thread to handle menu navigation
     background = std::thread(&Menu::navigate, this);
     
   }
 
-  // Add a menu item
-  void add_item(const char * name, const char * description, void * action) {
+  /** 
+   * @brief Add a submenu item
+   *
+   * @detail Add a menu item which opens another menu when it is selected
+   */
+  void add_submenu_item(const char * name,
+			const char * description,
+			Menu menu) {
+    
+  }
+  
+  
+  /** 
+   * @brief Add an action menu item
+   *
+   * @detail Add a menu item which performs an action (calls a function)
+   * when it is selected
+   */
+  void add_action_item(const char * name,
+		       const char * description,
+		       void * action) {
 
     // It seems like you have to free the menu before messing around
     // with menu_items
-    if(menu == nullptr) {
-      std::cerr << "Error: menu unexpectedly null" << std::endl;
-    }
-    unpost_menu(menu);
-    int result = free_menu(menu);    
-    if(result == E_SYSTEM_ERROR) {
-      std::cerr << "Error: failed to free menu, system error" << std::endl;
-      std::cerr << strerror(errno) << std::endl;
-    } else if(result == E_BAD_ARGUMENT) {
-      std::cerr << "Error: failed to free menu, bad argument" << std::endl;
-    } else if(result == E_POSTED) {
-      std::cerr << "Error: failed to free menu, already argument" << std::endl;
-    }
- 
+    hide();
     
     // Add the new item onto the end of menu list
     menu_items.back() = new_item(name, description); // Overwriting nullptr
@@ -152,10 +212,7 @@ public:
     }
     
     // Post the menu
-    mvprintw(LINES - 3, 0, "Press <ENTER> to see the option selected");
-    mvprintw(LINES - 2, 0, "Up and Down arrow keys to naviage (F1 to Exit)");
-    post_menu(menu);
-    refresh();
+    show();
   }
 
     // Add a menu item
@@ -206,7 +263,7 @@ public:
     // Post the menu
     mvprintw(LINES - 3, 0, "Press <ENTER> to see the option selected");
     mvprintw(LINES - 2, 0, "Up and Down arrow keys to naviage (F1 to Exit)");
-    post_menu(menu);
+    show();
     refresh();
   }
 
@@ -214,9 +271,9 @@ public:
   
   // Destructor (called when object is deleted)
   ~Menu() {
-    unpost_menu(menu);
-    free_menu(menu);
-    endwin();
-
+    stop_background = 1; // Indicate that background thread should stop
+    background.join(); // Wait for background thread to finish
+    hide();
+    remove();
   }
 };
