@@ -8,3 +8,8 @@
  */
 
 #include "menu.hpp"
+
+void OpenSubmenu::execute() {
+  oldmenu.hide();
+  submenu.show();
+}

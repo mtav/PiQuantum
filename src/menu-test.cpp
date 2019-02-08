@@ -19,31 +19,50 @@ void action(char * name) {
 
 int main() {
 
+  Action * action = new Action("Test");
+  
+  
   // Create ncurses background
   FancyTerm term;
   
   // Menu object
   Menu menu;
 
-  // Add menu items
-  //menu.add_submenu_item("Item 1", "Test item added dynamically", (void*)action);
-  menu.add_action_item("Item 2", "Test item added dynamically", (void*)action);
-  menu.add_action_item("Item 3", "Test item added dynamically", (void*)action);
-  menu.add_action_item("Item 4", "Test item added dynamically", (void*)action);
-  menu.add_action_item("Item 1", "Test item added dynamically", (void*)action);
-  menu.add_action_item("Item 2", "Test item added dynamically", (void*)action);
-  menu.add_action_item("Item 3", "Test item added dynamically", (void*)action);
-  menu.add_action_item("Item 4", "Test item added dynamically", (void*)action);
+  // Menu object
+  Menu submenu;
 
+  Menu another;
+
+  // Add menu items
+  //menu.add_action_item("Item 2", "Test item added dynamically", action);
+  menu.add_action_item("Item 3", "Test item added dynamically", action);
+  menu.add_action_item("Item 3", "Test item added dynamically", action);
+  menu.add_submenu_item("Submenu", "Test item added dynamically", submenu);
+  
+  submenu.add_action_item("Item 3", "Test item added dynamically", action);
+  submenu.add_action_item("Item 4", "Test item added dynamically", action);
+  submenu.add_action_item("Item 1", "Test item added dynamically", action);
+  submenu.add_action_item("Item 2", "Test item added dynamically", action);
+
+  submenu.add_submenu_item("Item 2", "Test item added dynamically", another);
+
+  
+  menu.show();
+
+  
+  //
+  
   // Clear menu
-  menu.clear_all();
+  //menu.clear_all();
 
   // Add new items
-  menu.add_action_item("New item 1", "Test item added dynamically", (void*)action);
-  menu.add_action_item("New item 2", "Test item added dynamically", (void*)action);
+  //menu.add_action_item("New item 1", "Test item added dynamically", action);
+  //menu.add_action_item("New item 2", "Test item added dynamically", action);
 
   
   // Stop program exiting
   while(1);
+
+  delete(action);
   
 }

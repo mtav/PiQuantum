@@ -44,6 +44,49 @@ public:
   }  
 };
 
+/** 
+ * @brief Userptr class
+ *
+ * @detail Contains data for executing functions when a menu item is
+ * selected. It should be cast to void* and past to the set_item_userptr
+ * function
+ *
+ */
+class UserPtr {
+private:
+
+public:
+  virtual void execute() = 0;
+};
+
+class Action : public UserPtr {
+private:
+  const char * name;
+
+public:
+  Action(const char * name) : name(name) { }
+  
+  void execute() {
+    move(20, 0);
+    clrtoeol();
+    mvprintw(20, 0, "Item selected is : %s", name);
+  }
+};
+
+class Menu;
+
+class OpenSubmenu : public UserPtr {
+private:
+  Menu & oldmenu;
+  Menu & submenu;
+public:
+  OpenSubmenu(Menu & submenu, Menu & oldmenu)
+    : submenu(submenu), oldmenu(oldmenu) {
+    std::cout << "Got to here" << std::endl;
+  }
+  void execute(); // Defined later
+};
+
 /**
  * @brief Menu handling class
  *
@@ -59,7 +102,8 @@ private:
   std::vector<ITEM * > menu_items;
   MENU * menu;
   std::thread background;
-  int stop_background = 0; // Set to one to stop the thread
+  int background_flag = 0; // Set to one to stop the thread
+  std::vector<OpenSubmenu * > submenus; // Holds submenu pointers
   
   // Probably needs to be static for compatibility with ncurses
   static void func(char * name) {
@@ -68,24 +112,33 @@ private:
     mvprintw(20, 0, "Item selected is : %s", name);
   }
 
-  // Make menu visible
-  void show() {
-    mvprintw(LINES - 3, 0, "Press <ENTER> to see the option selected");
-    mvprintw(LINES - 2, 0, "Up and Down arrow keys to naviage (F1 to Exit)");
-    if(menu != nullptr) post_menu(menu);
-    else std::cerr << "Error: no menu to post" << std::endl;
-    refresh();
-
+  // Start the background thread
+  void start_background() {
+    // Start thread to handle navigation
+    background = std::thread(&Menu::navigate, this);    
   }
 
-  // Hide the menu
-  void hide() {
-    if(menu == nullptr) {
-      std::cerr << "Error: menu unexpectedly null" << std::endl;
-      return;
+  // Start the background thread
+  void stop_background_block() {
+    // Check if thread is running (joinable)
+    if(background.joinable()) {
+      // Stop the background thread
+      background_flag = 1; // Indicate that background thread should stop
+      // Wait for background thread to finish
+      background.join();
     }
-    unpost_menu(menu);
-  } 
+  }
+
+  // Start the background thread
+  void stop_background_nonblock() {
+    // Check if thread is running (joinable)
+    if(background.joinable()) {
+      // Stop the background thread
+      background_flag = 1; // Indicate that background thread should stop
+      // Do not wait for background thread to finish
+    }
+  }
+
 
   // Free the menu
   void remove() {
@@ -107,7 +160,10 @@ private:
     int c = 0;
     while((c = getch()) != KEY_F(1)) {
       if(menu != nullptr) {
-	if(stop_background == 1) return; // from thread 
+	if(background_flag == 1) {
+	  background_flag = 0; // Reset the flag
+	  return; // from thread
+	}
 	switch(c) {
 	case KEY_DOWN:
 	  menu_driver(menu, REQ_DOWN_ITEM);
@@ -118,8 +174,12 @@ private:
 	case 10: { // Enter
 	  ITEM * cur = current_item(menu);
 	  if(cur == nullptr) break;
-	  void (* func)(char *) = (void(*)(char*))item_userptr(cur);
-	  func((char *)item_name(cur));
+
+	  UserPtr * user_ptr = static_cast<UserPtr*>(item_userptr(cur));
+	  user_ptr -> execute();
+	  
+	  //void (* func)(char *) = (void(*)(char*));
+	  //func((char *)item_name(cur));
 	  pos_menu_cursor(menu);
 	  break;
 	}
@@ -146,24 +206,47 @@ public:
     // of menu_items
     menu = new_menu(&menu_items[0]);
     if(menu == nullptr) {
-      std::cerr << "Menu error1: failed to create new menu" << std::endl;
+      std::cerr << "Menu error: failed to create new menu" << std::endl;
       std::cerr << strerror(errno) << std::endl;
     }
 
-    // Post the menu
-    show();
+    // Menu not visible here
 
-    // Thread to handle menu navigation
-    background = std::thread(&Menu::navigate, this);
+    // Use default std::thread constructor
     
   }
 
   // This method foregrounds the current menu, overwriting
   // whichever menu is currently in view
-  static void foreground() {
-    show();
+  void show() {
+
+    // Post the menu
+    mvprintw(LINES - 3, 0, "Press <ENTER> to see the option selected");
+    mvprintw(LINES - 2, 0, "Up and Down arrow keys to naviage (F1 to Exit)");
+    if(menu != nullptr) post_menu(menu);
+    else std::cerr << "Error: no menu to post" << std::endl;
+    refresh();
+
+    // Start the background thread
+    start_background();
   }
+
+  // This method disables a menus background thread)
+  void hide() {
+
+    // Unpost the menu
+    if(menu == nullptr) {
+      std::cerr << "Error: menu unexpectedly null" << std::endl;
+      return;
+    }
+    unpost_menu(menu);    
+
+    std::cout << "HERE-1" << std::endl;
   
+    // Stop the background thread
+    stop_background_nonblock();
+  }
+
   /** 
    * @brief Add a submenu item
    *
@@ -171,7 +254,7 @@ public:
    */
   void add_submenu_item(const char * name,
 			const char * description,
-			Menu menu) {
+			Menu & submenu) {
 
     // It seems like you have to free the menu before messing around
     // with menu_items
@@ -181,10 +264,37 @@ public:
     // Add the new item onto the end of menu list
     menu_items.back() = new_item(name, description); // Overwriting nullptr
 
-    // Associate the foreground menu action with the item
-    set_item_userptr(menu_items.back(), menu.foreground);
-
+    // Add a new submenu pointer to the list
+    submenus.push_back(new OpenSubmenu(submenu, *this)); // Deleted on clear_all
     
+    // Associate the foreground menu action with the item
+    set_item_userptr(menu_items.back(), (void*) submenus.back());
+
+    // Add nullptr to the end of the list
+    menu_items.push_back(nullptr);
+    
+    // Create new menu
+    // Since std::vector<ITEM*> stores elements contiguously in
+    // memory, the required argument ITEM** is a pointer to the first
+    // element of menu_items.
+    //
+    menu = new_menu(&menu_items[0]);
+    if(menu == nullptr) {
+      std::cerr << "Menu error2: failed to create new menu" << std::endl;
+      switch(errno) {
+      case E_NOT_CONNECTED:
+	std::cerr << "No items are connected to the menu" << std::endl;	
+	break;
+      case E_SYSTEM_ERROR:
+	std::cerr << strerror(errno) << std::endl;
+	break;
+      default:
+	std::cerr << "Unknown error" << std::endl;
+      }
+    }
+
+    // Don't repost
+   
   }
   
   
@@ -196,7 +306,7 @@ public:
    */
   void add_action_item(const char * name,
 		       const char * description,
-		       void * action) {
+		       Action * action) {
 
     // It seems like you have to free the menu before messing around
     // with menu_items
@@ -207,7 +317,7 @@ public:
     menu_items.back() = new_item(name, description); // Overwriting nullptr
 
     // Associate the new action to the last menu item
-    set_item_userptr(menu_items.back(), action);
+    set_item_userptr(menu_items.back(), (void*)action);
 
      // Add nullptr to the end of the list
     menu_items.push_back(nullptr);
@@ -232,8 +342,7 @@ public:
       }
     }
     
-    // Post the menu
-    show();
+    // Don't repost the menu
   }
 
     // Add a menu item
@@ -280,6 +389,7 @@ public:
 	std::cerr << "Unknown error" << std::endl;
       }
     }
+
     
     // Post the menu
     mvprintw(LINES - 3, 0, "Press <ENTER> to see the option selected");
@@ -292,8 +402,10 @@ public:
   
   // Destructor (called when object is deleted)
   ~Menu() {
-    stop_background = 1; // Indicate that background thread should stop
-    background.join(); // Wait for background thread to finish
+
+    // Clear the menu
+    clear_all();
+    
     hide();
     remove();
   }
