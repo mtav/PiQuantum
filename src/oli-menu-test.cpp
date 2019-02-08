@@ -36,7 +36,8 @@
  *       Write QASM 
  */
 
-int end_val=0;
+
+
 
 int func(char * name) {
     move(20, 0);
@@ -51,7 +52,6 @@ int func(char * name) {
 
 
 int start_menu(char * choices[], int n_choices){
-
 
     ITEM ** my_items;
     MENU * my_menu;
@@ -88,18 +88,20 @@ int start_menu(char * choices[], int n_choices){
     // Create menu
     my_menu = new_menu((ITEM **)my_items);
 
+
     //start of new
     /* Set menu option not to show the description */
     menu_opts_off(my_menu, O_SHOWDESC);
 
     /* Create the window to be associated with the menu */
-    my_menu_win = newwin(10, 70, 4, 4);
+    my_menu_win = newwin(10, 75, 4, 4);
     keypad(my_menu_win, TRUE);
 
+    // resize stuff here ^,
     /* Set main window and sub window */
     set_menu_win(my_menu, my_menu_win);
-    set_menu_sub(my_menu, derwin(my_menu_win, 6, 68, 3, 1));
-    set_menu_format(my_menu, 5, 3);
+    set_menu_sub(my_menu, derwin(my_menu_win, 6, 73, 3, 1));
+    set_menu_format(my_menu, 4, 2);
     set_menu_mark(my_menu, " * ");
 
     /* Print a border around the main
@@ -158,7 +160,7 @@ int start_menu(char * choices[], int n_choices){
                 break;
         }
         // update cursor position 
-                        wrefresh(my_menu_win);
+        wrefresh(my_menu_win);
         if (selected_op == 1) break;
     } // End of while
 
@@ -175,3 +177,6 @@ int start_menu(char * choices[], int n_choices){
     // 48 so that noone notices...
     else return end_val-48;
 }
+
+
+
