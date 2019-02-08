@@ -38,14 +38,15 @@
 
 int end_val=0;
 
-void func(char * name) {
+int func(char * name) {
     move(20, 0);
     clrtoeol();
     mvprintw(20, 0, "Item selected is : %s", name);
     printf("%c", name[0]);
     // the function returns first char of the string option chosen which 
     // then is used to change screen in main!
-    end_val = (int) name[0];
+    //end_val = (int) name[0];
+    return name[0];
 }
 int start_menu(char * choices[], int n_choices){
 
@@ -93,7 +94,6 @@ int start_menu(char * choices[], int n_choices){
     int c;
     int end_val;
     int selected_op = 0;
-    // while((c = getch()) != KEY_F(1)) {
     while ( (c = getch()) != KEY_F(1) ){
         switch(c) {
             case KEY_DOWN:
@@ -105,8 +105,8 @@ int start_menu(char * choices[], int n_choices){
             case 10: // Enter
                 {	  
                     ITEM * cur = current_item(my_menu);
-                    void (* func)(char *) = (void(*)(char*))item_userptr(cur);
-                    func((char *)item_name(cur));
+                    int (* func)(char *) = (int(*)(char*))item_userptr(cur);
+                    end_val = func((char *)item_name(cur));
                     pos_menu_cursor(my_menu);
                     /*ITEM *cur;
                       void (*p)(char *);
@@ -116,8 +116,8 @@ int start_menu(char * choices[], int n_choices){
                       p((char *)item_name(cur));
                       pos_menu_cursor(my_menu);
                       */
-                    printf("\n%d\n", end_val);
-                    //selected_op = 1;
+                    //printf("\n%d\n", end_val);
+                    selected_op = 1;
                     break;
                 }
                 break;
@@ -133,5 +133,8 @@ int start_menu(char * choices[], int n_choices){
     endwin();
 
     if(c == KEY_F(1)) return 0;
-    else return end_val;
+    // there is something weird going on with type conversion or something
+    // but basically the function returns the number you want +48 so we subtract 
+    // 48 so that noone notices...
+    else return end_val-48;
 }
