@@ -48,11 +48,14 @@ int func(char * name) {
     //end_val = (int) name[0];
     return name[0];
 }
+
+
 int start_menu(char * choices[], int n_choices){
 
 
     ITEM ** my_items;
     MENU * my_menu;
+    WINDOW *my_menu_win;
     int i;
     ITEM * cur_item;
 
@@ -85,11 +88,47 @@ int start_menu(char * choices[], int n_choices){
     // Create menu
     my_menu = new_menu((ITEM **)my_items);
 
+    //// start old
+    /*
     // Post the menu
     mvprintw(LINES - 3, 0, "Press <ENTER> to see the option selected");
     mvprintw(LINES - 2, 0, "Up and Down arrow keys to naviage (F1 to Exit)");
     post_menu(my_menu);
     refresh();
+    */
+    /// end of old
+
+    //start of new
+    /* Set menu option not to show the description */
+    menu_opts_off(my_menu, O_SHOWDESC);
+
+    /* Create the window to be associated with the menu */
+    my_menu_win = newwin(10, 70, 4, 4);
+    keypad(my_menu_win, TRUE);
+
+    /* Set main window and sub window */
+    set_menu_win(my_menu, my_menu_win);
+    set_menu_sub(my_menu, derwin(my_menu_win, 6, 68, 3, 1));
+    set_menu_format(my_menu, 5, 3);
+    set_menu_mark(my_menu, " * ");
+
+    /* Print a border around the main
+     * window and print a title */
+    box(my_menu_win, 0, 0);
+
+    attron(COLOR_PAIR(2));
+    mvprintw(LINES - 3, 0, "Use PageUp and PageDown to scroll");
+    mvprintw(LINES - 2, 0, "Use Arrow Keys to navigate (F1 to Exit)");
+    attroff(COLOR_PAIR(2));
+    refresh();
+
+    /* Post
+     * the
+     * menu
+     * */
+    post_menu(my_menu);
+    wrefresh(my_menu_win);
+    /// end of new
 
     int c;
     int end_val;
@@ -101,6 +140,12 @@ int start_menu(char * choices[], int n_choices){
                 break;
             case KEY_UP:
                 menu_driver(my_menu, REQ_UP_ITEM);
+                break;
+            case KEY_LEFT:
+                menu_driver(my_menu, REQ_LEFT_ITEM);
+                break;
+            case KEY_RIGHT:
+                menu_driver(my_menu, REQ_RIGHT_ITEM);
                 break;
             case 10: // Enter
                 {	  
@@ -122,6 +167,8 @@ int start_menu(char * choices[], int n_choices){
                 }
                 break;
         }
+        // update cursor position 
+                        wrefresh(my_menu_win);
         if (selected_op == 1) break;
     } // End of while
 

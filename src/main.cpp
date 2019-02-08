@@ -50,7 +50,8 @@ char * menu_gates[] ={
     "1. Q-NOT",
     "2. Q-PHASE",
     "3. HALF",
-    "4. Back",
+    "4. C-NOT",
+    "5. Back",
 };
 
 char * menu_algo[] ={
@@ -73,46 +74,82 @@ char * menu_qasm[] ={
     "2. Write out QASM code",
 };
 
+char * menu_qubits[] ={
+    "1. qubit 1",
+    "2. qubit 2",
+    "3. qubit 3",
+    "4. qubit 4",
+};
+
 /*
-void func(char * name) {
-  move(20, 0);
-  clrtoeol();
-  mvprintw(20, 0, "Item selected is : %s", name);
-}
-*/
+   void func(char * name) {
+   move(20, 0);
+   clrtoeol();
+   mvprintw(20, 0, "Item selected is : %s", name);
+   }
+   */
 int main() {
 
     int choice=1;
+    int gate_choice=0;
+    int algo_choice=0;
+    int displays_choice=0;
+    int error_cor_choice=0;
+    int qasm_choice=0;
 
     while(choice != 0){
-    // make the menu with choices with 6 options
-    choice = start_menu(menu_main, 6);
-   
-    printf("\nchoice = %d\n", choice);
-        
-        // gate list functions
-        if(choice == 1){
-            printf("exit start menu\n");
-            choice = start_menu(menu_gates, 4);
-        }
-        // algorithms
-        else if( choice == 2){
-            choice = start_menu(menu_algo, 2);
-        }
-        // display modes
-        else if( choice == 3){
-            choice = start_menu(menu_displays, 3);
-        }
-        // Q error correction
-        else if( choice == 4){
-            choice = start_menu(menu_error_cor, 1);
-        }
-        // QASM
-        else if ( choice == 5){
-            choice = start_menu(menu_qasm, 2);
-        }
+        // make the menu with choices with 6 options
+        choice = start_menu(menu_main, 6);
 
+        switch(choice) {
+            case 1:
+                {
+                    // gate list functions
+                    gate_choice = start_menu(menu_gates, 5);
+
+                    // then ask for qubit
+                    mvprintw(0, 0, "Choose a qubit to act on");
+                    refresh();
+                    int qubit_choice = start_menu(menu_qubits, 4);
+                    
+                    switch(gate_choice) {
+                        case 1:
+                            // Not gate
+                            printf("Not gate on qubit %d", qubit_choice);
+                            break;
+                        case 2:
+                            // z gate
+                            break;
+                        case 3:
+                            // H gate
+                            break;
+                        case 4:
+                            // CNOT
+                            // 2-qubit gate so ask for second qubit.
+                            int qubit_choice2 = start_menu(menu_qubits, 4);
+                            printf("CNOT on %d and %d", qubit_choice, qubit_choice2);
+                            break;
+                    } // end of choose gate
+                }
+
+                break;
+            case 2:
+                // algorithms
+                algo_choice = start_menu(menu_algo, 2);
+                break; 
+            case 3:
+                // display modes
+                displays_choice = start_menu(menu_displays, 3);
+                break;
+            case 4:
+                // Q error correction
+                error_cor_choice = start_menu(menu_error_cor, 1);
+                break;
+            case 5:
+                // QASM
+                qasm_choice = start_menu(menu_qasm, 2);
+                break;
+        }
     }
-   // }
 }
 
