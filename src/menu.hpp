@@ -101,8 +101,9 @@ class Menu {
 private:
   std::vector<ITEM * > menu_items;
   MENU * menu;
-  std::thread background;
-  int background_flag = 0; // Set to one to stop the thread
+  static Menu * current_menu; // The menu that is currently visible
+  static std::thread background;
+  static int background_flag; // Set to one to stop the thread
   std::vector<OpenSubmenu * > submenus; // Holds submenu pointers
   
   // Probably needs to be static for compatibility with ncurses
@@ -110,33 +111,6 @@ private:
     move(20, 0);
     clrtoeol();
     mvprintw(20, 0, "Item selected is : %s", name);
-  }
-
-  // Start the background thread
-  void start_background() {
-    // Start thread to handle navigation
-    background = std::thread(&Menu::navigate, this);    
-  }
-
-  // Start the background thread
-  void stop_background_block() {
-    // Check if thread is running (joinable)
-    if(background.joinable()) {
-      // Stop the background thread
-      background_flag = 1; // Indicate that background thread should stop
-      // Wait for background thread to finish
-      background.join();
-    }
-  }
-
-  // Start the background thread
-  void stop_background_nonblock() {
-    // Check if thread is running (joinable)
-    if(background.joinable()) {
-      // Stop the background thread
-      background_flag = 1; // Indicate that background thread should stop
-      // Do not wait for background thread to finish
-    }
   }
 
 
@@ -153,26 +127,30 @@ private:
     }
   }  
   
-  // Handle menu navigation and selection
-  // @todo I think there's a problem with when this function exits,
-  // ie. how to exit properly 
-  void navigate() {
+  /** 
+   * @brief Handle menu navigation and selection
+   *
+   * @detail Every menu shares the same background thread, because only
+   * one menu is visible at once, so this method is static.
+   *
+   */
+  static void navigate() {
     int c = 0;
     while((c = getch()) != KEY_F(1)) {
-      if(menu != nullptr) {
+      if(current_menu != nullptr && current_menu -> menu != nullptr) {
 	if(background_flag == 1) {
 	  background_flag = 0; // Reset the flag
 	  return; // from thread
 	}
 	switch(c) {
 	case KEY_DOWN:
-	  menu_driver(menu, REQ_DOWN_ITEM);
+	  menu_driver(current_menu -> menu, REQ_DOWN_ITEM);
 	  break;
 	case KEY_UP:
-	  menu_driver(menu, REQ_UP_ITEM);
+	  menu_driver(current_menu -> menu, REQ_UP_ITEM);
 	  break;
 	case 10: { // Enter
-	  ITEM * cur = current_item(menu);
+	  ITEM * cur = current_item(current_menu -> menu);
 	  if(cur == nullptr) break;
 
 	  UserPtr * user_ptr = static_cast<UserPtr*>(item_userptr(cur));
@@ -180,7 +158,7 @@ private:
 	  
 	  //void (* func)(char *) = (void(*)(char*));
 	  //func((char *)item_name(cur));
-	  pos_menu_cursor(menu);
+	  pos_menu_cursor(current_menu -> menu);
 	  break;
 	}
 	  break;
@@ -213,9 +191,13 @@ public:
     // Menu not visible here
 
     // Use default std::thread constructor
-    
+
   }
 
+  static void set_current_menu(Menu * new_menu) {
+    Menu::current_menu = new_menu;
+  }
+  
   // This method foregrounds the current menu, overwriting
   // whichever menu is currently in view
   void show() {
@@ -227,8 +209,9 @@ public:
     else std::cerr << "Error: no menu to post" << std::endl;
     refresh();
 
-    // Start the background thread
-    start_background();
+    // Set new current menu
+    Menu::set_current_menu(this);
+
   }
 
   // This method disables a menus background thread)
@@ -242,9 +225,7 @@ public:
     unpost_menu(menu);    
 
     std::cout << "HERE-1" << std::endl;
-  
-    // Stop the background thread
-    stop_background_nonblock();
+    
   }
 
   /** 
