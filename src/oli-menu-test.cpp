@@ -88,16 +88,6 @@ int start_menu(char * choices[], int n_choices){
     // Create menu
     my_menu = new_menu((ITEM **)my_items);
 
-    //// start old
-    /*
-    // Post the menu
-    mvprintw(LINES - 3, 0, "Press <ENTER> to see the option selected");
-    mvprintw(LINES - 2, 0, "Up and Down arrow keys to naviage (F1 to Exit)");
-    post_menu(my_menu);
-    refresh();
-    */
-    /// end of old
-
     //start of new
     /* Set menu option not to show the description */
     menu_opts_off(my_menu, O_SHOWDESC);

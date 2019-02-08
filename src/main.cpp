@@ -111,7 +111,7 @@ int main() {
                     mvprintw(0, 0, "Choose a qubit to act on");
                     refresh();
                     int qubit_choice = start_menu(menu_qubits, 4);
-                    
+
                     switch(gate_choice) {
                         case 1:
                             // Not gate
