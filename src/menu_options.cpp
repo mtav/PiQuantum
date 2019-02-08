@@ -15,6 +15,7 @@
 
 #include "oli-menu-test.cpp"
 
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
 char * menu_main[] = {
     "1. Quantum gates",
@@ -37,21 +38,25 @@ char * menu_gates[] ={
 char * menu_algo[] ={
     "1. Addition",
     "2. ...",
+    "0. Back",
 };
 
 char * menu_displays[] ={
     "1. Average states",
     "2. Cycle states",
     "3. Measure",
+    "0. Back",
 };
 
 char * menu_error_cor[] ={
     "1. What is quantum error correction?",
+    "0. Back",
 };
 
 char * menu_qasm[] ={
     "1. Read in QASM code",
     "2. Write out QASM code",
+    "0. Back",
 };
 
 char * menu_qubits[] ={
@@ -59,6 +64,7 @@ char * menu_qubits[] ={
     "2. qubit 2",
     "3. qubit 3",
     "4. qubit 4",
+    "0. Back",
 };
 
 
@@ -66,34 +72,34 @@ int func_gate_menu(void){
     // gate list functions
     mvprintw(0, 0, "Choose a quantum operation");
     refresh();
-    int gate_choice = start_menu(menu_gates, 5);
+    int gate_choice = start_menu(menu_gates, ARRAY_SIZE(menu_gates));
 
     mvprintw(0, 0, "\n");
     refresh();
     if (gate_choice != 0){
-    // then ask for qubit
-    mvprintw(0, 0, "Choose a qubit to act on");
-    refresh();
-    int qubit_choice = start_menu(menu_qubits, 4);
-    
-    switch(gate_choice) {
-        case 1:
-            // Not gate
-            printf("Not gate on qubit %d", qubit_choice);
-            break;
-        case 2:
-            // z gate
-            break;
-        case 3:
-            // H gate
-            break;
-        case 4:
-            // CNOT
-            // 2-qubit gate so ask for second qubit.
-            int qubit_choice2 = start_menu(menu_qubits, 4);
-            printf("CNOT on %d and %d", qubit_choice, qubit_choice2);
-            break;
-    } // end of choose gate
+        // then ask for qubit
+        mvprintw(0, 0, "Choose a qubit to act on");
+        refresh();
+        int qubit_choice = start_menu(menu_qubits, ARRAY_SIZE(menu_qubits));
+
+        switch(gate_choice) {
+            case 1:
+                // Not gate
+                printf("Not gate on qubit %d", qubit_choice);
+                break;
+            case 2:
+                // z gate
+                break;
+            case 3:
+                // H gate
+                break;
+            case 4:
+                // CNOT
+                // 2-qubit gate so ask for second qubit.
+                int qubit_choice2 = start_menu(menu_qubits, ARRAY_SIZE(menu_qubits));
+                printf("CNOT on %d and %d", qubit_choice, qubit_choice2);
+                break;
+        } // end of choose gate
     }    // clear the title
     mvprintw(0, 0, "\n");
     refresh();
@@ -103,7 +109,7 @@ int func_algo_menu(void){
     // set text
     mvprintw(0, 0, "Choose one quantum algorithm to run");
     refresh();
-    int algo_choice = start_menu(menu_algo, 2);
+    int algo_choice = start_menu(menu_algo, ARRAY_SIZE(menu_algo));
     switch(algo_choice){
         case 1:
             // addition
@@ -118,7 +124,7 @@ int func_display_menu(void){
     // set text
     mvprintw(0, 0, "Choose a display!");
     refresh();
-    int displays_choice = start_menu(menu_displays, 3);
+    int displays_choice = start_menu(menu_displays, ARRAY_SIZE(menu_displays));
     switch(displays_choice){
         case 1:
             break;
@@ -132,4 +138,12 @@ int func_display_menu(void){
     // clear text
     mvprintw(0, 0, "\n");
     refresh();
+}
+
+int func_error_cor_menu(void){
+    int error_cor_choice = start_menu(menu_error_cor, ARRAY_SIZE(menu_error_cor));
+}
+
+int func_qasm_menu(void){
+    int qasm_choice = start_menu(menu_qasm, ARRAY_SIZE(menu_qasm));
 }

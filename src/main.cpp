@@ -58,23 +58,23 @@ int main() {
                 // end of gates submenu
                 break;
             case 2:
-                 // algorithms
-                    func_algo_menu();    
+                // algorithms
+                func_algo_menu();    
                 // end of algorithms submenu
                 break; 
             case 3:
-                    // display modes,
-                    // needs to update the global var for display options 
-                    func_display_menu();
-                    // end of display choice
+                // display modes,
+                // needs to update the global var for display options 
+                func_display_menu();
+                // end of display choice
                 break;
             case 4:
                 // Q error correction
-                error_cor_choice = start_menu(menu_error_cor, 1);
+                func_error_cor_menu();
                 break;
             case 5:
                 // QASM
-                qasm_choice = start_menu(menu_qasm, 2);
+                func_qasm_menu();
                 break;
         }
     }
