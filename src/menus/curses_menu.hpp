@@ -98,6 +98,8 @@ int start_menu(char * choices[], int n_choices){
     int c;
     int end_val;
     int selected_op = 0;
+
+    // use something like kbhit() to switch between getch() and spi button in?
     while ( (c = getch()) != KEY_F(1) ){
         switch(c) {
             case KEY_DOWN:

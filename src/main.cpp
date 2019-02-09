@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "menu_options.hpp"
+#include "menus/menu_options.hpp"
 
 /** glob
  * ---------------------------------
@@ -32,6 +32,11 @@
  */
 
 int main() {
+
+/*
+ * make state vector, 
+ *
+ */
 
     // do menu stuff - see menu_options.hpp
     int choice=1;
