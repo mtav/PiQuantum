@@ -1,9 +1,10 @@
 /** 
  * @file curses_menu.hpp
  * @authors J Scott, O Thomas
- * @date Jan 2019 
+ * @date Feb 2019 
  *
- * @detail functions for generating menu items.
+ * @detail functions for generating menu items using the curses library, edit this for
+ * global colours and positions.
  *
  */
 #include <stdio.h>
@@ -20,7 +21,6 @@ int func(char * name) {
     printf("%c", name[0]);
     // the function returns first char of the string option chosen which 
     // then is used to change screen in main!
-    //end_val = (int) name[0];
     return name[0];
 }
 

@@ -9,15 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// curses.
-#include <menu.h>
-#include <curses.h>
-
-//#include "oli-menu-test.cpp"
-#include "menu_options.cpp"
-
-// no idea what these do/are for...
-#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
+#include "menu_options.hpp"
 
 /** glob
  * ---------------------------------
@@ -41,32 +33,26 @@
 
 int main() {
 
+    // do menu stuff - see menu_options.hpp
     int choice=1;
-    int gate_choice=0;
-    int algo_choice=0;
-    int displays_choice=0;
-    int error_cor_choice=0;
-    int qasm_choice=0;
-
+    // menus return 0 for exit condition.
     while(choice != 0){
         // make the menu with choices with 6 options
-        choice = start_menu(menu_main, 6);
+        choice = func_home_menu();
 
         switch(choice) {
             case 1:
+                // Quantum gates
                 func_gate_menu();
-                // end of gates submenu
                 break;
             case 2:
                 // algorithms
                 func_algo_menu();    
-                // end of algorithms submenu
                 break; 
             case 3:
                 // display modes,
                 // needs to update the global var for display options 
                 func_display_menu();
-                // end of display choice
                 break;
             case 4:
                 // Q error correction
