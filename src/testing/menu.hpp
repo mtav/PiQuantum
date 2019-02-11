@@ -103,7 +103,7 @@ private:
   std::vector<ITEM * > menu_items;
   MENU * menu;
   static Menu * current_menu; // The menu that is currently visible
-  static std::thread background;
+  static std::thread * background;
   static int background_flag; // Set to one to stop the thread
   std::vector<OpenSubmenu * > submenus; // Holds submenu pointers
   
@@ -127,6 +127,29 @@ private:
       std::cerr << "Error: failed to free menu, already argument" << std::endl;
     }
   }  
+
+  // Start background
+  void start_bacgrkound() {
+    
+    // Start background thread
+    background = new std::thread(Menu::navigate);
+
+  }
+
+  // Stop background
+  void stop_bacgrkound() {
+    
+    // Wait for background to end
+    background_flag = 1;
+    if(background -> joinable()) {
+      background -> join();
+    }
+
+    // Start background thread
+    * background = new std::thread(Menu::navigate);
+
+  }
+  
   
   /** 
    * @brief Handle menu navigation and selection
@@ -136,14 +159,17 @@ private:
    *
    */
   static void navigate() {
-    int c = 0;
-    while((c = getch()) != KEY_F(1)) {
-      if((current_menu != nullptr) && (current_menu -> menu != nullptr)) {
-	if(background_flag == 1) {
-	  background_flag = 0; // Reset the flag
-	  return; // from thread
-	}
-	switch(c) {
+    while(1) {
+      int key = getch();
+      if(key == KEY_F(1))
+	; // Do something
+      if(background_flag == 1) {
+	background_flag = 0; // Reset the flag
+	std::cout << "Exiting background " << std::endl;
+	return; // from thread
+      }
+      if(current_menu != nullptr && current_menu -> menu != nullptr) {
+	switch(key) {
 	case KEY_DOWN:
 	  menu_driver(current_menu -> menu, REQ_DOWN_ITEM);
 	  break;
@@ -153,12 +179,8 @@ private:
 	case 10: { // Enter
 	  ITEM * cur = current_item(current_menu -> menu);
 	  if(cur == nullptr) break;
-
-	  UserPtr * user_ptr = static_cast<UserPtr*>(item_userptr(cur));
+	  UserPtr * user_ptr = static_cast<UserPtr * >(item_userptr(cur));
 	  user_ptr -> execute();
-	  
-	  //void (* func)(char *) = (void(*)(char*));
-	  //func((char *)item_name(cur));
 	  pos_menu_cursor(current_menu -> menu);
 	  break;
 	}
@@ -183,15 +205,13 @@ public:
     // Since std::vector<ITEM*> stores elements contiguously in
     // memory, so the required ITEM** is a pointer to the first element
     // of menu_items
-    menu = new_menu(&menu_items[0]);
-    if(menu == nullptr) {
-      std::cerr << "Menu error: failed to create new menu" << std::endl;
-      std::cerr << strerror(errno) << std::endl;
-    }
+    //menu = new_menu(&menu_items[0]);
+    //if(menu == nullptr) {
+    //  std::cerr << "Menu error: failed to create new menu" << std::endl;
+    //  std::cerr << strerror(errno) << std::endl;
+    //}
 
     // Menu not visible here
-
-    // Use default std::thread constructor
 
   }
 
@@ -388,5 +408,7 @@ public:
     
     hide();
     remove();
+
+    
   }
 };

@@ -21,6 +21,3 @@ Menu * Menu::current_menu = nullptr;
 
 // Set to one to stop the thread
 int Menu::background_flag = 0;
-
-// The background thread for the current menu
-std::thread Menu::background = std::thread(Menu::navigate);    
