@@ -17,8 +17,8 @@ menu.o: menu.cpp menu.hpp
 menu-test: menu-test.cpp menu.o
 	g++ -std=c++11 -pthread menu-test.cpp menu.o -o menu-test -lncurses -lmenu
 
-mathematics: math_test.cpp
-	g++ -std=c++11 -I /usr/local/include/eigen3/ -o math_test
+maths: math_test.cpp
+	g++ -std=c++11 -I/usr/include/eigen3/  math_test.cpp -o math_test
 
 clean:
 	rm -rf prog spi-test menu-test *.o
