@@ -15,6 +15,7 @@
 #include <cerrno>
 #include <cstring>
 
+
 /**
  * @brief Class for managing ncurses
  *

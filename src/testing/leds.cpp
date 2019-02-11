@@ -9,3 +9,6 @@
 
 #include <wiringPi.h>
 #include "spi.hpp"
+#include "leds.hpp"
+
+Alarm * Alarm::alrm = nullptr; // A pointer to an alarm class

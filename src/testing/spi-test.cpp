@@ -13,6 +13,7 @@
 #include "leds.hpp"
 
 #include <cstdlib>
+#include <cstring>
 #include <signal.h>
 #include <unistd.h>
 
@@ -26,13 +27,13 @@ void interrupt(int signal) {
 
 int main() {
 
-  signal(SIGALRM, interrupt);
-  ualarm(100000,100000);
-  while(1);
+  //  signal(SIGALRM, interrupt);
+  //ualarm(100000,100000);
 
-  /*
+  //Alarm alrm;
+  
   LedDriver leds;
-
+  /*
   unsigned char byte = 0;
   while(1) {
     byte ++;
@@ -40,4 +41,9 @@ int main() {
     leds.set({byte,byte});
   }
   */
+  double thing = 0;
+  while(1) {
+    std::cin >> thing;
+    leds.test_led.red = thing; 
+  };
 }

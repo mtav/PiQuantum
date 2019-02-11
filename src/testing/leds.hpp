@@ -11,20 +11,49 @@
 #include <signal.h>
 #include <unistd.h>
 
+class Led {
+public:
+  // RGB values (between zero and one)
+  double red;
+  double green;
+  double blue;
+
+  Led() : red(0.1), green(0.5), blue(0.5) { }
+
+};
+
 class Alarm {
 private:
-  // Alarm handler
-  static void handler(int sig_num) {
-    std::cout << "SIGALRM" << std::endl;
+
+  static Alarm * alrm; // A pointer to an alarm class
+
+  static void handler(int sig) {
+    if(sig != SIGALRM) {
+      std::cerr << "Error: unexpected signal " << sig << ", expected SIGALRM"
+		<< std::endl;
+    }
+    if(alrm != nullptr) alrm -> func(); // execute the intended function
   }
+
+  // Set the function called by the alarm 
+  virtual void func() = 0;
+
+  // Set up pointer to alarm object
+  void set_pointer(Alarm * ptr) { alrm = ptr; }
   
 public:
-  Alarm() {
+
+  Alarm(int delay_us) { 
+    
     // Set up alarm handler
-    signal(SIGALRM, Alarm::handler);
+    signal(SIGALRM, handler);
     
     // Schedule alarm
-    ualarm(5000,5000);
+    ualarm(delay_us,delay_us);
+
+    // Set pointer to this class
+    set_pointer(this);
+    
   }
   
 };
@@ -35,16 +64,45 @@ public:
   static const int OE = 1; // Physical pin 12
 };
 
-class LedDriver {
+class LedDriver : public Alarm {
 private:
   const int channel; // SPI channel number
   const double frequency; // SPI channel frequency
   const int chips; // Number of TLC591x chips
   SpiChannel spi; // SPI interface
 
-public:
+  /**
+   * @brief Function for simulating dimmable LEDs
+   *
+   * @detail This function is repeatedly called at a high 
+   * rate by the alarm signal. Each time it is called it 
+   * compares counter/period with an RGB value in Led.
+   * If counter/period exceeds the RGB value the LED is 
+   * switched off, otherwise it is left on. When the counter
+   * is the same as the period, the counter is reset and all 
+   * LEDs are switches back on
+   *
+   */
+  const int period;
+  double counter;
+  void func() {    
+    // Increment counter
+    counter++;
+    // Check for counter reset
+    if(counter == period) {
+      counter = 0; // Reset counter
+      if((counter/period) < test_led.red) set({255,255}); // Turn on LED
+    }
+    // Turn off LED if counter is high enough
+    if((counter/period) >= test_led.red) set({0,0});
+  }
   
-  LedDriver() : channel(0), frequency(500000), spi(channel, frequency), chips(2) {
+public:
+  Led test_led;
+  
+  LedDriver() : channel(0), frequency(500000),
+		spi(channel, frequency), chips(2),
+		period(10), counter(0), Alarm(500) {
 
     // Need to call this setup function for wiringPi before
     // using any of its functions. Use wiringPi pin conventions
