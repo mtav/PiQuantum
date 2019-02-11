@@ -37,7 +37,7 @@ int main() {
   //menu.add_action_item("Item 2", "Test item added dynamically", action);
   menu.add_action_item("Item 3", "Test item added dynamically", action);
   menu.add_action_item("Item 3", "Test item added dynamically", action);
-  menu.add_submenu_item("Submenu", "Test item added dynamically", submenu);
+  //menu.add_submenu_item("Submenu", "Test item added dynamically", submenu);
   /*  
   submenu.add_action_item("Item 3", "Test item added dynamically", action);
   submenu.add_action_item("Item 4", "Test item added dynamically", action);

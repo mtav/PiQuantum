@@ -137,7 +137,7 @@ private:
   static void navigate() {
     int c = 0;
     while((c = getch()) != KEY_F(1)) {
-      if(current_menu != nullptr && current_menu -> menu != nullptr) {
+      if((current_menu != nullptr) && (current_menu -> menu != nullptr)) {
 	if(background_flag == 1) {
 	  background_flag = 0; // Reset the flag
 	  return; // from thread
@@ -223,8 +223,6 @@ public:
       return;
     }
     unpost_menu(menu);    
-
-    std::cout << "HERE-1" << std::endl;
     
   }
 
