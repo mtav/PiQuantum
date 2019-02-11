@@ -1,9 +1,9 @@
 /** 
- * @file main.cpp
+ * @file curses_menu.hpp
  * @authors J Scott, O Thomas
  * @date Jan 2019 
  *
- * @detail main function for the Raspberry Pi Quantum computer simulator.
+ * @detail functions for generating menu items.
  *
  */
 #include <stdio.h>
@@ -12,32 +12,6 @@
 // curses.
 #include <menu.h>
 #include <curses.h>
-
-// no idea what these do/are for...
-#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
-
-/** glob
- * ---------------------------------
- * main flags 
- *   
- *   Reset
- *   Display
- *       Disp_Average
- *       Disp_Cycle
- *       Measure
- *   Algorithm
- *       Gates
- *           Single qubit
- *           Two qubit
- *       Subroutines 
- *   Error correction mode
- *   QASM
- *       Read QASM
- *       Write QASM 
- */
-
-
-
 
 int func(char * name) {
     move(20, 0);
@@ -49,7 +23,6 @@ int func(char * name) {
     //end_val = (int) name[0];
     return name[0];
 }
-
 
 int start_menu(char * choices[], int n_choices){
 
