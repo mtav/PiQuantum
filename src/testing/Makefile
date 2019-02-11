@@ -12,10 +12,10 @@ leds.o: leds.cpp leds.hpp
 	g++ -c leds.cpp -o leds.o
 
 menu.o: menu.cpp menu.hpp 
-	g++ -std=c++11 -c menu.cpp -o menu.o
+	g++ -std=c++11 -Wall -c menu.cpp -o menu.o
 
 menu-test: menu-test.cpp menu.o
-	g++ -std=c++11 -pthread menu-test.cpp menu.o -o menu-test -lncurses -lmenu
+	g++ -std=c++11 -Wall -pthread menu-test.cpp menu.o -o menu-test -lncurses -lmenu
 
 clean:
 	rm -rf prog spi-test menu-test *.o

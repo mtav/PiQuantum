@@ -19,5 +19,6 @@ void OpenSubmenu::execute() {
 // The menu that is currently visible
 Menu * Menu::current_menu = nullptr;
 
-// Set to one to stop the thread
+// Relating to background thread
 int Menu::background_flag = 0;
+int Menu::background_running = 0;

@@ -9,18 +9,10 @@
 
 #include "menu.hpp"
 
-// Test action
-void action(char * name) {
-  move(20, 0);
-  clrtoeol();
-  mvprintw(20, 0, "Item selected is : %s", name);
-}
-
-
 int main() {
 
-  Action * action = new Action("Test");
-  
+  Action * action1 = new Action("Test 1");
+  Action * action2 = new Action("Test 2");
   
   // Create ncurses background
   FancyTerm term;
@@ -28,25 +20,22 @@ int main() {
   // Menu object
   Menu menu;
 
-  // Menu object
+  // Submenu
   Menu submenu;
-
   Menu another;
-
+  
   // Add menu items
-  //menu.add_action_item("Item 2", "Test item added dynamically", action);
-  menu.add_action_item("Item 3", "Test item added dynamically", action);
-  menu.add_action_item("Item 3", "Test item added dynamically", action);
-  //menu.add_submenu_item("Submenu", "Test item added dynamically", submenu);
-  /*  
-  submenu.add_action_item("Item 3", "Test item added dynamically", action);
-  submenu.add_action_item("Item 4", "Test item added dynamically", action);
-  submenu.add_action_item("Item 1", "Test item added dynamically", action);
-  submenu.add_action_item("Item 2", "Test item added dynamically", action);
+  menu.add_item("Item 1", "Test 1 item added dynamically", action1);
+  menu.add_item("Item 2", "Test 2 item added dynamically", action2);
+  menu.add_item("Submenu", "Test item added dynamically", submenu);
+  
+  submenu.add_item("Item 3", "Test item added dynamically", action1);
+  submenu.add_item("Item 4", "Test item added dynamically", action1);
+  submenu.add_item("Item 1", "Test item added dynamically", action1);
+  submenu.add_item("Item 2", "Test item added dynamically", action1);
 
-  submenu.add_submenu_item("Item 2", "Test item added dynamically", another);
+  submenu.add_item("Submenu", "Go to new menu", another);
 
-  */
   menu.show();
 
   
@@ -63,6 +52,6 @@ int main() {
   // Stop program exiting
   while(1);
 
-  delete(action);
+  delete(action1, action2);
   
 }
