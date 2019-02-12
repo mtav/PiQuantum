@@ -25,3 +25,4 @@ maths: math_test.cpp consts.o
 
 clean:
 	rm -rf prog spi-test menu-test *.o
+ 

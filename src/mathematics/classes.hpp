@@ -1,5 +1,9 @@
 #include <Eigen/Core>
 #include <iostream>
+#include <vector>
+
+// Complex number type
+typedef std::complex<double> Cmplx;
 
 //double r2=sqrt(2);
 // --------------------- ThE gRaNd StAtE vEcToR cLaSs -----------------
@@ -138,26 +142,30 @@ class State_Vectors {
 };
 
 // ---------------------------------- WoNdErFuL oPeRaToRs ---------------------
-class Operators {
-    int num_qubits;
-    int size;
+class Operator {
+  int num_qubits;
+  int size;
+  State_Vectors & state; // This is one possibility...
 
-    public:
-    Eigen::Matrix2cd matrix;
+public:
+  Eigen::Matrix2cd matrix;
 
-    // ---------------------- methods -----------------------------
-    int get_num_qubits(){return num_qubits;};
-    int get_size(){return size;}; 
+  // ---------------------- methods -----------------------------
+  int get_num_qubits(){return num_qubits;};
+  int get_size(){return size;}; 
 
-    void print(){std::cout << matrix <<std::endl;};
-    // ------------------------- IlLeGaL oPeRaToR oVeRlOaDiNg ------------------------
-    //friend void operator|(Eigen::Matrix2cd op, int qubit){
-    //    single_qubit_op(op, qubit);
-    //}
+  void print(){std::cout << matrix <<std::endl;};
 
-    // ----------------------- CoNsTrUcToR ------------------------
-    Operators(int num, Eigen::Matrix2cd mat){
-        num_qubits = num;
-        matrix = mat;  
-    };
+  // ------------------------- IlLeGaL oPeRaToR oVeRlOaDiNg ---------------------
+  friend void operator | (Operator op, int qubit){
+    op.state.single_qubit_op(op.matrix, qubit);
+  }
+  
+  // ----------------------- CoNsTrUcToR ------------------------
+  Operator(int num_qubits, std::vector<Cmplx> mat_elmts, State_Vectors & state)
+    : state(state), num_qubits(num_qubits) {
+    matrix << mat_elmts[0], mat_elmts[1], mat_elmts[2], mat_elmts[3];
+  }
+
 };
+

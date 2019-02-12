@@ -5,15 +5,8 @@
 
 #include "classes.hpp"
 
-typedef std::complex<double> CD;
-
 //double r2=sqrt(2);
 
-/// should be able to pass like this 
-// define ALL OPERATYORS LIKE THIS PLEASE OI FIXED IT
-static Operators X(1, (Eigen::Matrix2cd() << 
-            0,1,
-            1,0).finished()); 
 
 //static Operators X;
 
@@ -30,9 +23,7 @@ X.matrix = (Eigen::Matrix2cd() <<
         0,1,
         1,0).finished(); 
 */
-static Eigen::Matrix2cd Y = (Eigen::Matrix2cd() << 
-        0, CD(0,-1),
-        CD(0,1), 0).finished(); 
+
 /*
 static Eigen::Matrix2cd Z = (Eigen::Matrix2cd() << 
         1,0,
