@@ -15,7 +15,17 @@ menu.o: menu.cpp menu.hpp
 	g++ -std=c++11 -Wall -c menu.cpp -o menu.o
 
 menu-test: menu-test.cpp menu.o
-	g++ -std=c++11 -Wall -pthread menu-test.cpp menu.o -o menu-test -lncurses -lmenu
+	g++ -std=c++11 -Wall -pthread -I/usr/include/eigen3/ menu-test.cpp menu.o -o menu-test -lncurses -lmenu
+
+maths.o: 
+	g++ -std=c++11 math_test.cpp consts.o -o math_test
+
+classes.o: classes.cpp consts.hpp
+	g++ -std=c++11 -I/usr/include/eigen3/ -c consts.cpp -o consts.o
+
+static_test:
+	g++ -std=c++11 -Wall -c static_test_2.cpp -o static_test_2.o
+	g++ -std=c++11 -Wall static_test_1.cpp static_test_2.o -o static
 
 clean:
 	rm -rf prog spi-test menu-test *.o

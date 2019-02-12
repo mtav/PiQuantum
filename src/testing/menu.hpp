@@ -278,7 +278,7 @@ public:
     
     // Add the new item onto the end of menu list
     menu_items.insert(menu_items.end()-offset,
-		      new_item(name, description)); // Before nullptr
+		      new_item(name, description)); // Before nullptr/back
     
     // Add a new submenu pointer to the list
     submenus.push_back(new MenuLink(submenu, *this)); // Deleted on clear_all?

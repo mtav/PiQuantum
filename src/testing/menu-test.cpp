@@ -8,6 +8,7 @@
  */
 
 #include "menu.hpp"
+#include "classes.hpp"
 
 // Probably needs to be static for compatibility with ncurses
 void test() {
@@ -17,10 +18,8 @@ void test() {
 }
 
 
-int main() {
 
-  //  Action * action1 = new Action("Test 1");
-  // Action * action2 = new Action("Test 2");
+int main() {
   
   // Create ncurses background
   FancyTerm term;
