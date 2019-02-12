@@ -1,13 +1,6 @@
-#include <Eigen/Core>
-#include <stdlib.h>
-#include <stdio.h>
+#include "math_test.hpp"
 
-#include <iostream>
-
-#include "consts.hpp"
-
-
-int mat_test(void)
+void mat_test(void)
 {
     // call constructor 
 

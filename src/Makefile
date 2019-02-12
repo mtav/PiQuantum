@@ -1,6 +1,6 @@
 # Run `make all', `make spi', etc.
-all: main.cpp
-	g++ main.cpp -o prog -lmenu -lncurses
+all: math_test.o main.cpp
+	g++ -std=c++11 -I/usr/include/eigen3/ main.cpp math_test.o -o prog -lmenu -lncurses
 
 spi-test: spi.o leds.o spi-test.cpp
 	g++ spi-test.cpp spi.o leds.o -o spi-test -lwiringPi
@@ -17,8 +17,12 @@ menu.o: menu.cpp menu.hpp
 menu-test: menu-test.cpp menu.o
 	g++ -std=c++11 -pthread menu-test.cpp menu.o -o menu-test -lncurses -lmenu
 
-mathematics: math_test.cpp
-	g++ -std=c++11 -I /usr/local/include/eigen3/ -o math_test
+#consts.o: consts.cpp consts.hpp
+#	g++ -std=c++11 -I/usr/include/eigen3/ -c consts.cpp -o consts.o
+
+math_test.o: math_test.cpp consts.hpp # consts.o
+	g++ -std=c++11 -I/usr/include/eigen3/ -c  math_test.cpp -o math_test.o
 
 clean:
 	rm -rf prog spi-test menu-test *.o
+ 

@@ -9,7 +9,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "menus/menu_options.hpp"
+#include "menu_options.hpp"
+#include "math_test.hpp"
 
 /** glob
  * ---------------------------------
