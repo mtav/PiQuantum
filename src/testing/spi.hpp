@@ -33,22 +33,22 @@
  *
  */
 class SpiChannel {
-private:
-  const int channel; // Either 0 or 1
-  
-public:
-  // Constructor
-  SpiChannel(int channel, int frequency);
-  
-  // Simultaneous read/write data to the SPI interface
-  // Pass a std::vector to write. Read data is returned as a std::vector
-  std::vector<unsigned char> read_write(const std::vector<unsigned char> write);
-  
-  // Simultaneous read/write data to the SPI interface
-  // Read and write a single byte of data
-  unsigned char read_write(const unsigned char write);
-  
-  // Change frequency in Hz
-  void change_frequency(int frequency);
-  
+    private:
+        const int channel; // Pi channel Either 0 or 1
+
+    public:
+        // Constructor
+        SpiChannel(int channel, int frequency);
+
+        // Simultaneous read/write data to the SPI interface
+        // Pass a std::vector to write. Read data is returned as a std::vector
+        std::vector<unsigned char> read_write(const std::vector<unsigned char> write);
+
+        // Simultaneous read/write data to the SPI interface
+        // Read and write a single byte of data
+        unsigned char read_write(const unsigned char write);
+
+        // Change frequency in Hz
+        void change_frequency(int frequency);
+
 };

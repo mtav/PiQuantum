@@ -35,63 +35,86 @@
 
 int main() {
 
-    // new menu 
-    FancyTerm term;
+    int choice;
+    std::cout << "Enter a choice 0 for no menu, \n 1 for working menu \n 2 for newTM menu"; 
+    std::cin >> choice;
 
-    // top level menu 
-    Menu main_menu;
+    if (choice == 0){
+//////////////////////////////////////////////////////////////////////////////////////
+//              PUT ALL MAIN CODE HERE!
 
-    main_menu.add("Quantum gates", "", gate_menu)
-    main_
-    
-    , menu_gates;
-    
-    Menu sub_menu_qubits;
+    }
+    else if (choice == 2){
+/*
+        // new menu 
+        FancyTerm term;
 
-    menu_main.add_item("gates", "", func_gate_menu );
-    
-    menu_main.add_item("sub", "",sub_menu_qubits ); 
-    
-    menu_main.show();
-    
-    while(1);
+        // -------------------- MaIn MeNu -----------------------------------
+        // top level menu 
+        Menu main_menu;
+
+        main_menu.add("1. Quantum gates", "", gate_menu);
+        main_menu.add("2. Quantum algorithms", "", algo_menu);
+        main_menu.add("3. Display modes", "", display_menu);
+        main_menu.add("4. Quantum Error Correction", "", error_cor_menu);
+        main_menu.add("5. QASM - Quantum Assembly Language", "", qasm_menu);
+
+        // ---------------------- GaTe MeNu ----------------------------------
+        Menu gate_menu;
+
+        gate_menu.add("1. X, Quantum NOT", qubit_menu);
+
+
+        Menu sub_menu_qubits;
+
+        menu_main.add_item("gates", "", func_gate_menu );
+
+        menu_main.add_item("sub", "",sub_menu_qubits ); 
+
+        menu_main.show();
+
+        while(1);
+  */
+
+    }
     /*
 
- * make state vector, 
- *
+     * make state vector, 
+     *
+     */
+    else if (choice == 1){
 
+        // do menu stuff - see menu_options.hpp
+        int choice=1;
+        // menus return 0 for exit condition.
+        while(choice != 0){
+            // make the menu with choices with 6 options
+            choice = func_home_menu();
 
-    // do menu stuff - see menu_options.hpp
-    int choice=1;
-    // menus return 0 for exit condition.
-    while(choice != 0){
-        // make the menu with choices with 6 options
-        choice = func_home_menu();
-
-        switch(choice) {
-            case 1:
-                // Quantum gates
-                func_gate_menu();
-                break;
-            case 2:
-                // algorithms
-                func_algo_menu();    
-                break; 
-            case 3:
-                // display modes,
-                // needs to update the global var for display options 
-                func_display_menu();
-                break;
-            case 4:
-                // Q error correction
-                func_error_cor_menu();
-                break;
-            case 5:
-                // QASM
-                func_qasm_menu();
-                break;
+            switch(choice) {
+                case 1:
+                    // Quantum gates
+                    func_gate_menu();
+                    break;
+                case 2:
+                    // algorithms
+                    func_algo_menu();    
+                    break; 
+                case 3:
+                    // display modes,
+                    // needs to update the global var for display options 
+                    func_display_menu();
+                    break;
+                case 4:
+                    // Q error correction
+                    func_error_cor_menu();
+                    break;
+                case 5:
+                    // QASM
+                    func_qasm_menu();
+                    break;
+            }
         }
     }
-*/
-}
 
+}
