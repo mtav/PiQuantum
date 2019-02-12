@@ -19,7 +19,12 @@ class Led {
         double blue;
 
         Led() : red(0.1), green(0.5), blue(0.5) { }
+};
 
+class PIN {
+    public:
+        static const int LE = 0; // Physical pin 11
+        static const int OE = 1; // Physical pin 12
 };
 
 class Alarm {
@@ -33,7 +38,7 @@ class Alarm {
                     << std::endl;
             }
             if(alrm != nullptr) alrm -> func(); // execute the intended function
-        }
+        }// end of handler
 
         // Set the function called by the alarm 
         virtual void func() = 0;
@@ -44,7 +49,6 @@ class Alarm {
     public:
 
         Alarm(int delay_us) { 
-
             // Set up alarm handler
             signal(SIGALRM, handler);
 
@@ -53,15 +57,7 @@ class Alarm {
 
             // Set pointer to this class
             set_pointer(this);
-
         }
-
-};
-
-class PIN {
-    public:
-        static const int LE = 0; // Physical pin 11
-        static const int OE = 1; // Physical pin 12
 };
 
 class LedDriver : public Alarm {
@@ -95,7 +91,7 @@ class LedDriver : public Alarm {
             }
             // Turn off LED if counter is high enough
             if((counter/period) >= test_led.red) set({0,0});
-        }
+        } // end of func
 
     public:
         Led test_led;
@@ -113,7 +109,7 @@ class LedDriver : public Alarm {
             pinMode(PIN::LE, OUTPUT); // Set LE to output
             pinMode(PIN::OE, OUTPUT); // Set OE to output    
 
-        }
+        } // end of LedDriver()
 
         /** 
          * @brief Turn on an LED via the external display driver TLC591x
@@ -160,11 +156,7 @@ class LedDriver : public Alarm {
             digitalWrite(PIN::OE, LOW); // No need to bring high again?
 
             return 0;
-
-        }
-
-
-
-};
+        } // end of set
+}; // end of LedDriver
 
 
