@@ -2,10 +2,7 @@
 #include <iostream>
 #include <vector>
 
-// Complex number type
-typedef std::complex<double> Cmplx;
 
-//double r2=sqrt(2);
 // --------------------- ThE gRaNd StAtE vEcToR cLaSs -----------------
 class State_Vectors {
     int num_qubits;
@@ -162,7 +159,7 @@ public:
   }
   
   // ----------------------- CoNsTrUcToR ------------------------
-  Operator(int num_qubits, std::vector<Cmplx> mat_elmts, State_Vectors & state)
+  Operator(int num_qubits, Eigen::Vector4cd mat_elmts, State_Vectors & state)
     : state(state), num_qubits(num_qubits) {
     matrix << mat_elmts[0], mat_elmts[1], mat_elmts[2], mat_elmts[3];
   }

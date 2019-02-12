@@ -5,7 +5,22 @@
 
 #include "classes.hpp"
 
-//double r2=sqrt(2);
+// Complex number type
+typedef std::complex<double> CD;
+
+// ----------------------- GrAnD dEcLaRaTiOnS -------------------------------
+
+static State_Vectors state(2);
+
+// ----------------------- SiNgLe QuBiT oPeRaToRs ---------------------------
+static Operator X(1, {0,1,1,0}, state); 
+static Operator Y(1, {0, CD(0,-1), CD(0,1), 0}, state); 
+static Operator Z(1, {1,0,0,-1}, state);
+static Operator H(1, {1/sqrt(2),1/sqrt(2),1/sqrt(2),-1/sqrt(2)}, state);
+
+// ----------------------- TwO qUbIt OpErAtOrS -------------------------------
+static Operator CNOT(2, {0,1,1,0}, state);
+static Operator CPHASE(2, {1,0,0,-1}, state);
 
 
 //static Operators X;

@@ -10,13 +10,13 @@
 int main(void)
 {
     // call constructor 
-    State_Vectors state(2);
+//    State_Vectors state(2);
 
     /// should be able to pass like this 
     // define ALL OPERATYORS LIKE THIS PLEASE OI FIXED IT
     // I think this version is simpler... 
-    Operator X(1, {0,1,1,0}, state); 
-    Operator Y(1, {0, Cmplx(0,-1), Cmplx(0,1), 0}, state); 
+//    Operator X(1, {0,1,1,0}, state); 
+//    Operator Y(1, {0, Cmplx(0,-1), Cmplx(0,1), 0}, state); 
 
     // Print X
     std::cout << "X is.." << std::endl;
@@ -36,7 +36,7 @@ int main(void)
     state.print();
 
     // Do Y on qubit 1
-    Y | 1;
+    X | 1;
 
     // Print the new state vector
     std::cout << "After Y on qubit one (too tired to decide if it's right :P)..."
@@ -62,8 +62,8 @@ int main(void)
     std::cout << typeid(X.matrix).name() <<std::endl;
 
     std::cout << typeid((Eigen::Matrix2cd() << 
-        0, Cmplx(0,-1),
-        Cmplx(0,1), 0).finished()).name() <<std::endl;
+        0, CD(0,-1),
+        CD(0,1), 0).finished()).name() <<std::endl;
 }
 
 
