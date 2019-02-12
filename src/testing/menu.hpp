@@ -74,8 +74,8 @@ class Menu;
 
 class MenuLink : public UserPtr {
 private:
-  Menu & oldmenu;
   Menu & submenu;
+  Menu & oldmenu;
 public:
   MenuLink(Menu & submenu, Menu & oldmenu)
     : submenu(submenu), oldmenu(oldmenu) { }
@@ -225,7 +225,6 @@ public:
 
     // Refresh
     refresh();
-
     
   }
   
@@ -248,8 +247,7 @@ public:
     // Refresh the menu
     refresh();
     wrefresh(menu_win);
-
-
+    
   }
 
   // Hide the menu
@@ -262,9 +260,9 @@ public:
    *
    * @detail Add a menu item which opens another menu when it is selected
    */
-  void add_item(const char * name,
-		const char * description,
-		Menu & submenu) {
+  void add(const char * name,
+	   const char * description,
+	   Menu & submenu) {
 
     // It seems like you have to free the menu before messing around
     // with menu_items
@@ -275,8 +273,8 @@ public:
     int offset;
     if(back_button == 0) offset = 1;
     else offset = 2;
-    
-    // Add the new item onto the end of menu list
+
+    // Add the new item onto the end of menu list (before back)
     menu_items.insert(menu_items.end()-offset,
 		      new_item(name, description)); // Before nullptr/back
     
@@ -284,7 +282,7 @@ public:
     submenus.push_back(new MenuLink(submenu, *this)); // Deleted on clear_all?
 
     // Associate the foreground menu action with the item
-    set_item_userptr(*(menu_items.end()-2), (void*) submenus.back());
+    set_item_userptr(*(menu_items.end()-1-offset), (void*) submenus.back());
     
     // Add a back button to the submenu
     submenu.add_back_button(this);
@@ -313,14 +311,14 @@ public:
     previous = previous_menu;
 
     // Add the new item onto the end of menu list
-    menu_items.insert(menu_items.end()-1,
+    menu_items.insert(menu_items.end()-1, // i.e. before the nullptr
 		      new_item("Back", "Go back to previous menu"));
 
     // When is this going to get deleted?
     MenuLink * menu_switch = new MenuLink(* previous_menu, * this);
     
     // Associate the foreground menu action with the item
-    set_item_userptr(*(menu_items.end()-2), (void*)menu_switch);
+    set_item_userptr(* (menu_items.end() - 2), (void * )menu_switch);
 
     // Create new menu
     // Since std::vector<ITEM*> stores elements contiguously in
@@ -331,7 +329,7 @@ public:
     create_menu();
     
     // Indicate there is a back button
-    previous_menu -> back_button = 1;
+    back_button = 1;
 
   }
   
@@ -340,9 +338,10 @@ public:
    *
    * @detail Add a menu item which performs an action (calls a function)
    * when it is selected
+   *
    */
   template<typename T>
-  void add_item(const char * name,
+  void add(const char * name,
 		const char * description,
 		T func) {
 
@@ -364,7 +363,7 @@ public:
 		      new_item(name, description)); // Before nullptr
 
     // Associate the new action to the last menu item
-    set_item_userptr(*(menu_items.end()-2), (void*)action);
+    set_item_userptr(*(menu_items.end()-1-offset), (void*)action);
     
     // Create new menu
     // Since std::vector<ITEM*> stores elements contiguously in

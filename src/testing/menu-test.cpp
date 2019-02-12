@@ -17,8 +17,6 @@ void test() {
   mvprintw(20, 0, "Test");
 }
 
-
-
 int main() {
   
   // Create ncurses background
@@ -32,16 +30,19 @@ int main() {
   Menu another;
   
   // Add menu items
-  menu.add_item("Item 1", "Test 1 item added dynamically", test);
-  menu.add_item("Item 2", "Test 2 item added dynamically", test);
-  menu.add_item("Submenu", "Test item added dynamically", submenu);
-  
-  submenu.add_item("Item 3", "Test item added dynamically", test);
-  submenu.add_item("Item 4", "Test item added dynamically", test);
-  submenu.add_item("Item 1", "Test item added dynamically", test);
-  submenu.add_item("Item 2", "Test item added dynamically", test);
+  menu.add("Item 1", "Test 1 item added dynamically", test);
+  menu.add("Item 2", "Test 2 item added dynamically", test);
+  menu.add("Submenu", "Test item added dynamically", submenu);
+  submenu.add("Subitem 1", "Test item added dynamically", test);
 
-  submenu.add_item("Submenu", "Go to new menu", another);
+  
+  /*
+  submenu.add("Item 4", "Test item added dynamically", test);
+  submenu.add("Item 1", "Test item added dynamically", test);
+  submenu.add("Item 2", "Test item added dynamically", test);
+
+  submenu.add("Submenu", "Go to new menu", another);
+  */
   menu.show();
 
   
