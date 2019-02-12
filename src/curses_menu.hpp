@@ -71,7 +71,7 @@ int start_menu(char * choices[], int n_choices){
     keypad(my_menu_win, TRUE);
 
     // resize stuff here ^,
-     /* Set main window and sub window */
+    /* Set main window and sub window */
     set_menu_win(my_menu, my_menu_win);
     set_menu_sub(my_menu, derwin(my_menu_win, 6, 73, 3, 1));
     set_menu_format(my_menu, 4, 2);
@@ -101,42 +101,49 @@ int start_menu(char * choices[], int n_choices){
 
     // use something like kbhit() to switch between getch() and spi button in?
     while ( (c = getch()) != KEY_F(1) ){
-        switch(c) {
-            case KEY_DOWN:
-                menu_driver(my_menu, REQ_DOWN_ITEM);
-                break;
-            case KEY_UP:
-                menu_driver(my_menu, REQ_UP_ITEM);
-                break;
-            case KEY_LEFT:
-                menu_driver(my_menu, REQ_LEFT_ITEM);
-                break;
-            case KEY_RIGHT:
-                menu_driver(my_menu, REQ_RIGHT_ITEM);
-                break;
-            case 10: // Enter
-                {	  
-                    ITEM * cur = current_item(my_menu);
-                    int (* func)(char *) = (int(*)(char*))item_userptr(cur);
-                    end_val = func((char *)item_name(cur));
-                    pos_menu_cursor(my_menu);
-                    /*ITEM *cur;
-                      void (*p)(char *);
-
-                      cur = current_item(my_menu);
-                      p = item_userptr(cur);
-                      p((char *)item_name(cur));
-                      pos_menu_cursor(my_menu);
-                      */
-                    //printf("\n%d\n", end_val);
-                    selected_op = 1;
-                    break;
-                }
-                break;
+        if( 48<= c && c<58){
+            end_val = c;
+            selected_op = 1;
+            break;
         }
-        // update cursor position 
-        wrefresh(my_menu_win);
-        if (selected_op == 1) break;
+        else{
+            switch(c) {
+                case KEY_DOWN:
+                    menu_driver(my_menu, REQ_DOWN_ITEM);
+                    break;
+                case KEY_UP:
+                    menu_driver(my_menu, REQ_UP_ITEM);
+                    break;
+                case KEY_LEFT:
+                    menu_driver(my_menu, REQ_LEFT_ITEM);
+                    break;
+                case KEY_RIGHT:
+                    menu_driver(my_menu, REQ_RIGHT_ITEM);
+                    break;
+                case 10: // Enter
+                    {	  
+                        ITEM * cur = current_item(my_menu);
+                        int (* func)(char *) = (int(*)(char*))item_userptr(cur);
+                        end_val = func((char *)item_name(cur));
+                        pos_menu_cursor(my_menu);
+                        /*ITEM *cur;
+                          void (*p)(char *);
+
+                          cur = current_item(my_menu);
+                          p = item_userptr(cur);
+                          p((char *)item_name(cur));
+                          pos_menu_cursor(my_menu);
+                          */
+                        //printf("\n%d\n", end_val);
+                        selected_op = 1;
+                        break;
+                    }
+                    break;
+            }
+            // update cursor position 
+            wrefresh(my_menu_win);
+            if (selected_op == 1) break;
+        }
     } // End of while
 
     // Clean up
