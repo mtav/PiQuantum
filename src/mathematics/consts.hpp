@@ -9,7 +9,6 @@
 typedef std::complex<double> CD;
 
 // ----------------------- GrAnD dEcLaRaTiOnS -------------------------------
-
 static State_Vectors state(2);
 
 // ----------------------- SiNgLe QuBiT oPeRaToRs ---------------------------
@@ -21,23 +20,6 @@ static Operator H(1, {1/sqrt(2),1/sqrt(2),1/sqrt(2),-1/sqrt(2)}, state);
 // ----------------------- TwO qUbIt OpErAtOrS -------------------------------
 static Operator CNOT(2, {0,1,1,0}, state);
 static Operator CPHASE(2, {1,0,0,-1}, state);
-
-
-//static Operators X;
-
-//(1, (Eigen::Matrix2cd() << 
-//        0,1,
-//        1,0).finished());
-
-/*
-// 2x2 single qubit gates
-// don't worry about it!
-
-extern Operators X(1);
-X.matrix = (Eigen::Matrix2cd() << 
-        0,1,
-        1,0).finished(); 
-*/
 
 /*
 static Eigen::Matrix2cd Z = (Eigen::Matrix2cd() << 
