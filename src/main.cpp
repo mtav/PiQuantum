@@ -12,6 +12,7 @@
 #include "menu_options.hpp"
 #include "math_test.hpp"
 
+#include "menu.hpp"
 /** glob
  * ---------------------------------
  * main flags 
@@ -34,10 +35,31 @@
 
 int main() {
 
-/*
+    // new menu 
+    FancyTerm term;
+
+    // top level menu 
+    Menu main_menu;
+
+    main_menu.add("Quantum gates", "", gate_menu)
+    main_
+    
+    , menu_gates;
+    
+    Menu sub_menu_qubits;
+
+    menu_main.add_item("gates", "", func_gate_menu );
+    
+    menu_main.add_item("sub", "",sub_menu_qubits ); 
+    
+    menu_main.show();
+    
+    while(1);
+    /*
+
  * make state vector, 
  *
- */
+
 
     // do menu stuff - see menu_options.hpp
     int choice=1;
@@ -70,5 +92,6 @@ int main() {
                 break;
         }
     }
+*/
 }
 
