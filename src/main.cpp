@@ -36,52 +36,14 @@
 int main() {
 
     int choice;
-    std::cout << "Enter a choice 0 for no menu, \n 1 for working menu \n 2 for newTM menu"; 
+    std::cout << "Enter a choice: \n 0 for no menu, \n 1 for working menu \n 2 for newTM menu"; 
     std::cin >> choice;
 
     if (choice == 0){
-//////////////////////////////////////////////////////////////////////////////////////
-//              PUT ALL MAIN CODE HERE!
+        //////////////////////////////////////////////////////////////////////////////////////
+        //              PUT ALL MAIN CODE HERE!
 
     }
-    else if (choice == 2){
-/*
-        // new menu 
-        FancyTerm term;
-
-        // -------------------- MaIn MeNu -----------------------------------
-        // top level menu 
-        Menu main_menu;
-
-        main_menu.add("1. Quantum gates", "", gate_menu);
-        main_menu.add("2. Quantum algorithms", "", algo_menu);
-        main_menu.add("3. Display modes", "", display_menu);
-        main_menu.add("4. Quantum Error Correction", "", error_cor_menu);
-        main_menu.add("5. QASM - Quantum Assembly Language", "", qasm_menu);
-
-        // ---------------------- GaTe MeNu ----------------------------------
-        Menu gate_menu;
-
-        gate_menu.add("1. X, Quantum NOT", qubit_menu);
-
-
-        Menu sub_menu_qubits;
-
-        menu_main.add_item("gates", "", func_gate_menu );
-
-        menu_main.add_item("sub", "",sub_menu_qubits ); 
-
-        menu_main.show();
-
-        while(1);
-  */
-
-    }
-    /*
-
-     * make state vector, 
-     *
-     */
     else if (choice == 1){
 
         // do menu stuff - see menu_options.hpp
@@ -115,6 +77,38 @@ int main() {
                     break;
             }
         }
-    }
+    } 
+    else if (choice == 2){
+        /*
+        // new menu 
+        FancyTerm term;
 
+        // -------------------- MaIn MeNu -----------------------------------
+        // top level menu 
+        Menu main_menu;
+
+        main_menu.add("1. Quantum gates", "", gate_menu);
+        main_menu.add("2. Quantum algorithms", "", algo_menu);
+        main_menu.add("3. Display modes", "", display_menu);
+        main_menu.add("4. Quantum Error Correction", "", error_cor_menu);
+        main_menu.add("5. QASM - Quantum Assembly Language", "", qasm_menu);
+
+        // ---------------------- GaTe MeNu ----------------------------------
+        Menu gate_menu;
+
+        gate_menu.add("1. X, Quantum NOT", qubit_menu);
+
+
+        Menu sub_menu_qubits;
+
+        menu_main.add_item("gates", "", func_gate_menu );
+
+        menu_main.add_item("sub", "",sub_menu_qubits ); 
+
+        menu_main.show();
+
+        while(1);
+        */
+
+    }
 }
