@@ -26,25 +26,9 @@ private:
   
   
 public:
-    // Constructor (called when object is made)
-  FancyTerm() {
-
-    // Initialize curses 
-    initscr();
-    start_color();
-    // read inputs without carrige return
-    cbreak();
-    // don't echo inputs to term
-    noecho();
-    // enable F-keys and Arrow keys
-    keypad(stdscr, TRUE);
-
-  }
-
-  // Destructor
-  ~FancyTerm() {
-    endwin();
-  }  
+  // Constructor and destructor
+  FancyTerm();
+  ~FancyTerm();
 };
 
 /** 
@@ -62,28 +46,38 @@ public:
   virtual void execute() = 0;
 };
 
+template<typename T>
 class Action : public UserPtr {
 private:
   const char * name;
+  T func;
 
 public:
   Action(const char * name) : name(name) { }
-  
+  /*
   void execute() {
     move(20, 0);
     clrtoeol();
     mvprintw(20, 0, "Item selected is : %s", name);
   }
+  */
+  Action(T func) : func(func) { }
+
+  void execute() {
+    // Call the function
+    func();
+  }
+
 };
 
 class Menu;
 
-class OpenSubmenu : public UserPtr {
+class MenuLink : public UserPtr {
 private:
   Menu & oldmenu;
   Menu & submenu;
 public:
-  OpenSubmenu(Menu & submenu, Menu & oldmenu)
+  MenuLink(Menu & submenu, Menu & oldmenu)
     : submenu(submenu), oldmenu(oldmenu) { }
   void execute(); // Defined later
 };
@@ -108,17 +102,10 @@ private:
   std::thread background;
   static int background_flag; // Set to one to stop the thread
   static int background_running; // Set to one when background is running
-  std::vector<OpenSubmenu * > submenus; // Holds submenu pointers
+  std::vector<MenuLink * > submenus; // Holds submenu pointers
 
   WINDOW * menu_win;
-  
-  // Probably needs to be static for compatibility with ncurses
-  static void func(char * name) {
-    move(20, 0);
-    clrtoeol();
-    mvprintw(20, 0, "Item selected is : %s", name);
-  }
-  
+    
   // Start background
   void start_background() {
     
@@ -294,7 +281,7 @@ public:
 		      new_item(name, description)); // Before nullptr
     
     // Add a new submenu pointer to the list
-    submenus.push_back(new OpenSubmenu(submenu, *this)); // Deleted on clear_all?
+    submenus.push_back(new MenuLink(submenu, *this)); // Deleted on clear_all?
 
     // Associate the foreground menu action with the item
     set_item_userptr(*(menu_items.end()-2), (void*) submenus.back());
@@ -330,7 +317,7 @@ public:
 		      new_item("Back", "Go back to previous menu"));
 
     // When is this going to get deleted?
-    OpenSubmenu * menu_switch = new OpenSubmenu(* previous_menu, * this);
+    MenuLink * menu_switch = new MenuLink(* previous_menu, * this);
     
     // Associate the foreground menu action with the item
     set_item_userptr(*(menu_items.end()-2), (void*)menu_switch);
@@ -348,22 +335,25 @@ public:
 
   }
   
-  
   /** 
    * @brief Add an action menu item
    *
    * @detail Add a menu item which performs an action (calls a function)
    * when it is selected
    */
+  template<typename T>
   void add_item(const char * name,
 		const char * description,
-		Action * action) {
+		T func) {
 
     // It seems like you have to free the menu before messing around
     // with menu_items
     unpost_menu(menu);
     free_menu(menu);
 
+    // Create new action item
+    Action<T> * action = new Action<T>(func);
+    
     // Set back button offset
     int offset;
     if(back_button == 0) offset = 1;
@@ -389,6 +379,7 @@ public:
     refresh();
   }
 
+  
     // Add a menu item
   void clear_all() {
 

@@ -9,7 +9,28 @@
 
 #include "menu.hpp"
 
-void OpenSubmenu::execute() {
+// Constructor
+FancyTerm::FancyTerm() {
+  
+  // Initialize curses 
+  initscr();
+  start_color();
+  // read inputs without carrige return
+  cbreak();
+  // don't echo inputs to term
+  noecho();
+  // enable F-keys and Arrow keys
+  keypad(stdscr, TRUE);
+  
+}
+
+// Destructor
+FancyTerm::~FancyTerm() {
+  endwin();
+}  
+
+
+void MenuLink::execute() {
   oldmenu.hide();
   submenu.show();
   // Set new current menu
