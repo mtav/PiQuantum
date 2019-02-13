@@ -10,6 +10,8 @@
 #include <wiringPi.h>
 #include <signal.h>
 #include <unistd.h>
+#include <iostream>
+#include "spi.hpp"
 
 class Led {
     public:

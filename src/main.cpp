@@ -39,7 +39,7 @@ int main() {
     std::cout << "Enter a choice: \n 0 for no menu, \n 1 for working menu \n 2 for newTM menu"; 
     std::cin >> choice;
 
-    if (choice == 0){
+    {if (choice == 0){
         //////////////////////////////////////////////////////////////////////////////////////
         //              PUT ALL MAIN CODE HERE!
 
