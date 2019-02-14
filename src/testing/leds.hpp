@@ -14,16 +14,6 @@
 #include <memory>
 #include "spi.hpp"
 
-class Led {
-    public:
-        // RGB values (between zero and one)
-        double red;
-        double green;
-        double blue;
-
-        Led(std::shared_ptr) : red(0.1), green(0.5), blue(0.5) { }
-};
-
 class PIN {
     public:
         static const int LE = 0; // Physical pin 11
@@ -62,11 +52,15 @@ class Alarm {
         }
 };
 
+// Forward declaration
+class Led;
+
 class LedDriver : public Alarm {
 private:
   const int chips; // Number of TLC591x chips
   std::shared_ptr<SpiChannel> spi; // SPI interface
-
+  std::vector<Led * > leds; // A list of pointers to LED objects
+  
   /**
    * @brief Function for simulating dimmable LEDs
    *
@@ -76,26 +70,14 @@ private:
    * If counter/period exceeds the RGB value the LED is 
    * switched off, otherwise it is left on. When the counter
    * is the same as the period, the counter is reset and all 
-   * LEDs are switches back on
+   * LEDs are switches back on.
    *
    */
   const int period;
   double counter;
-  void func() {    
-    // Increment counter
-    counter++;
-    // Check for counter reset
-    if(counter == period) {
-      counter = 0; // Reset counter
-      if((counter/period) < test_led.red) set({255,255}); // Turn on LED
-    }
-    // Turn off LED if counter is high enough
-    if((counter/period) >= test_led.red) set({0,0});
-  } // end of func
+  void func();
 
 public:
-  Led test_led;
-
   LedDriver(std::shared_ptr<SpiChannel> spi) 
     : spi(spi), chips(2), period(10), 
       counter(0), Alarm(500) {
@@ -157,7 +139,77 @@ public:
 
     return 0;
   } // end of set
+
+  /** 
+   * @brief Register LED
+   *
+   * @detail Register an Led object with the driver. The function stores a 
+   * pointer to the Led object. There's a problem still to solve: how to
+   * remove the entry when the Led object no longer exists. That can be 
+   * fixed later.
+   *
+   */
+  void register_led(Led * led) {
+    // Add the LED to the leds vector or pointers
+    leds.push_back(led);
+  }
+  
 }; // end of LedDriver
 
+class Led {
+private:
+  // A pointer to the LED driver which writes
+  // data to the hardware. Each Led object
+  // needs to register itself with the
+  // driver. The driver then polls the
+  // Led objects to read their color and
+  // write it to the hardware device
+  std::shared_ptr<LedDriver> driver;
+    
+  // RGB values (between zero and one)
+  double red;
+  double green;
+  double blue;
 
+  // Chip and line number
+  const int chip; 
+  const std::vector<int> rgb_lines;
+  
+public:
+  
+  Led(int chip, std::vector<int> rgb_lines, std::shared_ptr<LedDriver> driver)
+    : red(0), green(0), blue(0),
+      chip(chip), rgb_lines(rgb_lines), driver(driver)
+  {
+    // Register the Led object with the driver
+    driver -> register_led(this);
 
+    // Check the the line vector is the right length
+    if(rgb_lines.size() != 3) {
+      std::cerr << "Error: wrong number of RGB lines" << std::endl;
+      abort();
+    }
+  }
+
+  ~Led() {
+    // De register the Led object from the driver
+    // Something like this. Don't really want a
+    // memory leak, but in practice it'll be fine.
+    //driver -> deregister_led(id);
+  }
+
+  void set_rgb(std::vector<double> rgb) {
+    red = rgb[0];
+    green = rgb[1];
+    blue = rgb[2];
+  }
+
+  std::vector<double> get_rgb() {
+    return {red, green, blue};
+  }
+
+  // Return the chip and line numbers
+  int get_chip() { return chip; }
+  std::vector<int> get_rgb_lines() { return rgb_lines; }
+
+};

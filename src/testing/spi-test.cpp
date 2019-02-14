@@ -37,8 +37,9 @@ int main() {
 
   // A shared object for driving TLC591x based LEDs. Each LED object
   // should take this and store it in a shared_ptr
-  std::shared_ptr<LedDriver> leds = std::make_shared<LedDriver>(spi_0);
+  std::shared_ptr<LedDriver> led_driver = std::make_shared<LedDriver>(spi_0);
 
+  Led led(1, {1, 3, 2}, led_driver);
   
   /*
     unsigned char byte = 0;
@@ -48,10 +49,10 @@ int main() {
     leds.set({byte,byte});
     }
   */
-  double thing = 0;
-  while(1) {
-    std::cin >> thing;
-    leds.test_led.red = thing; 
-  };
+  //  double thing = 0;
+  //while(1) {
+  //  std::cin >> thing;
+  //  leds.test_led.red = thing; 
+  //};
 }
 
