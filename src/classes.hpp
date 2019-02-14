@@ -2,7 +2,6 @@
 #include <iostream>
 #include <vector>
 
-
 // --------------------- ThE gRaNd StAtE vEcToR cLaSs -----------------
 class State_Vectors {
     int num_qubits;
