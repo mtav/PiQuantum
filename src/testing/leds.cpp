@@ -40,5 +40,5 @@ void LedDriver::func() {
 
 
 
-  if((counter/period) >= test_led.red) set({0,0});
+  //if((counter/period) >= test_led.red) set({0,0});
 } // end of func
