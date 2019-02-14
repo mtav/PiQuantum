@@ -13,6 +13,10 @@
 #include "spi.hpp"
 
 // class to read all of the button states via the spi
+// SN74hc165 shift register 
+// RED CLK                  - PI 21 - Physical 40 - SPI1 CLK
+// YELLOW SH/LD shift/load  - PI 26 - Physical 37 - GPIO 26
+// GREEN Serial out         - PI 19 - Physical 35 - SPI1 MISO
 class Button_driver {
     private:
         int num_chips;
@@ -26,7 +30,7 @@ class Button_driver {
 
         // constructor 
         // initialize with : assign in {}
-        Button_driver(int chips = 1, double freq = 250000000, int channel = 1):
+        Button_driver(int chips = 2, double freq = 250000000, int channel = 1):
             num_chips(chips), frequency(freq), spi_channel(channel), 
             spi(spi_channel, frequency)
     {
@@ -39,7 +43,6 @@ class Button_driver {
         // set up pins for input
 
     }
-
         // methods
         unsgn_char_vect read_spi_bytes(){
             // empty_data is number of chips elements as each unsignd char is 1 byte.
@@ -50,6 +53,8 @@ class Button_driver {
 
 // each button inherits the Button_driver to read the button buffer
 // and the button object returns true or false for it's position in the byte 
+/// @todo atm each button has its own button_driver object which means there 
+// could 
 class Button : public Button_driver {
     private:
         // i.e 1st or 2nd byte
