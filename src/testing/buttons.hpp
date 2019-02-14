@@ -9,6 +9,7 @@
 #ifndef buttons
 #define buttons
 
+#include <wiringPi.h>
 #include "spi.hpp"
 
 // class to read all of the button states via the spi
@@ -30,7 +31,13 @@ class Button_driver {
             spi(spi_channel, frequency)
     {
         // make the empty buffer vector size of number of bytes for the button chips
-        for(int i; i < num_chips; i++) empty_data.push_back(0);
+        for(int i = 0; i < num_chips; i++) empty_data.push_back(0);
+
+        // setup wiring pi
+        wiringPiSetup();    // what is this alternating caps...
+
+        // set up pins for input
+
     }
 
         // methods
@@ -43,7 +50,7 @@ class Button_driver {
 
 // each button inherits the Button_driver to read the button buffer
 // and the button object returns true or false for it's position in the byte 
-class Button : private Button_driver {
+class Button : public Button_driver {
     private:
         // i.e 1st or 2nd byte
         int chip_number;
@@ -68,7 +75,6 @@ class Button : private Button_driver {
         void print_pos() {std::cout << button_pos <<std::endl;};
 
         bool is_pressed(){
-
             buffer = read_spi_bytes();
             // selects which byte and masks depending on which physical chip pin
             // the button is connected to.
@@ -77,14 +83,17 @@ class Button : private Button_driver {
 
 };
 
+
+
+// possibly don't need see butons.cpp
 class Button_groups {
     public:
-    std::vector<Button> qubit;
-    std::vector<Button> b_input; 
+        std::vector<Button> qubit;
+        std::vector<Button> b_input; 
 
-    Button_groups() : qubit({Button(1,1), Button(1,2)}),
-        b_input({Button(2,1), Button(2,2)}) 
-        {}
+        Button_groups() : qubit({Button(1,1), Button(1,2)}),
+            b_input({Button(2,1), Button(2,2)}) 
+            {}
 };
 
 

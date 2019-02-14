@@ -49,7 +49,6 @@ class Alarm {
         void set_pointer(Alarm * ptr) { alrm = ptr; }
 
     public:
-
         Alarm(int delay_us) { 
             // Set up alarm handler
             signal(SIGALRM, handler);
