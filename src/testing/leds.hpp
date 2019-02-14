@@ -13,6 +13,7 @@
 #include <iostream>
 #include "spi.hpp"
 
+#include "pin_mappings.hpp"
 class Led {
     public:
         // RGB values (between zero and one)
@@ -21,12 +22,6 @@ class Led {
         double blue;
 
         Led() : red(0.1), green(0.5), blue(0.5) { }
-};
-
-class PIN {
-    public:
-        static const int LE = 0; // Physical pin 11
-        static const int OE = 1; // Physical pin 12
 };
 
 class Alarm {

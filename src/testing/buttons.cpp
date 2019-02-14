@@ -21,7 +21,9 @@ int main(void){
     // want a vector of buttons for qubits 
     // something like qubit[1] is mapped to chip 1, pin 4
     // qubit[2] chip 1, pin 5 etc
-    std::vector<Button> qubit({Button(1,4), Button(1,5)});
+    std::vector<Button> qubit({Button(1,1), Button(1,2), Button(1,3), Button(1,4), Button(1,5),
+            Button(0,1), Button(0,2), Button(0,3), Button(0,4), Button(0,5), Button(0,6),
+            Button(0,7)});
 
     // checking it is doing what we want, it is!
     std::cout<< "There are " << qubit.size() << " qubit buttons" <<std::endl;
@@ -32,15 +34,16 @@ int main(void){
     // checking reading from spi
 
     // then we can do
-    //    qubit[1].is_pressed();
-
-    //   // or go through list of qubits checking which is selected.
-    //    for (int i = 0; i < static_cast<int>(qubit.size()); i++){
-    //    if (qubit[i].is_pressed() == 1){
-    //    return i;
-    //    break;
-    //    }
-    //    }
-
+    while(1){
+        //        std::cout << "is button pressed? " <<  qubit[1].is_pressed() <<std::endl;
+        // or go through list of qubits checking which is selected.
+        for (int i = 0; i < static_cast<int>(qubit.size()); i++){
+            if (qubit[i].is_pressed() == 1){
+                std::cout << "button " << i << " has been pressed" << std::endl;
+            }
+            else if(qubit[i].is_pressed() == 0){
+                std::cout << "no button " <<i <<std::endl;
+            }
+        }
+    }
 }
-
