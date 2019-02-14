@@ -14,10 +14,22 @@
 #include <memory>
 #include "spi.hpp"
 
+<<<<<<< HEAD
 class PIN {
     public:
         static const int LE = 0; // Physical pin 11
         static const int OE = 1; // Physical pin 12
+=======
+#include "pin_mappings.hpp"
+class Led {
+    public:
+        // RGB values (between zero and one)
+        double red;
+        double green;
+        double blue;
+
+        Led(std::shared_ptr) : red(0.1), green(0.5), blue(0.5) { }
+>>>>>>> 9d98c404d21681ded23c93a6118cca7c0cdddf77
 };
 
 class Alarm {

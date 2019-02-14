@@ -11,6 +11,7 @@
 
 #include <wiringPi.h>
 #include "spi.hpp"
+#include "pin_mappings.hpp"
 
 // class to read all of the button states via the spi
 // SN74hc165 shift register 
@@ -30,7 +31,8 @@ class Button_driver {
 
         // constructor 
         // initialize with : assign in {}
-        Button_driver(int chips = 2, double freq = 250000000, int channel = 1):
+        // set clk freq to < 30MHz max 
+        Button_driver(int chips = 2, double freq = 100000, int channel = 1):
             num_chips(chips), frequency(freq), spi_channel(channel), 
             spi(spi_channel, frequency)
     {
@@ -41,13 +43,23 @@ class Button_driver {
         wiringPiSetup();    // what is this alternating caps...
 
         // set up pins for input
-
+        pinMode(PIN::SHLD, OUTPUT);    //set inhibit to output mode
+        digitalWrite(PIN::SHLD, HIGH);
     }
         // methods
         unsgn_char_vect read_spi_bytes(){
             // empty_data is number of chips elements as each unsignd char is 1 byte.
             // eg 2 chips empty_data = {0, 0} 2 bytes long
-            return spi.read_write(empty_data); 
+            
+            // bring SHLD low to enable parallel load
+            digitalWrite(PIN::SHLD, LOW); 
+            for(int i=0; i<100; i++); //wait
+            // bring high to stop read and shift 
+            digitalWrite(PIN::SHLD, HIGH);
+
+            unsgn_char_vect buffer = spi.read_write(empty_data); 
+            std::cout << (int)buffer[0] << (int)buffer[1] <<std::endl;
+            return buffer;
         }
 };
 
@@ -81,6 +93,7 @@ class Button : public Button_driver {
 
         bool is_pressed(){
             buffer = read_spi_bytes();
+            //std::cout << buffer[0] << std::endl;
             // selects which byte and masks depending on which physical chip pin
             // the button is connected to.
             return (buffer[chip_number] & (1 << chip_pin));
