@@ -11,6 +11,9 @@
  *
  */
 
+#ifndef SPI_HPP
+#define SPI_HPP
+
 #include <iostream>
 #include <wiringPiSPI.h>
 #include <errno.h>
@@ -56,3 +59,5 @@ class SpiChannel {
 
 
 };
+
+#endif
