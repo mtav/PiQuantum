@@ -16,7 +16,7 @@
 // class to read all of the button states via the spi
 // SN74hc165 shift register 
 // RED CLK                  - PI 21 - Physical 40 - SPI1 CLK
-// YELLOW SH/LD shift/load  - PI 26 - Physical 37 - GPIO 26
+// YELLOW SH/LD shift/load  - PI 13 - Physical 33 - GPIO 13
 // GREEN Serial out         - PI 19 - Physical 35 - SPI1 MISO
 class Button_driver {
     private:
@@ -32,7 +32,7 @@ class Button_driver {
         // constructor 
         // initialize with : assign in {}
         // set clk freq to < 30MHz max 
-        Button_driver(int chips = 2, double freq = 100000, int channel = 1):
+        Button_driver(int chips = 2, double freq = 50000, int channel = 1):
             num_chips(chips), frequency(freq), spi_channel(channel), 
             spi(spi_channel, frequency)
     {
@@ -47,18 +47,19 @@ class Button_driver {
         digitalWrite(PIN::SHLD, HIGH);
     }
         // methods
-        unsgn_char_vect read_spi_bytes(){
+        unsgn_char_vect read_spi_bytes(unsgn_char_vect empty_data){
             // empty_data is number of chips elements as each unsignd char is 1 byte.
             // eg 2 chips empty_data = {0, 0} 2 bytes long
             
             // bring SHLD low to enable parallel load
             digitalWrite(PIN::SHLD, LOW); 
-            for(int i=0; i<100; i++); //wait
             // bring high to stop read and shift 
             digitalWrite(PIN::SHLD, HIGH);
 
             unsgn_char_vect buffer = spi.read_write(empty_data); 
+            
             std::cout << (int)buffer[0] << (int)buffer[1] <<std::endl;
+            std::cout << (int)empty_data[0] << (int)empty_data[1] << std::endl;
             return buffer;
         }
 };
@@ -67,7 +68,7 @@ class Button_driver {
 // and the button object returns true or false for it's position in the byte 
 /// @todo atm each button has its own button_driver object which means there 
 // could 
-class Button : public Button_driver {
+class Button {
     private:
         // i.e 1st or 2nd byte
         int chip_number;
@@ -78,11 +79,14 @@ class Button : public Button_driver {
         int button_pos;
 
     public:
+        // need to pass all buttons the same button_driver object
+        Button_driver _driver;
         // make a buffer vector for the unsigned chars
         unsgn_char_vect buffer;
 
         // constructor
-        Button(int chp_num, int chp_pin) : 
+        // passes the same driver class for all buttons from buttons.cpp
+        Button(int chp_num, int chp_pin, Button_driver driver) : 
             chip_number(chp_num), chip_pin(chp_pin) 
     {
         // the bit in the spi associated to the button
@@ -92,7 +96,7 @@ class Button : public Button_driver {
         void print_pos() {std::cout << button_pos <<std::endl;};
 
         bool is_pressed(){
-            buffer = read_spi_bytes();
+            buffer = _driver.read_spi_bytes({0,0});
             //std::cout << buffer[0] << std::endl;
             // selects which byte and masks depending on which physical chip pin
             // the button is connected to.
@@ -100,20 +104,6 @@ class Button : public Button_driver {
         }
 
 };
-
-
-
-// possibly don't need see butons.cpp
-class Button_groups {
-    public:
-        std::vector<Button> qubit;
-        std::vector<Button> b_input; 
-
-        Button_groups() : qubit({Button(1,1), Button(1,2)}),
-            b_input({Button(2,1), Button(2,2)}) 
-            {}
-};
-
 
 
 #endif

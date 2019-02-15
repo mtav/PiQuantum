@@ -7,7 +7,7 @@ class PIN {
         static const int OE = 1; // Physical pin 12
        
         // for buttons
-        static const int SHLD = 25; // Physical pin 37
+        static const int SHLD = 23; // Physical pin 33
 };
 
 

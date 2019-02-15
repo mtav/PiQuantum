@@ -4,8 +4,10 @@
 
 int main(void){
 
+    Button_driver BD;
+
     // make a button for qubit 1 on chip_1 and pin_1 
-    Button qubit1(1, 1);
+    //Button qubit1(1, 1);
 
     // check if qubit1 is selected with
     //qubit1.is_pressed();    // returns 0 or 1
@@ -21,15 +23,33 @@ int main(void){
     // want a vector of buttons for qubits 
     // something like qubit[1] is mapped to chip 1, pin 4
     // qubit[2] chip 1, pin 5 etc
-    std::vector<Button> qubit({Button(1,1), Button(1,2), Button(1,3), Button(1,4), Button(1,5),
-            Button(0,1), Button(0,2), Button(0,3), Button(0,4), Button(0,5), Button(0,6),
-            Button(0,7)});
+    ///button mapping
+    /// 1st byte  
+    // 00000100 btn A26-28 -> logical 0
+    /// 00000010 btn A7-9   -> logical 6
+    /// 00000001 btn A4-6   -> logical 7
+    /// 00001000 btn A1-3   -> logical 8 
+    /// 
+    /// 2nd byte  
+    ///// 10000000 btn A23-25 -> logical 1
+    /// 00000010 btn A20-22 -> logical 2
+    /// 00000100 btn A17-19 -> logical 3
+    /// 00000001 btn A13-15 -> logical 4 
+    /// 00001000 btn A10-12 -> logical 5
+
+
+    std::vector<Button> qubit( {Button(0,2, BD)});
+    //  , Button(1,7, BD), Button(1,1, BD),
+    // Button(1,2, BD)});
+
+    //   std::vector<Button> func_buttons({Button(1,0, BD), Button(1,3, BD), Button(0,1, BD), 
+    //            Button(0,0, BD), Button(0,3, BD)});
+
 
     // checking it is doing what we want, it is!
     std::cout<< "There are " << qubit.size() << " qubit buttons" <<std::endl;
     std::cout << "at positions, " <<std::endl; 
     qubit[0].print_pos();
-    qubit[1].print_pos();
 
     // checking reading from spi
 
