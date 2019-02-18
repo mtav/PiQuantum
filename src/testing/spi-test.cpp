@@ -27,6 +27,13 @@ void interrupt(int signal) {
 
 int main() {
 
+
+      
+  // Need to call this setup function for wiringPi before
+  // using any of its functions. Use wiringPi pin conventions
+  // (see the reference -> setup section of the wiringPi website).
+  wiringPiSetup();
+
   //  signal(SIGALRM, interrupt);
   //ualarm(100000,100000);
 
@@ -39,7 +46,15 @@ int main() {
   // should take this and store it in a shared_ptr
   std::shared_ptr<LedDriver> led_driver = std::make_shared<LedDriver>(spi_0);
 
-  Led led(1, {1, 3, 2}, led_driver);
+  Led led1(0, {7, 6, 5}, led_driver);
+  led1.set_rgb({0.5, 0.5, 0.5});
+
+ 
+  
+  //std::cout << "red:" << led.get_rgb()[0] << std::endl;
+  //std::cout << "greed:" << led.get_rgb()[1] << std::endl;
+  //std::cout << "blue:" << led.get_rgb()[2] << std::endl;
+  
   
   /*
     unsigned char byte = 0;
@@ -54,5 +69,7 @@ int main() {
   //  std::cin >> thing;
   //  leds.test_led.red = thing; 
   //};
+
+  while(1);
 }
 

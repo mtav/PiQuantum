@@ -55,6 +55,8 @@ private:
   const int chips; // Number of TLC591x chips
   std::shared_ptr<SpiChannel> spi; // SPI interface
   std::vector<Led * > leds; // A list of pointers to LED objects
+  std::vector<unsigned char> write; // Data to write to chips
+  std::vector<unsigned char> mask; // Enable or disable LED lines 
   
   /**
    * @brief Function for simulating dimmable LEDs
@@ -69,7 +71,7 @@ private:
    *
    */
   const int period;
-  double counter;
+  double counter; // To avoid integer division
   void func();
 
 public:
@@ -77,15 +79,15 @@ public:
     : spi(spi), chips(2), period(10), 
       counter(0), Alarm(500) {
 
-    // Need to call this setup function for wiringPi before
-    // using any of its functions. Use wiringPi pin conventions
-    // (see the reference -> setup section of the wiringPi website).
-    wiringPiSetup();
-
     // Set up pins
     pinMode(PIN::LE, OUTPUT); // Set LE to output
     pinMode(PIN::OE, OUTPUT); // Set OE to output    
 
+    // Initialise data and mask arrays
+    write = std::vector<unsigned char>(chips, 0);    
+    mask = std::vector<unsigned char>(chips, 0);    
+
+    
   } // end of LedDriver()
 
   /** 
@@ -144,10 +146,7 @@ public:
    * fixed later.
    *
    */
-  void register_led(Led * led) {
-    // Add the LED to the leds vector or pointers
-    leds.push_back(led);
-  }
+  void register_led(Led * led);
   
 }; // end of LedDriver
 
@@ -171,7 +170,8 @@ private:
   const std::vector<int> rgb_lines;
   
 public:
-  
+
+  // Initialise with zero RGB values
   Led(int chip, std::vector<int> rgb_lines, std::shared_ptr<LedDriver> driver)
     : red(0), green(0), blue(0),
       chip(chip), rgb_lines(rgb_lines), driver(driver)
@@ -189,7 +189,7 @@ public:
   ~Led() {
     // De register the Led object from the driver
     // Something like this. Don't really want a
-    // memory leak, but in practice it'll be fine.
+    // memory leak, but in practice it'll be fine for now.
     //driver -> deregister_led(id);
   }
 

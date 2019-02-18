@@ -13,32 +13,45 @@
 Alarm * Alarm::alrm = nullptr; // A pointer to an alarm class
 
 void LedDriver::func() {    
+
+  // Initiliase data to write to chips
+  write = std::vector<unsigned char>(chips, 0);    
+
   // Increment counter
   counter++;
   // Check for counter reset
   if(counter == period) {
     counter = 0; // Reset counter
-    
-    // Loop over all the pointers in the leds vector, writing
-    // their state to the hardware.
-    // Start with an empty std::vector to populate with LED state
-    // data (length = chips, value = 0)
-    std::vector<unsigned char> write(chips, 0);    
-    for(Led * i : leds) {
-      // Need to ensure i still exists here
-      int chip = i -> get_chip();
-      std::vector<int> rgb_lines = i -> get_rgb_lines();
-      std::vector<double> rgb_values = i -> get_rgb();
-      // Loop over RGB setting corresponding bits
-      for(int k = 0; k < 3; k++) {
-	if((counter/period) < rgb_values[k])
-	  write[chip] |= (1 << rgb_lines[k]); // Write a 1 in correct position
-      }
-    } // Turn on LED
+    set(write); // Set all to one -- Need to fix
   }
-  // Turn off LED if counter is high enough
 
-
-
+  // Loop over all the pointers in the leds vector, turning
+  // the LEDs off if counter is high enough
+  // Start with an empty std::vector to populate with LED state
+  // data (length = chips, value = 0)
+  for(Led * i : leds) {
+    // Need to ensure i still exists here
+    int chip = i -> get_chip();
+    std::vector<int> rgb_lines = i -> get_rgb_lines();
+    std::vector<double> rgb_values = i -> get_rgb();
+    // Loop over RGB setting corresponding bits
+    for(int k = 0; k < 3; k++) {
+      if((counter/period) > (1 - rgb_values[k]))
+	write[chip] |= ~(1 << rgb_lines[k]); // Write a 0 in correct position
+    }
+  } // Turn on LED
+  for(int i = 0; i < chips; i++)
+    write[i] &= mask[i]; // Mask the write array
+  set(write); // Write the data to the chip
+  
   //if((counter/period) >= test_led.red) set({0,0});
 } // end of func
+
+void LedDriver::register_led(Led * led) {
+  // Add the LED to the leds vector or pointers
+  leds.push_back(led);
+  
+  // Enable LED lines
+  for(int i=0; i < 3; i++)
+    mask[led -> get_chip()] |= (1 << led -> get_rgb_lines()[i]);
+}
