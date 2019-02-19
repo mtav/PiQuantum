@@ -6,10 +6,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -72,8 +75,25 @@ public class MainActivity extends AppCompatActivity {
 
                 // Make a new textbox
                 TextView tv = new TextView(context);
+                if(deviceHardwareAddress.equals("B8:27:EB:BD:A5:BF")) {
+                    tv.setTextColor(Color.parseColor("#7CFC00"));
+                }
                 tv.setText(deviceName + ", " + deviceHardwareAddress);
                 layout.addView(tv);
+                if(deviceHardwareAddress.equals("B8:27:EB:BD:A5:BF")) {
+                    //set the properties for button
+                    Button btnTag = new Button(context);
+                    btnTag.setLayoutParams(lp);
+                    btnTag.setText("Connect");
+                    btnTag.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            // Connect to the device
+
+
+                        }
+                    });
+                    layout.addView(btnTag);
+                }
 
 
             }
@@ -92,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         tv.setTypeface(null, Typeface.BOLD);
         tv.setText("Paired devices:");
         layout.addView(tv);
-/*
+
         // List the paired devices
         if (pairedDevices.size() > 0) {
             // There are paired devices. Get the name and address of each paired device.
@@ -108,10 +128,9 @@ public class MainActivity extends AppCompatActivity {
                 layout.addView(valueTV);
             }
         }
-        */
 
         // Start discovery
-        //bluetoothAdapter.startDiscovery();
+        bluetoothAdapter.startDiscovery();
 
         // Make a new textbox
         TextView dis = new TextView(this);
