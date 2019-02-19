@@ -2,6 +2,7 @@ package com.example.piquantum;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,19 +12,25 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Set;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
     private LinearLayout.LayoutParams lp;
     private LinearLayout layout;
     private BluetoothAdapter bluetoothAdapter;
+    private BluetoothSocket bluetoothSocket;
+    private BluetoothDevice device;
+    private Connect connect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 // Discovery has found a device. Get the BluetoothDevice
                 // object and its info from the Intent.
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
 
@@ -81,17 +88,13 @@ public class MainActivity extends AppCompatActivity {
                 tv.setText(deviceName + ", " + deviceHardwareAddress);
                 layout.addView(tv);
                 if(deviceHardwareAddress.equals("B8:27:EB:BD:A5:BF")) {
+                    bluetoothAdapter.cancelDiscovery();
                     //set the properties for button
                     Button btnTag = new Button(context);
                     btnTag.setLayoutParams(lp);
                     btnTag.setText("Connect");
-                    btnTag.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            // Connect to the device
-
-
-                        }
-                    });
+                    connect = new Connect(bluetoothAdapter, device, layout, context);
+                    btnTag.setOnClickListener(connect);
                     layout.addView(btnTag);
                 }
 
