@@ -30,5 +30,8 @@ static_test:
 button_test: buttons.cpp spi.o
 	g++ buttons.cpp spi.o -o button_test -lwiringPi
 
+bluetooth-test: bluetooth-test.cpp
+	g++ bluetooth-test.cpp -lbluetooth -o bluetooth-test
+
 clean:
 	rm -rf prog spi-test menu-test *.o
