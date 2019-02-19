@@ -12,6 +12,26 @@
 
 Alarm * Alarm::alrm = nullptr; // A pointer to an alarm class
 
+// Print the registered LEDs
+void LedDriver::print() {
+  int count = 0; // Index the LEDs
+  for(Led * i : leds) {
+    std::cout << "-------" << std::endl;
+    std::cout << "LED " << count << ": "<< std::endl;
+    std::cout << "Lines: "
+	      << "R: "<< i -> get_rgb_lines()[0] << ", " 
+	      << "G: "<< i -> get_rgb_lines()[1] << ", "
+	      << "B: "<< i -> get_rgb_lines()[2] << ", "
+	      << std::endl
+	      << "Levels: "
+	      << "R: "<< i -> get_rgb()[0] << ", " 
+	      << "G: "<< i -> get_rgb()[1] << ", "
+	      << "B: "<< i -> get_rgb()[2] << ", "
+	      << std::endl;
+    count ++;
+  }
+}
+
 void LedDriver::func() {    
 
   // Initiliase data to write to chips
@@ -22,7 +42,7 @@ void LedDriver::func() {
   // Check for counter reset
   if(counter == period) {
     counter = 0; // Reset counter
-    set(write); // Set all to one -- Need to fix
+    set(write); // Set all to zero
   }
 
   // Loop over all the pointers in the leds vector, turning
@@ -37,7 +57,7 @@ void LedDriver::func() {
     // Loop over RGB setting corresponding bits
     for(int k = 0; k < 3; k++) {
       if((counter/period) > (1 - rgb_values[k]))
-	write[chip] |= ~(1 << rgb_lines[k]); // Write a 0 in correct position
+	write[chip] |= (1 << rgb_lines[k]); // Write a 1 in correct position
     }
   } // Turn on LED
   for(int i = 0; i < chips; i++)
