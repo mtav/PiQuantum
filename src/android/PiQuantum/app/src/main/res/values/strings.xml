@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">PiQuantum</string>
     <string name="scan_bluetooth">Scan Bluetooth</string>
+    <string name="connect">Connect</string>
 </resources>

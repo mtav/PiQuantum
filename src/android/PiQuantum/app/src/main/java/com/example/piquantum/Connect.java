@@ -44,44 +44,6 @@ public class Connect implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        // Connect to device
-        TextView tv = new TextView(context);
-        tv.setLayoutParams(lp);
-        tv.setTypeface(null, Typeface.BOLD);
-        tv.setText("Connecting to device...");
-        layout.addView(tv);
-
-        // UUID for server
-        UUID uuid = UUID.fromString("d364b420-8d71-11e3-baa8-0800200c9a66");
-        // Connect to the device
-        try {
-            // Get a BluetoothSocket to connect with the given BluetoothDevice.
-            // MY_UUID is the app's UUID string, also used in the server code.
-            socket = device.createRfcommSocketToServiceRecord(uuid);
-        } catch (IOException e) {
-            Log.e(TAG, "Socket's create() method failed", e);
-        }
-
-        try {
-            // Connect to the remote device through the socket. This call blocks
-            // until it succeeds or throws an exception.
-            socket.connect();
-        } catch (IOException connectException) {
-            // Unable to connect; close the socket and return.
-            try {
-                socket.close();
-            } catch (IOException closeException) {
-                Log.e(TAG, "Could not close the client socket", closeException);
-            }
-            return;
-        }
-        // Connect to device
-        TextView another = new TextView(context);
-        another.setLayoutParams(lp);
-        another.setText("Successfully connected to device");
-        layout.addView(another);
-
-
 
     }
 

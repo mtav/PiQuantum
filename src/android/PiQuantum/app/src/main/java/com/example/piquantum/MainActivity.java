@@ -25,34 +25,35 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
-    private LinearLayout.LayoutParams lp;
-    private LinearLayout layout;
-    private BluetoothAdapter bluetoothAdapter;
-    private BluetoothSocket bluetoothSocket;
+    private static final String TAG = "MainActivity";
+
+    private BluetoothAdapter adapter;
+    private BluetoothSocket socket;
     private BluetoothDevice device;
-    private Connect connect;
+    private TextView paired;
+    private TextView discovered;
+    private TextView connecting;
+    private Button connect;
+    //private Connect connect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Buttons and textviews
+        paired = (TextView) findViewById(R.id.paired);
+        discovered = (TextView) findViewById(R.id.discovered);
+        connecting = (TextView) findViewById(R.id.connecting);
+        connect = (Button) findViewById(R.id.connect);
+
         // Register for broadcasts when a device is discovered.
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(receiver, filter);
 
-        // Get the activity layout
-        layout = findViewById(R.id.layout);
-
-        // Useful layout parameters
-        lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-
         // Get the device bluetooth adapter
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (bluetoothAdapter == null) {
+        adapter = BluetoothAdapter.getDefaultAdapter();
+        if (adapter == null) {
             // Device doesn't support Bluetooth
         }
 
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         int REQUEST_ENABLE_BT = 1; // Must be greater than 0
 
         // Enable the bluetooth adapter
-        if (!bluetoothAdapter.isEnabled()) {
+        if (!adapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
@@ -79,23 +80,12 @@ public class MainActivity extends AppCompatActivity {
                 device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
-
-                // Make a new textbox
-                TextView tv = new TextView(context);
-                if(deviceHardwareAddress.equals("B8:27:EB:BD:A5:BF")) {
-                    tv.setTextColor(Color.parseColor("#7CFC00"));
-                }
-                tv.setText(deviceName + ", " + deviceHardwareAddress);
-                layout.addView(tv);
-                if(deviceHardwareAddress.equals("B8:27:EB:BD:A5:BF")) {
-                    bluetoothAdapter.cancelDiscovery();
-                    //set the properties for button
-                    Button btnTag = new Button(context);
-                    btnTag.setLayoutParams(lp);
-                    btnTag.setText("Connect");
-                    connect = new Connect(bluetoothAdapter, device, layout, context);
-                    btnTag.setOnClickListener(connect);
-                    layout.addView(btnTag);
+                // Write device
+                discovered.append(deviceName + ", " + deviceHardwareAddress + "\n");
+                if(deviceHardwareAddress.equals("84:A6:C8:31:F9:F6"/*"B8:27:EB:BD:A5:BF"*/)) {
+                    adapter.cancelDiscovery();
+                    // Enable the connect button
+                    connect.setVisibility(View.VISIBLE);
                 }
 
 
@@ -103,44 +93,67 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    public void connect(View view) {
+        connecting.setText("Connecting to device...");
+        // UUID for server
+        UUID uuid = UUID.fromString("d364b420-8d71-11e3-baa8-0800200c9a66");
+        // Connect to the device
+        try {
+            // Get a BluetoothSocket to connect with the given BluetoothDevice.
+            // MY_UUID is the app's UUID string, also used in the server code.
+            socket = device.createInsecureRfcommSocketToServiceRecord(uuid);
+        } catch (IOException e) {
+            Log.e(TAG, "Socket's create() method failed", e);
+        }
+
+        try {
+            // Connect to the remote device through the socket. This call blocks
+            // until it succeeds or throws an exception.
+            socket.connect();
+        } catch (IOException connectException) {
+            // Unable to connect; close the socket and return.
+            connecting.append("Failed to connect to device: "
+                            + connectException.getMessage() + "\n");
+            try {
+                socket.close();
+            } catch (IOException closeException) {
+                Log.e(TAG, "Could not close the client socket", closeException);
+            }
+            return;
+        }
+        // Connecting to device
+        connecting.append("Successfully connected to device\n");
+    }
 
     /** Called when the user touches the button */
     public void scan_bluetooth(View view) {
 
-        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+        Set<BluetoothDevice> pairedDevices = adapter.getBondedDevices();
 
-        // Make a new textbox
-        TextView tv = new TextView(this);
-        tv.setLayoutParams(lp);
-        tv.setTypeface(null, Typeface.BOLD);
-        tv.setText("Paired devices:");
-        layout.addView(tv);
+        paired.append("Paired devices:\n");
 
         // List the paired devices
         if (pairedDevices.size() > 0) {
             // There are paired devices. Get the name and address of each paired device.
-            for (BluetoothDevice device : pairedDevices) {
+            for (BluetoothDevice dev : pairedDevices) {
                 // Get the device details
-                String deviceName = device.getName();
-                String deviceHardwareAddress = device.getAddress(); // MAC address
+                String deviceName = dev.getName();
+                String deviceHardwareAddress = dev.getAddress(); // MAC address
+                paired.append(deviceName + ", " + deviceHardwareAddress + "\n");
 
-                // Make a new textbox
-                TextView valueTV = new TextView(this);
-                valueTV.setLayoutParams(lp);
-                valueTV.setText(deviceName + ", " + deviceHardwareAddress);
-                layout.addView(valueTV);
+                if(deviceHardwareAddress.equals("B8:27:EB:BD:A5:BF")) {
+                    // Enable the connect button
+                    connect.setVisibility(View.VISIBLE);
+                    // Return -- must be a better way
+                    return;
+                }
+
             }
         }
 
         // Start discovery
-        bluetoothAdapter.startDiscovery();
-
-        // Make a new textbox
-        TextView dis = new TextView(this);
-        dis.setText("Discovered devices:");
-        tv.setLayoutParams(lp);
-        dis.setTypeface(null, Typeface.BOLD);
-        layout.addView(dis);
+        adapter.startDiscovery();
+        discovered.setText("Discovered devices:\n");
 
     }
 

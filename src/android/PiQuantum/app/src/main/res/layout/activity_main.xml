@@ -19,6 +19,29 @@
         android:text="@string/scan_bluetooth"
         android:onClick="scan_bluetooth"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/paired"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/discovered"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/connect"
+        android:id="@+id/connect"
+        android:visibility="gone"
+        android:onClick="connect"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/connecting"/>
+
 </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
