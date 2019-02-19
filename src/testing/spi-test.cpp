@@ -39,8 +39,8 @@ int main() {
 
   // Shared SPI channel objects for channel 0 and 1. Everything using
   // SPI should take this variable and store it in a shared_ptr object
-  std::shared_ptr<SpiChannel> spi_0 = std::make_shared<SpiChannel>(0, 500000); 
-  std::shared_ptr<SpiChannel> spi_1 = std::make_shared<SpiChannel>(1, 500000);
+  SpiChannel & spi_0 = getSpiChannel(0); 
+  SpiChannel & spi_1 = getSpiChannel(1);
 
   // A shared object for driving TLC591x based LEDs. Each LED object
   // should take this and store it in a shared_ptr

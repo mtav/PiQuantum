@@ -7,6 +7,9 @@
  *
  */
 
+#ifndef LEDS_HPP
+#define LEDS_HPP
+
 #include <wiringPi.h>
 #include <signal.h>
 #include <unistd.h>
@@ -53,7 +56,7 @@ class Led;
 class LedDriver : public Alarm {
 private:
   const int chips; // Number of TLC591x chips
-  std::shared_ptr<SpiChannel> spi; // SPI interface
+  SpiChannel & spi; // SPI interface
   std::vector<Led * > leds; // A list of pointers to LED objects
   std::vector<unsigned char> write; // Data to write to chips
   std::vector<unsigned char> mask; // Enable or disable LED lines 
@@ -75,7 +78,7 @@ private:
   void func();
 
 public:
-  LedDriver(std::shared_ptr<SpiChannel> spi) 
+  LedDriver(SpiChannel & spi) 
     : spi(spi), chips(2), period(10), 
       counter(0), Alarm(500) {
 
@@ -125,7 +128,7 @@ public:
     }
 
     // Read and write data (multiple bytes)
-    std::vector<unsigned char> read = spi -> read_write(data);
+    std::vector<unsigned char> read = spi.read_write(data);
 
     // Bring LE high momentarily
     digitalWrite(PIN::LE, HIGH);
@@ -208,3 +211,5 @@ public:
   std::vector<int> get_rgb_lines() { return rgb_lines; }
 
 };
+
+#endif

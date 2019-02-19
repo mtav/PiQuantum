@@ -60,4 +60,7 @@ class SpiChannel {
 
 };
 
+// Return a reference to an SPI channel
+SpiChannel & getSpiChannel(int channel);
+
 #endif
