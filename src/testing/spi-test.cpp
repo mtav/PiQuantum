@@ -17,17 +17,7 @@
 #include <signal.h>
 #include <unistd.h>
 
-void interrupt(int signal) {
-    if(signal != SIGALRM) {
-        std::cerr << "Error: unexpected signal " << signal << ", expected SIGALRM"
-            << std::endl;
-        return;
-    }
-}
-
 int main() {
-
-
       
   // Need to call this setup function for wiringPi before
   // using any of its functions. Use wiringPi pin conventions
@@ -46,10 +36,17 @@ int main() {
   // should take this and store it in a shared_ptr
   std::shared_ptr<LedDriver> led_driver = std::make_shared<LedDriver>(spi_0);
 
-  Led led1(0, {7, 6, 5}, led_driver);
-  led1.set_rgb({0.5, 0.5, 0.5});
-
- 
+  Led led0(0, {4, 2, 3}, led_driver);
+  Led led1(0, {7, 5, 6}, led_driver);
+  Led led2(1, {4, 2, 3}, led_driver);
+  Led led3(1, {7, 5, 6}, led_driver);
+  
+  led0.set_rgb({0.0, 0, 1.0});
+  led1.set_rgb({0.0, 0, 1.0});
+  led2.set_rgb({0.0, 0.0, 1.0});
+  led3.set_rgb({0.0, 0.0, 1.0});
+  
+  led_driver -> print();
   
   //std::cout << "red:" << led.get_rgb()[0] << std::endl;
   //std::cout << "greed:" << led.get_rgb()[1] << std::endl;

@@ -90,6 +90,9 @@ public:
     
   } // end of LedDriver()
 
+  // Print the registered LEDs
+  void print();
+  
   /** 
    * @brief Turn on an LED via the external display driver TLC591x
    *
