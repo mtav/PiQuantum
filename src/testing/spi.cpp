@@ -9,17 +9,6 @@
 
 #include "spi.hpp"
 
-// Return a reference to SPI channel
-SpiChannel & getSpiChannel(int channel, double freq) {
-  static SpiChannel spi(channel, freq);
-  return spi;
-}
-
-// Return parameters
-int SpiChannel::get_channel() {
-  return channel;
-}
-
 SpiChannel::SpiChannel(int channel, int frequency) : channel(channel) {
     // Check channel
     if((channel !=0) && (channel != 1)) {

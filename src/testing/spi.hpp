@@ -57,12 +57,7 @@ class SpiChannel {
         // Read and write a single byte of data
         unsigned char read_write(const unsigned char write);
 
-  // Return parameters
-  int get_channel();
 
 };
-
-// Return a reference to an SPI channel
-SpiChannel & getSpiChannel(int channel, double frequency);
 
 #endif

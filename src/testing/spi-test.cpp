@@ -39,13 +39,9 @@ int main() {
 
   // Shared SPI channel objects for channel 0 and 1. Everything using
   // SPI should take this variable and store it in a shared_ptr object
-  SpiChannel & spi = getSpiChannel(1, 50000);
-  std::cout << spi.get_channel() << std::endl;
-  SpiChannel & spi1 = getSpiChannel(0, 50000);
-  std::cout << spi.get_channel() << std::endl;
-  std::cout << spi1.get_channel() << std::endl;
+  std::shared_ptr<SpiChannel> spi_0 = std::make_shared<SpiChannel>(0, 500000); 
+  std::shared_ptr<SpiChannel> spi_1 = std::make_shared<SpiChannel>(1, 500000);
 
-  /*
   // A shared object for driving TLC591x based LEDs. Each LED object
   // should take this and store it in a shared_ptr
   std::shared_ptr<LedDriver> led_driver = std::make_shared<LedDriver>(spi_0);
@@ -58,7 +54,7 @@ int main() {
   //std::cout << "red:" << led.get_rgb()[0] << std::endl;
   //std::cout << "greed:" << led.get_rgb()[1] << std::endl;
   //std::cout << "blue:" << led.get_rgb()[2] << std::endl;
-  */
+  
   
   /*
     unsigned char byte = 0;
