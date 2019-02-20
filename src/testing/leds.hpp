@@ -128,7 +128,7 @@ public:
     }
 
     // Read and write data (multiple bytes)
-    std::vector<unsigned char> read = spi -> read_write(data);
+    spi -> write(data);
 
     // Bring LE high momentarily
     digitalWrite(PIN::LE, HIGH);
