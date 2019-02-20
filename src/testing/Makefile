@@ -2,8 +2,8 @@
 all: main.cpp
 	g++ main.cpp -o prog -lmenu -lncurses
 
-spi-test: spi.o leds.o spi-test.cpp
-	g++ spi-test.cpp spi.o leds.o -o spi-test -lwiringPi
+spi-test: spi.o leds.o wpi.o spi-test.cpp
+	g++ spi-test.cpp spi.o wpi.o leds.o -o spi-test -lwiringPi
 
 spi.o: spi.cpp spi.hpp
 	g++ -c spi.cpp -o spi.o
@@ -32,6 +32,9 @@ button_test: buttons.cpp spi.o
 
 bluetooth-test: bluetooth-test.c
 	gcc bluetooth-test.c -lbluetooth -o bluetooth-test
+
+wpi.o: wpi.hpp wpi.cpp
+	g++ -c wpi.cpp -o wpi.o
 
 clean:
 	rm -rf prog spi-test menu-test *.o

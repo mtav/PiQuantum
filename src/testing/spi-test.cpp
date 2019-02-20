@@ -9,7 +9,7 @@
 
 #include <iostream>
 #include "spi.hpp"
-#include <wiringPi.h>
+#include "wpi.hpp"
 #include "leds.hpp"
 
 #include <cstdlib>
@@ -19,10 +19,6 @@
 
 int main() {
       
-  // Need to call this setup function for wiringPi before
-  // using any of its functions. Use wiringPi pin conventions
-  // (see the reference -> setup section of the wiringPi website).
-  wiringPiSetup();
 
   Led led0(0, {4, 2, 3});
   //Led led1(0, {7, 5, 6});
