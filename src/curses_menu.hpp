@@ -7,6 +7,10 @@
  * global colours and positions.
  *
  */
+
+#ifndef curses_menu
+#define curses_menu
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,7 +34,6 @@ int start_menu(char * choices[], int n_choices){
     MENU * my_menu;
     WINDOW *my_menu_win;
     int i;
-    ITEM * cur_item;
 
     // Initialize curses 
     initscr();
@@ -161,4 +164,4 @@ int start_menu(char * choices[], int n_choices){
 }
 
 
-
+#endif 

@@ -33,18 +33,22 @@
  *       Write QASM 
  */
 
-int main() {
+int main() 
+{
 
-    int choice;
+    int main_choice;
     std::cout << "Enter a choice: \n 0 for no menu, \n 1 for working menu \n 2 for newTM menu"; 
-    std::cin >> choice;
+    std::cin >> main_choice;
 
-    {if (choice == 0){
+    if(main_choice == 0)
+    {
+        std::cout << "0" << std::endl;
         //////////////////////////////////////////////////////////////////////////////////////
         //              PUT ALL MAIN CODE HERE!
 
     }
-    else if (choice == 1){
+    else if(main_choice == 1)
+    {
 
         // do menu stuff - see menu_options.hpp
         int choice=1;
@@ -75,10 +79,11 @@ int main() {
                     // QASM
                     func_qasm_menu();
                     break;
-            }
-        }
+            };
+        };
     } 
-    else if (choice == 2){
+    else if(main_choice == 2)
+    {
         /*
         // new menu 
         FancyTerm term;
@@ -111,4 +116,4 @@ int main() {
         */
 
     }
-}
+};
