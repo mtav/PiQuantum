@@ -20,6 +20,7 @@
 #include <string.h>
 #include <vector>
 #include <algorithm>
+#include <memory>
 
 // easier to read.
 typedef std::vector<unsigned char> unsgn_char_vect;
@@ -63,5 +64,17 @@ class SpiChannel {
         // write takes ref vector 
         void write(const unsgn_char_vect & write);
 };
+
+/**
+ * @brief Wrapper to return SPI class
+ *
+ * @detail Return a shared_ptr object to an SPI channel.
+ * This function is a kind of singleton implementation, 
+ * preventing multiple copies of the SPI class. The actual
+ * SPI objects are stored in static variables so that they 
+ * retain their value between function calls.   
+ *
+ */
+std::shared_ptr<SpiChannel> getSpiChannel(int channel);
 
 #endif

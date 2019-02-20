@@ -10,6 +10,23 @@
 #include <wiringPi.h>
 #include "leds.hpp"
 
+/**
+ * @brief Wrapper to return LedDriver class
+ *
+ * @detail Return a shared_ptr object to an LedDriver. Pass 
+ * a channel to indicate which SPI channel to use
+ * 
+ */
+std::shared_ptr<LedDriver> getLedDriver(int channel) {
+  // Static pointer to LED driver
+  static std::shared_ptr<LedDriver> driver;
+  // If necessary, make a new SPI channel
+  if(driver == nullptr)
+    driver = std::make_shared<LedDriver>(getSpiChannel(channel));
+  // Return the spi channel pointer
+  return driver; 
+}
+
 Alarm * Alarm::alrm = nullptr; // A pointer to an alarm class
 
 // Print the registered LEDs
@@ -24,9 +41,9 @@ void LedDriver::print() {
 	      << "B: "<< i -> get_rgb_lines()[2] << ", "
 	      << std::endl
 	      << "Levels: "
-	      << "R: "<< i -> get_rgb()[0] << ", " 
-	      << "G: "<< i -> get_rgb()[1] << ", "
-	      << "B: "<< i -> get_rgb()[2] << ", "
+	      << "R: "<< i -> rgb()[0] << ", " 
+	      << "G: "<< i -> rgb()[1] << ", "
+	      << "B: "<< i -> rgb()[2] << ", "
 	      << std::endl;
     count ++;
   }
@@ -53,7 +70,7 @@ void LedDriver::func() {
     // Need to ensure i still exists here
     int chip = i -> get_chip();
     std::vector<int> rgb_lines = i -> get_rgb_lines();
-    std::vector<double> rgb_values = i -> get_rgb();
+    std::vector<double> rgb_values = i -> rgb();
     // Loop over RGB setting corresponding bits
     for(int k = 0; k < 3; k++) {
       if((counter/period) > (1 - rgb_values[k]))
