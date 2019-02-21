@@ -7,6 +7,9 @@
  *
  */
 
+#ifndef menu_hpp
+#define menu_hpp
+
 #include <iostream>
 #include <menu.h>
 #include <curses.h>
@@ -420,3 +423,5 @@ public:
     
   }
 };
+
+#endif

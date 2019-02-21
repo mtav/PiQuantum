@@ -1,3 +1,7 @@
+
+#ifndef consts
+#define consts
+
 #include <Eigen/Core>
 #include <complex>
 #include <iostream>
@@ -39,3 +43,5 @@ static Eigen::Matrix4cd CNOT = (Eigen::Matrix4cd() <<
         0, 0, 1, 0).finished(); 
 
 */
+
+#endif

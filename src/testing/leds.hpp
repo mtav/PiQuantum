@@ -49,6 +49,26 @@ class Alarm {
 
 // Forward declaration
 class Led;
+class LedDriver;
+
+/**
+ * @brief Wrapper to return LedDriver class
+ *
+ * @detail Return a shared_ptr object to an LedDriver. Pass 
+ * a channel to indicate which SPI channel to use
+ * 
+ */
+std::shared_ptr<LedDriver> getLedDriver(int channel);
+
+// Store the chip and line number for a particular
+// LED
+typedef struct {
+  int chip;
+  int line;
+} Lines;
+
+// Print the chip/lines for an LED
+std::ostream & operator << (std::ostream & stream, Lines lines);
 
 class LedDriver : public Alarm {
 private:
@@ -128,7 +148,7 @@ public:
     }
 
     // Read and write data (multiple bytes)
-    std::vector<unsigned char> read = spi -> read_write(data);
+    spi -> write(data);
 
     // Bring LE high momentarily
     digitalWrite(PIN::LE, HIGH);
@@ -163,30 +183,20 @@ private:
   // write it to the hardware device
   std::shared_ptr<LedDriver> driver;
     
-  // RGB values (between zero and one)
-  double red;
-  double green;
-  double blue;
+  // Chip and line numbers 
+  const std::vector<Lines> lines;
 
-  // Chip and line number
-  const int chip; 
-  const std::vector<int> rgb_lines;
+  // RGB values (between zero and one)
+  std::vector<double> rgb_values; // In order [0]=r, [1]=g, [2]=b
   
 public:
-
+  
   // Initialise with zero RGB values
-  Led(int chip, std::vector<int> rgb_lines, std::shared_ptr<LedDriver> driver)
-    : red(0), green(0), blue(0),
-      chip(chip), rgb_lines(rgb_lines), driver(driver)
+  Led(Lines r, Lines g, Lines b)
+    : rgb_values(3,0), lines({r,g,b}), driver(getLedDriver(0))
   {
     // Register the Led object with the driver
-    driver -> register_led(this);
-
-    // Check the the line vector is the right length
-    if(rgb_lines.size() != 3) {
-      std::cerr << "Error: wrong number of RGB lines" << std::endl;
-      abort();
-    }
+    driver -> register_led(this); 
   }
 
   ~Led() {
@@ -196,18 +206,17 @@ public:
     //driver -> deregister_led(id);
   }
 
-  void set_rgb(std::vector<double> rgb) {
-    red = rgb[0];
-    green = rgb[1];
-    blue = rgb[2];
+  // Read and write the RGB value
+  // May as well just make this public...
+  void rgb(double red, double green, double blue) {
+    rgb_values[0] = red;
+    rgb_values[1] = green;
+    rgb_values[2] = blue;
   }
-
-  std::vector<double> get_rgb() {
-    return {red, green, blue};
-  }
+  std::vector<double> rgb() { return rgb_values; }
 
   // Return the chip and line numbers
-  int get_chip() { return chip; }
-  std::vector<int> get_rgb_lines() { return rgb_lines; }
+  std::vector<Lines> get_lines() { return lines; }
 
 };
+

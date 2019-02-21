@@ -1,4 +1,15 @@
-// Need to sudo apt-get install libbluetooth-dev
+/** Need to sudo apt-get install libbluetooth-dev
+ *
+ * This won't run unless you modify the bluetooth service to run in compatibility
+ * mode:
+ *
+ * 1) Go to the file /etc/systemd/system/dbus-org.bluez.service
+ * 2) Change the line ExecStart=/usr/lib/bluetooth/bluetoothd to
+ *    ExecStart=/usr/lib/bluetooth/bluetoothd --compat
+ * 3) Restart the bluetooth service: sudo systemctl daemon-reload followed by
+ *    sudo systemctl restart bluetooth.
+ * 4) Run sudo chmod 777 /var/run/sdp
+ */
 
 #include <stdio.h>
 #include <unistd.h>
@@ -61,6 +72,10 @@ sdp_session_t * register_service() {
     session = sdp_connect( BDADDR_ANY, BDADDR_LOCAL, SDP_RETRY_IF_BUSY );
     err = sdp_record_register(session, record, 0);
 
+    if(err != 0) {
+      printf("Failed to add record");
+    }
+    
     // cleanup
     sdp_data_free( channel );
     sdp_list_free( l2cap_list, 0 );
@@ -77,11 +92,11 @@ int main(int argc, char **argv)
   // Register a bluetooth service
   sdp_session_t * session =  register_service();
   
-    struct sockaddr_rc loc_addr = { 0 }, rem_addr = { 0 };
-    char buf[1024] = { 0 };
-    int s, client, bytes_read;
-    socklen_t opt = sizeof(rem_addr);
-
+  struct sockaddr_rc loc_addr = { 0 }, rem_addr = { 0 };
+  char buf[1024] = { 0 };
+  int s, client, bytes_read;
+  socklen_t opt = sizeof(rem_addr);
+  
     // allocate socket
     s = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
 
