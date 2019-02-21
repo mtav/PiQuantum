@@ -17,8 +17,7 @@
 #include <signal.h>
 #include <unistd.h>
 
-int main() {
-      
+int main() {    
 
   Led led0({{0,4}, {0,2}, {0,3}});
   //Led led1(0, {7, 5, 6});
@@ -26,7 +25,7 @@ int main() {
   //Led led3(1, {7, 5, 6});
 
   
-  led0.rgb(0.0, 0, 1.0);
+  //led0.rgb(0.0, 0, 1.0);
   //led1.set_rgb({0.0, 0, 1.0});
   //led2.set_rgb({0.0, 0.0, 1.0});
   //led3.set_rgb({0.0, 0.0, 1.0});

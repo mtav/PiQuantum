@@ -193,11 +193,12 @@ public:
   
   // Initialise with zero RGB values
   Led(std::vector<Lines> rgb_lines)
-    : rgb_values(3,0), lines(lines), driver(getLedDriver(0))
+    : rgb_values(3,0), lines(rgb_lines), driver(getLedDriver(0))
   {
+
     // Register the Led object with the driver
     driver -> register_led(this);
-
+    
     // Check the the line vector is the right length
     if(rgb_lines.size() != 3) {
       std::cerr << "Error: wrong number of RGB lines" << std::endl;

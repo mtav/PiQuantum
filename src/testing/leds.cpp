@@ -33,7 +33,8 @@ Alarm * Alarm::alrm = nullptr; // A pointer to an alarm class
 void LedDriver::print() {
   int count = 0; // Index the LEDs
   for(Led * i : leds) {
-    std::cout << "-------" << std::endl;
+    std::cout << "------------------------------------"
+	      << std::endl;
     std::cout << "LED " << count << ": "<< std::endl;
     std::cout << "Lines: "
 	      << "R: " << i -> get_lines()[0] << ", " 
@@ -85,10 +86,11 @@ void LedDriver::func() {
 void LedDriver::register_led(Led * led) {
   // Add the LED to the leds vector or pointers
   leds.push_back(led);
-  
+
   // Enable LED lines
   for(int k=0; k < 3; k++)
     mask[led -> get_lines()[k].chip] |= (1 << led -> get_lines()[k].line);
+
 }
 
 // Print the chip/lines for an LED
