@@ -36,14 +36,14 @@ void LedDriver::print() {
     std::cout << "-------" << std::endl;
     std::cout << "LED " << count << ": "<< std::endl;
     std::cout << "Lines: "
-	      << "R: "<< i -> get_rgb_lines()[0] << ", " 
-	      << "G: "<< i -> get_rgb_lines()[1] << ", "
-	      << "B: "<< i -> get_rgb_lines()[2] << ", "
+	      << "R: " << i -> get_lines()[0] << ", " 
+	      << "G: " << i -> get_lines()[1] << ", "
+	      << "B: " << i -> get_lines()[2] << ", "
 	      << std::endl
 	      << "Levels: "
-	      << "R: "<< i -> rgb()[0] << ", " 
-	      << "G: "<< i -> rgb()[1] << ", "
-	      << "B: "<< i -> rgb()[2] << ", "
+	      << "R: " << i -> rgb()[0] << ", " 
+	      << "G: " << i -> rgb()[1] << ", "
+	      << "B: " << i -> rgb()[2] << ", "
 	      << std::endl;
     count ++;
   }
@@ -68,13 +68,11 @@ void LedDriver::func() {
   // data (length = chips, value = 0)
   for(Led * i : leds) {
     // Need to ensure i still exists here
-    int chip = i -> get_chip();
-    std::vector<int> rgb_lines = i -> get_rgb_lines();
-    std::vector<double> rgb_values = i -> rgb();
     // Loop over RGB setting corresponding bits
     for(int k = 0; k < 3; k++) {
-      if((counter/period) > (1 - rgb_values[k]))
-	write[chip] |= (1 << rgb_lines[k]); // Write a 1 in correct position
+      if((counter/period) > (1 - i -> rgb()[k]))
+	write[i -> get_lines()[k].chip]
+	  |= (1 << i -> get_lines()[k].line); // Write a 1 in correct position
     }
   } // Turn on LED
   for(int i = 0; i < chips; i++)
@@ -89,6 +87,12 @@ void LedDriver::register_led(Led * led) {
   leds.push_back(led);
   
   // Enable LED lines
-  for(int i=0; i < 3; i++)
-    mask[led -> get_chip()] |= (1 << led -> get_rgb_lines()[i]);
+  for(int k=0; k < 3; k++)
+    mask[led -> get_lines()[k].chip] |= (1 << led -> get_lines()[k].line);
+}
+
+// Print the chip/lines for an LED
+std::ostream & operator << (std::ostream & stream, Lines lines) {
+  stream << "(" << lines.chip << ", " << lines.line << ")"; 
+  return stream;
 }

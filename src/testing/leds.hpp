@@ -60,6 +60,16 @@ class LedDriver;
  */
 std::shared_ptr<LedDriver> getLedDriver(int channel);
 
+// Store the chip and line number for a particular
+// LED
+typedef struct {
+  int chip;
+  int line;
+} Lines;
+
+// Print the chip/lines for an LED
+std::ostream & operator << (std::ostream & stream, Lines lines);
+
 class LedDriver : public Alarm {
 private:
   const int chips; // Number of TLC591x chips
@@ -173,9 +183,8 @@ private:
   // write it to the hardware device
   std::shared_ptr<LedDriver> driver;
     
-  // Chip and line number
-  const int chip; 
-  const std::vector<int> rgb_lines;
+  // Chip and line numbers 
+  const std::vector<Lines> lines;
 
   // RGB values (between zero and one)
   std::vector<double> rgb_values; // In order [0]=r, [1]=g, [2]=b
@@ -183,8 +192,8 @@ private:
 public:
   
   // Initialise with zero RGB values
-  Led(int chip, std::vector<int> rgb_lines)
-    : rgb_values(3,0), chip(chip), rgb_lines(rgb_lines), driver(getLedDriver(0))
+  Led(std::vector<Lines> rgb_lines)
+    : rgb_values(3,0), lines(lines), driver(getLedDriver(0))
   {
     // Register the Led object with the driver
     driver -> register_led(this);
@@ -213,8 +222,7 @@ public:
   std::vector<double> rgb() { return rgb_values; }
 
   // Return the chip and line numbers
-  int get_chip() { return chip; }
-  std::vector<int> get_rgb_lines() { return rgb_lines; }
+  std::vector<Lines> get_lines() { return lines; }
 
 };
 
