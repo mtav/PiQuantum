@@ -1,15 +1,18 @@
 # Run `make all', `make spi', etc.
+
+CFLAGS = -Wall -g -std=c++11 
+
 all: main.cpp
 	g++ main.cpp -o prog -lmenu -lncurses
 
-spi-test: spi.o leds.o spi-test.cpp
-	g++ spi-test.cpp spi.o leds.o -o spi-test -lwiringPi
+spi-test: spi.o leds.o wpi.o spi-test.cpp
+	g++ $(CFLAGS) spi-test.cpp spi.o wpi.o leds.o -o spi-test -lwiringPi
 
 spi.o: spi.cpp spi.hpp
-	g++ -c spi.cpp -o spi.o
+	g++ $(CFLAGS)-c spi.cpp -o spi.o
 
 leds.o: leds.cpp leds.hpp
-	g++ -c leds.cpp -o leds.o
+	g++ $(CFLAG)-c leds.cpp -o leds.o
 
 menu.o: menu.cpp menu.hpp 
 	g++ -std=c++11 -Wall -c menu.cpp -o menu.o
@@ -32,6 +35,9 @@ button_test: buttons.cpp buttons.hpp spi.o
 
 bluetooth-test: bluetooth-test.c
 	gcc bluetooth-test.c -lbluetooth -o bluetooth-test
+
+wpi.o: wpi.hpp wpi.cpp
+	g++ -c wpi.cpp -o wpi.o
 
 clean:
 	rm -rf prog spi-test menu-test *.o

@@ -9,6 +9,33 @@
 
 #include "spi.hpp"
 
+/**
+ * @brief Wrapper to return SPI class
+ *
+ * @detail Return a shared_ptr object to an SPI channel.
+ * This function is a kind of singleton implementation, 
+ * preventing multiple copies of the SPI class. The actual
+ * SPI objects are stored in static variables so that they 
+ * retain their value between function calls.   
+ *
+ */
+std::shared_ptr<SpiChannel> getSpiChannel(int channel) {
+  // Variables to store the SpiChannels for channel
+  // zero and 1. Initialisation takes place the first time
+  // the function is called and not subsequently, so the
+  // variables start as nullptrs and then take on values
+  // when new SpiChannels are created.
+  using ptr = std::shared_ptr<SpiChannel>;
+  // Set the size of the vector to two
+  static std::vector<ptr> spi = {nullptr, nullptr};
+  // If necessary, make a new SPI channel
+  if(spi[channel] == nullptr)
+    spi[channel] = std::make_shared<SpiChannel>(channel, 500000);
+  // Return the spi channel pointer
+  return spi[channel];
+  
+}
+
 SpiChannel::SpiChannel(int channel, int frequency) : channel(channel) {
     // Check channel
     if((channel !=0) && (channel != 1)) {
