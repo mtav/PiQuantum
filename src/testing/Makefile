@@ -27,7 +27,7 @@ static_test:
 	g++ -std=c++11 -Wall -c static_test_2.cpp -o static_test_2.o
 	g++ -std=c++11 -Wall static_test_1.cpp static_test_2.o -o static
 
-button_test: buttons.cpp spi.o
+button_test: buttons.cpp buttons.hpp spi.o
 	g++ buttons.cpp spi.o -o button_test -lwiringPi
 
 bluetooth-test: bluetooth-test.c

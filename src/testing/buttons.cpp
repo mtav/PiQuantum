@@ -4,14 +4,15 @@
 
 int main(void){
 
-    Button_driver BD;
+  //wiringPiSetup();
+  
+  //Button_driver BD;
 
     // make a button for qubit 1 on chip_1 and pin_1 
     //Button qubit1(1, 1);
 
     // check if qubit1 is selected with
     //qubit1.is_pressed();    // returns 0 or 1
-
 
     // TWO OPTIONS A CLASS OR DECLARE IN A FUNCTION HERE
     // WANT VECTORS OF BUTTONS, e.g QUBITS, GATES, DISP, FUNCTIONS
@@ -37,14 +38,20 @@ int main(void){
     /// 00000001 btn A13-15 -> logical 4 
     /// 00001000 btn A10-12 -> logical 5
 
-
-    std::vector<Button> qubit( {Button(0,2, BD)});
+  SpiChannel spi(1, 500000);
+  while(1) std::vector<unsigned char> thing = spi.read(1);
+  
+  //Button btn(0,2);
+  //btn.print_pos();
+  //while(1) btn.is_pressed();
+  
+    //std::vector<Button> qubit( {Button(0,2, BD)});
     //  , Button(1,7, BD), Button(1,1, BD),
     // Button(1,2, BD)});
 
     //   std::vector<Button> func_buttons({Button(1,0, BD), Button(1,3, BD), Button(0,1, BD), 
     //            Button(0,0, BD), Button(0,3, BD)});
-
+  /*
 
     // checking it is doing what we want, it is!
     std::cout<< "There are " << qubit.size() << " qubit buttons" <<std::endl;
@@ -66,4 +73,5 @@ int main(void){
             }
         }
     }
+  */
 }
