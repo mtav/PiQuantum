@@ -9,7 +9,7 @@
 CC = g++
 
 # define any compile-time flags
-CFLAGS = -Wall -g 
+CFLAGS = -Wall -g -O2
 
 # define any directories containing header files other than /usr/include
 #
@@ -71,7 +71,7 @@ depend: $(SRCS)
 
 # DO NOT DELETE THIS LINE -- make depend needs it
 
-math_test.o: state.hpp /usr/include/eigen3/Eigen/Core
+math_test.o: /usr/include/eigen3/Eigen/Core
 math_test.o: /usr/include/eigen3/Eigen/src/Core/util/DisableStupidWarnings.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/util/Macros.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/util/MKL_support.h
@@ -180,6 +180,7 @@ math_test.o: /usr/include/eigen3/Eigen/src/Core/Reverse.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/ArrayWrapper.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/GlobalFunctions.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/util/ReenableStupidWarnings.h
+math_test.o: /usr/include/stdlib.h /usr/include/stdio.h state.hpp
 state.o: state.hpp /usr/include/eigen3/Eigen/Core
 state.o: /usr/include/eigen3/Eigen/src/Core/util/DisableStupidWarnings.h
 state.o: /usr/include/eigen3/Eigen/src/Core/util/Macros.h

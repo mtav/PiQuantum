@@ -1,42 +1,27 @@
-#include <Eigen/Core>
-#include <stdlib.h>
-#include <stdio.h>
-
 #include <iostream>
 
-#include "consts.hpp"
+#include "state.hpp"
 
-
-int mat_test(void)
+int main(void)
 {
-    // call constructor 
 
-    // Print X
-    std::cout << "X is.." << std::endl;
-    X.print();
+    State_vector state(2);
 
-    std::cout << "State vector is" <<std::endl;
+    // take args, num of qubits to act on and angle
+    Rotation_X X;
+    Rotation_Y Y;
+    Rotation_Z Z;
+    Hadamard H;
+
+    // meaning create a X that is controlled on 1 qubit 
+    Rotation_X CNOT(2);
+
     state.print();
 
-    std::cout << "size " << state.get_size() << std::endl;
-    // std::cout << state.get_eigen_size() << std::endl;
+    // max sup state
+    state.apply(H,0);
+    state.apply(H,1);
 
-    // Operation example
-    X | 0; // Do X on qubit zero
-
-    // Print the new state vector
-    std::cout << "After X on qubit zero..." <<std::endl;
-    state.print();
-
-    // Do Y on qubit 1
-    X | 1;
-
-    // Print the new state vector
-    std::cout << "After Y on qubit one (too tired to decide if it's right :P)..."
-	      <<std::endl;
-    state.print();
-
-
+    state.apply(CNOT, 0, 1);
+    return 0;
 }
-
-
