@@ -1,4 +1,9 @@
-
+/**
+ * @file state.cpp
+ * @authors J Scott, O Thomas
+ * @date Feb 2019
+ * @brief State vector class
+ */
 
 
 #include "state.hpp"
@@ -101,7 +106,6 @@ void State_vector::single_qubit_op(const Eigen::Matrix2cd & op, int qubit) {
         for(int j=0; j<size; j+=high_incr) {
             // 2x2 matrix multiplication on the zero (i+j)
             // and one (i+j+bit) indices
-            //i mat_mul(op, state, i+j, i+j+bit);
             temp = mat_mul(op, vect, i+j, i+j+bit);
             vect(i+j) = temp(0); 
             vect(i+j+bit) = temp(1);
@@ -215,7 +219,6 @@ void State_vector::two_qubit_op(const Eigen::Matrix2cd & op, int ctrl, int targ)
             /// root + step + root_max contain 1 in the ctrl-th bit. 
             if( (((root+step) & (1 << ctrl)) && ((root+step+root_max) & (1 << ctrl))) == 1)
             {
-                //mat_mul(op, state, root + step, root + root_max + step);
                 temp = mat_mul(op, vect, root+step, root+root_max+step);
                 vect(root+step) = temp(0);
                 vect(root+step+root_max) = temp(1);

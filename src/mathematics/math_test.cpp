@@ -1,12 +1,15 @@
 #include <iostream>
-
 #include "state.hpp"
 
 int main(void)
 {
+    // TIMINGS @note 2-qubit gates take half the time of singles.
+    //      0.01s/gate for 20 qubits
+    //      0.9s/gate for 26 qubits
+    //      1.8s/gate for 27
     // makes the vacuum state.
     State_vector state(20);
-    
+
     // take args, num of qubits to act on and angle
     Rotation_X X;
     Rotation_Y Y;
@@ -16,16 +19,17 @@ int main(void)
     // meaning create a X that is controlled on 1 qubit 
     Rotation_X CNOT(2);
 
-    state.apply(X,0);
-    state.apply(X,1);
+    for(int i=0; i<10; i++)
+    {
+        state.apply(X,0);
+    }
+    //// max sup state
+    // state.apply(H,0);
+    // state.apply(H,1);
 
-    // max sup state
- //   state.apply(H,0);
-    //state.apply(H,1);
+    //  state.print();
+    //  state.apply(CNOT, 0, 1);
+    //  state.print();
 
-  //  state.print();
- //   state.apply(CNOT, 0, 1);
-//  state.print();
-    
     return 0;
 }
