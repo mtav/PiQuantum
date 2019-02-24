@@ -24,7 +24,7 @@ class Operator {
     Operator() {}
 };
 
-// Gates, all default args are the three paulis X, Y, Z
+// Gates, all default args are the three paulis X, Y, Z & H
 class Rotation_X : public Operator {
     private:
         double angle;
@@ -109,18 +109,12 @@ class State_vector {
     }
 
     // use to apply gates
-    void apply(const Operator & op, int qubit)
-    {
-        single_qubit_op(op.matrix, qubit);
-        std::cout << " You applied " << op.name << " on qubit " << qubit << std::endl; 
-    }
-
+    void apply(const Operator & op, int qubit);
     // two qubit version
-    void apply(const Operator & op, int ctrl, int targ)
-    {
-        two_qubit_op(op.matrix, ctrl, targ);
-        std::cout <<"You applied " << op.name << " controlled on " << ctrl << " target " << targ << std::endl;
-    }
+    void apply(const Operator & op, int ctrl, int targ);
 
 };
+
+
+
 #endif
