@@ -11,7 +11,7 @@
 
 #include <Eigen/Core>
 #include <iostream>
-//#include <vector>
+#include <vector>
 
 const double PI=4.0*atan(1.0);
 const std::complex<double> I_unit(0.0, 1.0);
@@ -20,16 +20,16 @@ const std::complex<double> I_unit(0.0, 1.0);
 // operators have a name, matrix and if they are single or two-qubit gates
 class Operator {
     public:
-    // e.g. single or 2 qubit control gate
-    int num_qubits;
-    std::string name;
-    Eigen::Matrix2cd matrix;
+        // e.g. single or 2 qubit control gate
+        int num_qubits;
+        std::string name;
+        Eigen::Matrix2cd matrix;
 
-    // ---------------------- methods ------------------------
-    int get_num_qubits(){return num_qubits;};
-    void print(){std::cout << matrix <<std::endl;};
+        // ---------------------- methods ------------------------
+        int get_num_qubits(){return num_qubits;};
+        void print(){std::cout << matrix <<std::endl;};
 
-    Operator() {}
+        Operator() {}
 };
 
 // Gates, all default args are the three paulis X, Y, Z & H
@@ -38,12 +38,12 @@ class Rotation_X : public Operator {
         double angle;
     public:
         Rotation_X(int num_qubit_act_on=1, double theta=PI) : angle(theta)
-        {
-            matrix << cos(angle/2), sin(angle/2),
-                      sin(angle/2), cos(angle/2);
-            num_qubits = num_qubit_act_on;
-            name = "X";
-        }
+    {
+        matrix << cos(angle/2), sin(angle/2),
+               sin(angle/2), cos(angle/2);
+        num_qubits = num_qubit_act_on;
+        name = "X";
+    }
 };
 
 class Rotation_Y : public Operator {
@@ -51,12 +51,12 @@ class Rotation_Y : public Operator {
         double angle;
     public:
         Rotation_Y(int num_qubit_act_on=1, double theta=PI) : angle(theta)
-        {
-            matrix << cos(angle/2), -I_unit*sin(angle/2),
-                      I_unit*sin(angle/2), cos(angle/2);
-            num_qubits = num_qubit_act_on;
-            name = "Y";
-        }
+    {
+        matrix << cos(angle/2), -I_unit*sin(angle/2),
+               I_unit*sin(angle/2), cos(angle/2);
+        num_qubits = num_qubit_act_on;
+        name = "Y";
+    }
 };
 
 class Rotation_Z : public Operator {
@@ -64,12 +64,12 @@ class Rotation_Z : public Operator {
         double angle;
     public:
         Rotation_Z(int num_qubit_act_on=1, double theta=PI) : angle(theta)
-        {
-            matrix << 1.0 , 0.0,
-                      0.0, exp(I_unit*angle);
-            num_qubits = num_qubit_act_on;
-            name = "Z";
-        }
+    {
+        matrix << 1.0 , 0.0,
+               0.0, exp(I_unit*angle);
+        num_qubits = num_qubit_act_on;
+        name = "Z";
+    }
 };
 
 class Hadamard : public Operator {
@@ -78,7 +78,7 @@ class Hadamard : public Operator {
         Hadamard(int num_qubit_act_on = 1)
         {
             matrix << 1.0, 1.0,
-                      1.0, -1.0;
+                   1.0, -1.0;
             matrix = (1/sqrt(2.0)) * matrix;
             name = "H";
         }
@@ -88,38 +88,83 @@ class Hadamard : public Operator {
 // ------------ ThE gRaNd StAtE vEcToR cLaSs ---------------
 class State_vector {
     private:
-    int num_qubits;
-    int size;
-    Eigen::VectorXcd vect;
+        int num_qubits;
+        int size;
+        Eigen::VectorXcd vect;
 
-    void single_qubit_op(const Eigen::Matrix2cd & op, int qubit);
-    
-    void two_qubit_op(const Eigen::Matrix2cd & op, int ctrl, int targ);
-    Eigen::Vector2cd mat_mul(const Eigen::Matrix2cd & op, const Eigen::VectorXcd & v, int i, int j);
-    
+        void single_qubit_op(const Eigen::Matrix2cd & op, int qubit);
+
+        void two_qubit_op(const Eigen::Matrix2cd & op, int ctrl, int targ);
+        Eigen::Vector2cd mat_mul(const Eigen::Matrix2cd & op, const Eigen::VectorXcd & v, int i, int j);
+
+        std::vector<int> qubit_indices(int qubit);
+
+        // [000 001 010 011 100 101 110 111] 
+        // right most qubit 0
+        // 0,1 [000 001]
+        // 2,3 [010 011]
+        // 4,5 [100 101]
+        // 6,7 [110 111]
+        struct Qubit_index {
+            std::vector<int> zero;
+            std::vector<int> one; 
+        };
+
     public:
-    // ------------------ methods --------------------------
-    int get_num_qubits(){return num_qubits;};
-    int get_size(){return size;}; 
-    void print(void){std::cout << vect << std::endl;};
+        std::vector<Qubit_index> qubit_index;
+        // ------------------ methods --------------------------
+        int get_num_qubits(){return num_qubits;};
+        int get_size(){return size;}; 
+        void print(void){std::cout << vect << std::endl;};
 
-    // -------------- constructors --------------------------
-    // default case if no qubits are specified
-    State_vector() {}
+        // -------------- constructors --------------------------
+        // default case if no qubits are specified
+        State_vector() {}
 
-    // if one int passed take as number of qubits 
-    State_vector(int num_qubits)
-    {
-        size = pow(2, num_qubits);
-        vect = Eigen::VectorXcd::Zero(size);
-        // make the first element 1 (Vacuum state)
-        vect(0)=1.0;
-    }
+        // if one int passed take as number of qubits 
+        State_vector(int num) : num_qubits(num)
+        {
+            size = pow(2, num);
+            vect = Eigen::VectorXcd::Zero(size);
+            // make the first element 1 (Vacuum state)
+            vect(0)=1.0;
+            
+            /// @todo this list makes the program take @ 10x as long at start up
+            // probably worth it if more than a few gates are performed
+            populate_qubit_indices(qubit_index);
+        }
 
-    // use to apply gates
-    void apply(const Operator & op, int qubit);
-    // two qubit version
-    void apply(const Operator & op, int ctrl, int targ);
+        // use to apply gates
+        void apply(const Operator & op, int qubit);
+        // two qubit version
+        void apply(const Operator & op, int ctrl, int targ);
+
+        // fill qubit_index with elements
+        // takes the std vector of qubits where each qubit has a zero & one int
+        //
+        void populate_qubit_indices(std::vector<Qubit_index> & list)
+        {
+            list.resize(num_qubits);
+            // loop over all qubits.
+            for(int i=0; i<num_qubits; i++)
+            {
+                // list[i].zero.resize(num_amplitudes);
+                // list[i].one.resize(num_amplitudes);
+                // the bit pos for qubit i
+                int bit = (1 << i);
+                int high_incr = (bit << 1);
+                // calc the positions of the pairs of zeros and ones
+                // like the mat mul and disp averaging 
+                for(int j=0; j<bit; j++)
+                {
+                    for(int k=0; k<size; k+=high_incr)
+                    {
+                        list[i].zero.push_back(j+k);
+                        list[i].one.push_back(j+k+bit);
+                    }
+                }
+            }
+        }
 
 };
 

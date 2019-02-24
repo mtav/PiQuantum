@@ -22,6 +22,14 @@ void State_vector::apply(const Operator & op, int ctrl, int targ)
     std::cout <<"You applied " << op.name << " controlled on " << ctrl << " target " << targ << std::endl;
 }
 
+// returns all pairs of values of indices in the state vector
+// i.e. [00 01 10 11], for qubit 0 return (0,1) for [00 01] & (2,3) for [10 11]
+// for qubit 1 return (0,2) for [00 10] & (1,3) for [01 11]
+//std::vector<int> qubit_indices(int qubit)
+//{
+
+//}
+
 // -------------------------- Matrix multiplication ----------------
 //
 // ------------------- WeIrD iNdEx LoOpInG --------------------
