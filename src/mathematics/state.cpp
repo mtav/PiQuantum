@@ -91,6 +91,162 @@ void State_vector::single_qubit_op(const Eigen::Matrix2cd & op, int qubit) {
     }
 }
 
+
+/*
+ *
+ *
+ * @brief Efficient controlled qubit operation
+ * @param op the operation (ctrl-op is performed)
+ * @param ctrl the index of the ctrl qubit
+ * @param targ the index of the targ qubit
+ * @param state the state vector
+ * 
+ * This function is implemented similarly to the single qubit case above.
+ * Now there are three ranges of indices to increment through, separated by
+ * the two qubit indices. 
+ * 
+
+ void controlled_qubit_op_new(const Complex op[2][2], int ctrl, int targ, Complex state[]) {
+ int small_bit, large_bit;
+ if(ctrl > targ) {
+ small_bit = (1 << targ);
+ large_bit = (1 << ctrl);
+ } else {
+ small_bit = (1 << ctrl);
+ large_bit = (1 << targ);
+ }
+ int mid_incr = (small_bit << 1);
+ int high_incr = (large_bit << 1);
+ int targ_bit = (1 << targ);
+
+// Increment through the indices above largest bit (ctrl or targ)
+for(int i=0; i<STATE_LENGTH; i+=high_incr) {
+// Increment through the middle set of bits
+for(int j=0; j<large_bit; j+=mid_incr) {
+// Increment through the low set of bits
+for(int k=0; j<small_bit; j++) {
+// 2x2 matrix multiplication on the zero (i+j+k)
+// and one (i+j+k+targ_bit) indices. 
+mat_mul(op, state, i+j+k, i+j+k+targ_bit);
+}
+}
+}
+}
+
+/// Old controlled qubit operations
+void controlled_qubit_op(const Complex op[2][2], int ctrl, int targ, Complex state[]) {
+int root_max = pow2(targ); // Declared outside the loop
+/// \bug this needs to be a long int for >16 qubits
+int increment = 2 * root_max;
+/// ROOT loop: starts at 0, increases in steps of 1
+for (int root = 0; root < root_max; root++) {
+/// STEP loop: starts at 0, increases in steps of 2^(k+1)
+for (int step = 0; step < STATE_LENGTH; step += increment) {
+/// First index is ZERO, second index is ONE
+/// @note for 2 qubit case check if the index in the ctrl qubit 
+/// is a 1 then apply the 2x2 unitary else do nothing
+///
+/// @note sorry.
+/// this checks for the first element of the state vector i.e. the target 
+/// qubits |0> and checks that the state vector element is one which the 
+/// control qubit has a |1> state -> (root + step)
+///
+/// The second element of the state vector to take is then the first
+/// +2^(target qubit number). This also needs to be checked that the control
+/// qubit is in the |1>. 
+/// @todo This expression can probably be simplified or broken over lines.
+/// The condition for the if statement is that root+step and
+/// root + step + root_max contain 1 in the ctrl-th bit. 
+if( (((root+step) & (1 << ctrl)) && 
+
+((root+step+root_max) & (1 << ctrl))) == 1){
+mat_mul(op, state, root + step, root + root_max + step);
+}
+}
+}
+}
+*/
+// same as above but different indices for controlled gates.
+void State_vector::two_qubit_op(const Eigen::Matrix2cd & op, int ctrl, int targ)
+{
+    // temp matrix
+    Eigen::Vector2cd temp;
+    int root_max = pow(2, targ); // Declared outside the loop
+    /// \bug this needs to be a long int for >16 qubits
+    int increment = 2 * root_max;
+    /// ROOT loop: starts at 0, increases in steps of 1
+    for (int root = 0; root < root_max; root++)
+    {
+        /// STEP loop: starts at 0, increases in steps of 2^(k+1)
+        for (int step = 0; step < size; step += increment)
+        {
+            /// First index is ZERO, second index is ONE
+            /// @note for 2 qubit case check if the index in the ctrl qubit 
+            /// is a 1 then apply the 2x2 unitary else do nothing
+            ///
+            /// @note sorry.
+            /// this checks for the first element of the state vector i.e. the target 
+            /// qubits |0> and checks that the state vector element is one which the 
+            /// control qubit has a |1> state -> (root + step)
+            ///
+            /// The second element of the state vector to take is then the first
+            /// +2^(target qubit number). This also needs to be checked that the control
+            /// qubit is in the |1>. 
+            /// @todo This expression can probably be simplified or broken over lines.
+            /// The condition for the if statement is that root+step and
+            /// root + step + root_max contain 1 in the ctrl-th bit. 
+            if( (((root+step) & (1 << ctrl)) && ((root+step+root_max) & (1 << ctrl))) == 1)
+            {
+                //mat_mul(op, state, root + step, root + root_max + step);
+                temp = mat_mul(op, vect, root+step, root+root_max+step);
+                vect(root+step) = temp(0);
+                vect(root+step+root_max) = temp(1);
+            }
+        }
+    }
+
+    /* // SUPER BROKEn
+       int small_bit, large_bit;
+       if(ctrl > targ) 
+       {
+       small_bit = (1 << targ);
+       large_bit = (1 << ctrl);
+       } 
+       else 
+       {
+       small_bit = (1 << ctrl);
+       large_bit = (1 << targ);
+       }
+       Eigen::Vector2cd temp;
+       int mid_incr = (small_bit << 1);
+       int high_incr = (large_bit << 1);
+       int targ_bit =  (1 << targ);
+
+
+       std::cout << "ctrl " << ctrl << " targ " << targ << std::endl;
+       std::cout << " small_bit " << small_bit << " large_bit " << large_bit << std::endl;
+       std::cout << " mid incr " << mid_incr << " high_incr " << high_incr << std::endl;
+    // Increment through the low set of bits
+    for(int k=0; k<small_bit; k++)
+    {
+    // Increment through the middle set of bits
+    for(int j=0; j<large_bit; j+=mid_incr) 
+    {
+    // Increment through the indices above largest bit (ctrl or targ)
+    for(int i = 0; i < size; i += high_incr) 
+    {
+    // 2x2 matrix multiplication on the zero (i+j+k)
+    // and one (i+j+k+targ_bit) indices. 
+    std::cout << "i " << i << " j " << j << " k " << k << i+j+k << std::endl;
+    std::cout << "i " << i << " j " << j << " k " << k << targ_bit << i+j+k << std::endl;
+    temp = mat_mul(op, vect, i+j+k, i+j+k+targ_bit);
+    vect(i+j+k) = temp(0);
+    vect(i+j+k+targ_bit) = temp(1);
+    }
+    }
+    }*/
+}
+
 // returns 2 vector,
 // takes 2x2 matrix
 // vector 

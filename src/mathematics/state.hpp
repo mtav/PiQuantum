@@ -8,7 +8,6 @@
 const double PI=4.0*atan(1.0);
 const std::complex<double> I_unit(0.0, 1.0);
 
-
 // --------------------- WoNdErFuL oPeRaToRs --------------
 // operators have a name, matrix and if they are single or two-qubit gates
 class Operator {
@@ -16,14 +15,12 @@ class Operator {
     // e.g. single or 2 qubit control gate
     int num_qubits;
     std::string name;
-
     Eigen::Matrix2cd matrix;
 
     // ---------------------- methods ------------------------
     int get_num_qubits(){return num_qubits;};
     void print(){std::cout << matrix <<std::endl;};
 
-    // ----------------------- CoNsTrUcToR ------------------
     Operator() {}
 };
 
@@ -88,8 +85,10 @@ class State_vector {
     Eigen::VectorXcd vect;
 
     void single_qubit_op(const Eigen::Matrix2cd & op, int qubit);
+    
+    void two_qubit_op(const Eigen::Matrix2cd & op, int ctrl, int targ);
     Eigen::Vector2cd mat_mul(const Eigen::Matrix2cd & op, const Eigen::VectorXcd & v, int i, int j);
-
+    
     public:
     // ------------------ methods --------------------------
     int get_num_qubits(){return num_qubits;};
@@ -119,10 +118,9 @@ class State_vector {
     // two qubit version
     void apply(const Operator & op, int ctrl, int targ)
     {
-        // placeholder two_qubit_op(op.matrix, ctrl, targ)
-        std::cout <<"You will apply " << op.name << " controlled on " << ctrl << " target " << targ << std::endl;
+        two_qubit_op(op.matrix, ctrl, targ);
+        std::cout <<"You applied " << op.name << " controlled on " << ctrl << " target " << targ << std::endl;
     }
-
 
 };
 #endif
