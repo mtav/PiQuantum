@@ -11,12 +11,13 @@ INCLUDES = -I../eigen3
 LFLAGS = -L../lib 
 
 # List all the source files here
+
 SRCS = math_test.cpp state.cpp
 
 OBJS =$(SRCS:.cpp=.o)
 
 # Target 1
-math_test: math_test.o state.o
+math_test: $(OBJS) 
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^ $(LFLAGS) $(LIBS)
 
 # Pattern matching
