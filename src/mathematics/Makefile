@@ -9,11 +9,11 @@
 CC = g++
 
 # define any compile-time flags
-CFLAGS = -Wall -g -O2
+CFLAGS = -Wall -g -O2 -march=native
 
 # define any directories containing header files other than /usr/include
 #
-INCLUDES = -I/usr/include/eigen3 -I.
+INCLUDES = -I/usr/include/eigen3
 
 # define library paths in addition to /usr/lib
 #   if I wanted to include libraries not in /usr/lib I'd specify
@@ -85,7 +85,6 @@ math_test.o: /usr/include/eigen3/Eigen/src/Core/NumTraits.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/MathFunctions.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/GenericPacketMath.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/MathFunctionsImpl.h
-math_test.o: /usr/include/eigen3/Eigen/src/Core/arch/Default/ConjHelper.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/arch/CUDA/Half.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/arch/CUDA/PacketMathHalf.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/arch/CUDA/TypeCasting.h
@@ -97,7 +96,6 @@ math_test.o: /usr/include/eigen3/Eigen/src/Core/functors/NullaryFunctors.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/functors/StlFunctors.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/functors/AssignmentFunctors.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/arch/CUDA/Complex.h
-math_test.o: /usr/include/eigen3/Eigen/src/Core/IO.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/DenseCoeffsBase.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/DenseBase.h
 math_test.o: /usr/include/eigen3/Eigen/src/plugins/BlockMethods.h
@@ -143,6 +141,7 @@ math_test.o: /usr/include/eigen3/Eigen/src/Core/DiagonalProduct.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/Redux.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/Visitor.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/Fuzzy.h
+math_test.o: /usr/include/eigen3/Eigen/src/Core/IO.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/Swap.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/CommaInitializer.h
 math_test.o: /usr/include/eigen3/Eigen/src/Core/GeneralProduct.h
@@ -194,7 +193,6 @@ state.o: /usr/include/eigen3/Eigen/src/Core/NumTraits.h
 state.o: /usr/include/eigen3/Eigen/src/Core/MathFunctions.h
 state.o: /usr/include/eigen3/Eigen/src/Core/GenericPacketMath.h
 state.o: /usr/include/eigen3/Eigen/src/Core/MathFunctionsImpl.h
-state.o: /usr/include/eigen3/Eigen/src/Core/arch/Default/ConjHelper.h
 state.o: /usr/include/eigen3/Eigen/src/Core/arch/CUDA/Half.h
 state.o: /usr/include/eigen3/Eigen/src/Core/arch/CUDA/PacketMathHalf.h
 state.o: /usr/include/eigen3/Eigen/src/Core/arch/CUDA/TypeCasting.h
@@ -206,7 +204,6 @@ state.o: /usr/include/eigen3/Eigen/src/Core/functors/NullaryFunctors.h
 state.o: /usr/include/eigen3/Eigen/src/Core/functors/StlFunctors.h
 state.o: /usr/include/eigen3/Eigen/src/Core/functors/AssignmentFunctors.h
 state.o: /usr/include/eigen3/Eigen/src/Core/arch/CUDA/Complex.h
-state.o: /usr/include/eigen3/Eigen/src/Core/IO.h
 state.o: /usr/include/eigen3/Eigen/src/Core/DenseCoeffsBase.h
 state.o: /usr/include/eigen3/Eigen/src/Core/DenseBase.h
 state.o: /usr/include/eigen3/Eigen/src/plugins/BlockMethods.h
@@ -252,6 +249,7 @@ state.o: /usr/include/eigen3/Eigen/src/Core/DiagonalProduct.h
 state.o: /usr/include/eigen3/Eigen/src/Core/Redux.h
 state.o: /usr/include/eigen3/Eigen/src/Core/Visitor.h
 state.o: /usr/include/eigen3/Eigen/src/Core/Fuzzy.h
+state.o: /usr/include/eigen3/Eigen/src/Core/IO.h
 state.o: /usr/include/eigen3/Eigen/src/Core/Swap.h
 state.o: /usr/include/eigen3/Eigen/src/Core/CommaInitializer.h
 state.o: /usr/include/eigen3/Eigen/src/Core/GeneralProduct.h

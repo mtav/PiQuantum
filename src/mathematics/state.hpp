@@ -131,7 +131,7 @@ class State_vector {
             
             /// @todo this list makes the program take @ 10x as long at start up
             // probably worth it if more than a few gates are performed
-            populate_qubit_indices(qubit_index);
+//            populate_qubit_indices(qubit_index);
         }
 
         // use to apply gates
