@@ -6,15 +6,17 @@
 #
 
 CC = g++
-CFLAGS = -Wall -g -O2
+CFLAGS = -Wall -g -O2 -march=native
 INCLUDES = -I../eigen3
 LFLAGS = -L../lib 
 
 # List all the source files here
-OBJS = math_test.o state.o
+SRCS = math_test.cpp state.cpp
+
+OBJS =$(SRCS:.cpp=.o)
 
 # Target 1
-math_test: math_test.o state.o 
+math_test: math_test.o state.o
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^ $(LFLAGS) $(LIBS)
 
 # Pattern matching
@@ -30,7 +32,7 @@ math_test: math_test.o state.o
 clean:
 	-rm -f *.o *~ math_test
 
-depend: $(OBJS:.o=.cpp)
+depend: $(SRCS)
 	makedepend $(INCLUDES) $^
 # DO NOT DELETE
 
