@@ -1,0 +1,16 @@
+CXXFLAGS = -Wall -g -O2 -I../eigen3
+OBJS = math_test.o state.o
+DEPDIR := .d
+$(shell mkdir -p $(DEPDIR) > /dev/null)
+
+test: $(OBJS)
+	g++ $(OBJS) $(CXXFLAGS) -o test $(LIBS)
+
+-include $(patsubst %.o, $(DEPDIR)/%.d, $(OBJS))
+
+%.o: %.cpp
+	g++ $(CXXFLAGS) -c $< -o $*.o
+	g++ -MM $< > $(DEPDIR)/$*.d
+
+clean:
+	-rm -rf main *.o .d

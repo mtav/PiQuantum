@@ -3,8 +3,8 @@
  * @authors J Scott, O Thomas
  * @date Feb 2019
  * @brief State vector class
+ *
  */
-
 
 #include "state.hpp"
 

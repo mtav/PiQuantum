@@ -3,8 +3,8 @@
  * @authors J Scott, O Thomas
  * @date Feb 2019
  * @brief Header for state vector class and operators
+ *
  */
-
 
 #ifndef state_hpp
 #define state_hpp
