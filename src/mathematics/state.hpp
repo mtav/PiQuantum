@@ -5,7 +5,6 @@
  * @brief Header for state vector class and operators
  */
 
-
 #ifndef state_hpp
 #define state_hpp
 
@@ -123,16 +122,16 @@ class State_vector {
 
         // if one int passed take as number of qubits 
         State_vector(int num) : num_qubits(num)
-        {
-            size = pow(2, num);
-            vect = Eigen::VectorXcd::Zero(size);
-            // make the first element 1 (Vacuum state)
-            vect(0)=1.0;
-            
-            /// @todo this list makes the program take @ 10x as long at start up
-            // probably worth it if more than a few gates are performed
-//            populate_qubit_indices(qubit_index);
-        }
+    {
+        size = pow(2, num);
+        vect = Eigen::VectorXcd::Zero(size);
+        // make the first element 1 (Vacuum state)
+        vect(0)=1.0;
+
+        /// @todo this list makes the program take @ 10x as long at start up
+        // probably worth it if more than a few gates are performed
+        // populate_qubit_indices(qubit_index);
+    }
 
         // use to apply gates
         void apply(const Operator & op, int qubit);
@@ -167,7 +166,6 @@ class State_vector {
         }
 
 };
-
 
 
 #endif

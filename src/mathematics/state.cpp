@@ -5,7 +5,6 @@
  * @brief State vector class
  */
 
-
 #include "state.hpp"
 
 // use to apply gates
@@ -280,8 +279,7 @@ void State_vector::two_qubit_op(const Eigen::Matrix2cd & op, int ctrl, int targ)
 // takes 2x2 matrix
 // vector 
 // and selects the i-th and j-th elements from the vector
-Eigen::Vector2cd State_vector::mat_mul(const Eigen::Matrix2cd & op, 
-        const Eigen::VectorXcd & v, int i, int j)
+Eigen::Vector2cd State_vector::mat_mul(const Eigen::Matrix2cd & op, const Eigen::VectorXcd & v, int i, int j)
 {
     // make temp vector of size 2
     Eigen::Vector2cd temp;
