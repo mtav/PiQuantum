@@ -19,8 +19,9 @@ leds.o: leds.cpp leds.hpp
 menu-test: menu-test.cpp menu.o
 	g++ -std=c++11 -pthread menu-test.cpp menu.o -o menu-test -lncurses
 	-lmenu
-	#consts.o: consts.cpp consts.hpp
-	#	g++ -std=c++11 -I/usr/include/eigen3/ -c consts.cpp -o consts.o
+
+consts.o: consts.cpp consts.hpp
+	g++ -std=c++11 -I/usr/include/eigen3/ -c consts.cpp -o consts.o
 
 math_test.o: math_test.cpp consts.hpp # consts.o
 	g++ -std=c++11 -I/usr/include/eigen3/ -c  math_test.cpp -o
