@@ -1,16 +1,30 @@
-CXXFLAGS = -Wall -g -O2 -I../eigen3
-OBJS = math_test.o state.o
+## General compilation options
+CXXFLAGS = -Wall -g -O2
+CXXFLAGS += -I../eigen3
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) > /dev/null)
+LIBS = 
 
-test: $(OBJS)
-	g++ $(OBJS) $(CXXFLAGS) -o test $(LIBS)
+## Target 1
+## List the required object files after the target
+##
+TEST_BIN = test
+$(TEST_BIN): math_test.o state.o
+	g++ $(CXXFLAGS)  $^ -o $(TEST_BIN) $(LIBS)
 
+## Target 2
+## Put new targets here...
+##
+
+## Read and include dependency files
 -include $(patsubst %.o, $(DEPDIR)/%.d, $(OBJS))
 
+## Pattern matching for compiling object files
 %.o: %.cpp
 	g++ $(CXXFLAGS) -c $< -o $*.o
 	g++ -MM $< > $(DEPDIR)/$*.d
 
+# Clean target
+.PHONY: clean
 clean:
 	-rm -rf test *.o .d
