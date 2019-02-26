@@ -209,7 +209,7 @@ class State_vector                                                              
          
             for(int i=0; i<num_qubits; i++)
             {
-                std::cout << "qubit " << i << " (|0>, |1>) (" << qubit_state[i].zero_amp << ", " << qubit_state[i].one_amp << ") " << std::endl;
+//                std::cout << "qubit " << i << " (|0>, |1>) (" << qubit_state[i].zero_amp << ", " << qubit_state[i].one_amp << ") " << std::endl;
             }
 
         }
