@@ -27,4 +27,4 @@ $(TEST_BIN): math_test.o state.o
 # Clean target
 .PHONY: clean
 clean:
-	-rm -rf test *.o .d
+	-rm -rf $(TEST_BIN) *.o .d
