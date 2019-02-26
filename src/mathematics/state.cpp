@@ -11,14 +11,14 @@
 // use to apply gates
 void State_vector::apply(const Operator & op, int qubit)
                                                                                     {
-    single_qubit_op(op.matrix, qubit);
-    std::cout << " You applied " << op.name << " on qubit " << qubit << std::endl; 
+    single_qubit_op(op.matrix, qubit)                                               ;
+    std::cout << " You applied " << op.name << " on qubit " << qubit << std::endl   ; 
                                                                                     }
 
 // two qubit version
 void State_vector::apply(const Operator & op, int ctrl, int targ)
                                                                                     {
-    two_qubit_op(op.matrix, ctrl, targ);
+    two_qubit_op(op.matrix, ctrl, targ)                                             ;
     std::cout <<"You applied " << op.name << " controlled on " << ctrl << " target " << targ << std::endl;
                                                                                     }
 
@@ -105,8 +105,8 @@ void State_vector::apply(const Operator & op, int ctrl, int targ)
  */
 void State_vector::single_qubit_op(const Eigen::Matrix2cd & op, int qubit)          {
     int bit = (1 << qubit); // The bit position corresponding to the kth qubit
-    int high_incr = (bit << 1); 
-    Eigen::Vector2cd temp;
+    int high_incr = (bit << 1)                                                      ; 
+    Eigen::Vector2cd temp                                                           ;
     /// @note this order is correct and super important!
     // Increment through the indices less than bit
     for(int i=0; i<bit; i++)                                                        {
@@ -114,9 +114,9 @@ void State_vector::single_qubit_op(const Eigen::Matrix2cd & op, int qubit)      
         for(int j=0; j<size; j+=high_incr)                                          {
             // 2x2 matrix multiplication on the zero (i+j)
             // and one (i+j+bit) indices
-            temp = mat_mul(op, vect, i+j, i+j+bit);
-            vect(i+j) = temp(0); 
-            vect(i+j+bit) = temp(1);
+            temp = mat_mul(op, vect, i+j, i+j+bit)                                  ;
+            vect(i+j) = temp(0)                                                     ; 
+            vect(i+j+bit) = temp(1)                                                 ;
                                                                                     }
                                                                                     }
                                                                                     }
@@ -200,10 +200,10 @@ mat_mul(op, state, root + step, root + root_max + step);
 void State_vector::two_qubit_op(const Eigen::Matrix2cd & op, int ctrl, int targ)
                                                                                     {
     // temp matrix
-    Eigen::Vector2cd temp;
+    Eigen::Vector2cd temp                                                           ;
     int root_max = pow(2, targ); // Declared outside the loop
     /// \bug this needs to be a long int for >16 qubits
-    int increment = 2 * root_max;
+    int increment = 2 * root_max                                                    ;
     /// ROOT loop: starts at 0, increases in steps of 1
     for (int root = 0; root < root_max; root++)
                                                                                     {
@@ -227,9 +227,9 @@ void State_vector::two_qubit_op(const Eigen::Matrix2cd & op, int ctrl, int targ)
             /// root + step + root_max contain 1 in the ctrl-th bit. 
             if( (((root+step) & (1 << ctrl)) && ((root+step+root_max) & (1 << ctrl))) == 1)
                                                                                     {
-                temp = mat_mul(op, vect, root+step, root+root_max+step);
-                vect(root+step) = temp(0);
-                vect(root+step+root_max) = temp(1);
+                temp = mat_mul(op, vect, root+step, root+root_max+step)             ;
+                vect(root+step) = temp(0)                                           ;
+                vect(root+step+root_max) = temp(1)                                  ;
                                                                                     }
                                                                                     }
                                                                                     }
@@ -283,10 +283,10 @@ void State_vector::two_qubit_op(const Eigen::Matrix2cd & op, int ctrl, int targ)
 Eigen::Vector2cd State_vector::mat_mul(const Eigen::Matrix2cd & op, const Eigen::VectorXcd & v, int i, int j)
                                                                                     {
     // make temp vector of size 2
-    Eigen::Vector2cd temp;
-    temp(0) = v(i);
-    temp(1) = v(j);
-    return op*temp;
+    Eigen::Vector2cd temp                                                           ;
+    temp(0) = v(i)                                                                  ;
+    temp(1) = v(j)                                                                  ;
+    return op*temp                                                                  ;
                                                                                     }
 
 
