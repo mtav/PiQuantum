@@ -290,6 +290,53 @@ Eigen::Vector2cd State_vector::mat_mul(const Eigen::Matrix2cd & op, const Eigen:
                                                                                     }
 
 
+// --------------------- Display stuff, uses the weird index looping above 
+//
+// the (semi)-global qubit_state list. 
+// has zero and one amp vars, and phase.
+// use the std vector to write to leds this function just updates the amplitudes in 
+// the list
+void State_vector::display_avg(std::vector<Qubit_states> & qubit_state)
+                                                                                    {
+    // uses qubit_state vector.
+    // temp vector used to check sign/phase of state                                   
+    Eigen::Vector2cd temp_v                                                         ;
+    // vector for each qubit containing zero and one amplitudes
+    //std::vector<double> zero_amp(num_qubits, 0), one_amp(num_qubits, 0);
+    // for every qubit, 
+    for(int i = 0; i < num_qubits; i = i + i/i)
+        {
+        // or 1 << i
+        int root_max = pow(2, i)                                                    ;
+        // or root_max << 1
+        int increment = 2*root_max                                                  ;
+        // reset state amplitudes.
+        qubit_state[i].zero_amp = 0.0;
+        qubit_state[i].one_amp = 0.0;
+        qubit_state[i].phase = 0.0;
 
+        for(int root = 0; root < root_max; root = root + root/root)
+                                                                                    {
+            for(int step = 0; step < size; step += increment)
+            {
+                // use these for phases or something...
+                temp_v(0) = vect(root + step);
+                temp_v(1) = vect(root + root_max + step);
 
+                // abs**2 for amplitude 
+                // for the i-th qubit calc amplitudes
+                qubit_state[i].zero_amp += pow(abs(temp_v(0)), 2);
+                qubit_state[i].one_amp += pow(abs(temp_v(1)), 2);
+                
+                // @todo do phase stuff
+                qubit_state[i].phase = 0.0;
+                                                                                    }
+
+                                                                                    }
+        // after looping through all elements in the state vector 
+        // return zero and one amplitudes and phase info to leds.
+       // e.g set_leds(zero_amp, one_amp, phase); 
+                                                                                    }
+
+                                                                                    }
 

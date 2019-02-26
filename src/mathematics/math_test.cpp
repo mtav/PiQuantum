@@ -19,9 +19,12 @@ int main(void)
     // meaning create a X that is controlled on 1 qubit 
     Rotation_X CNOT(2)                                      ;
 
+    //state.print();
     for(int i=0; i<10; i++)
                                                             {
         state.apply(X,0)                                    ;
+        state.apply(CNOT, 0,1);
+        state.disp();
                                                             }
     //// max sup state
     // state.apply(H,0);
@@ -29,7 +32,6 @@ int main(void)
 
     //  state.print();
     //  state.apply(CNOT, 0, 1);
-    //  state.print();
 
     return 0                                                ;
                                                             }

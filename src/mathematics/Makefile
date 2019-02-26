@@ -1,6 +1,6 @@
 ## General compilation options
-CXXFLAGS = -Wall -g -O2
-CXXFLAGS += -I../eigen3
+CPPFLAGS = -Wall -g -O2 -march=native
+LDLIBS = -I../eigen3
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) > /dev/null)
 LIBS = 
@@ -10,7 +10,7 @@ LIBS =
 ##
 TEST_BIN = test
 $(TEST_BIN): math_test.o state.o
-	g++ $(CXXFLAGS)  $^ -o $(TEST_BIN) $(LIBS)
+	g++ $(CPPFLAGS) $(LDLIBS)  $^ -o $(TEST_BIN) $(LIBS)
 
 ## Target 2
 ## Put new targets here...
@@ -22,7 +22,7 @@ $(TEST_BIN): math_test.o state.o
 
 ## Pattern matching for compiling object files
 %.o: %.cpp
-	g++ $(CXXFLAGS) -c $< -o $*.o
+	g++ $(CPPFLAGS) $(LDLIBS) -c $< -o $*.o
 	g++ -MM $< > $(DEPDIR)/$*.d
 
 # Clean target
