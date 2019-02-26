@@ -17,7 +17,8 @@ $(TEST_BIN): math_test.o state.o
 ##
 
 ## Read and include dependency files
--include $(patsubst %.o, $(DEPDIR)/%.d, $(OBJS))
+#-include $(patsubst %.o, $(DEPDIR)/%.d, $(OBJS))
+-include $(wildcard $(DEPDIR)/*.d)
 
 ## Pattern matching for compiling object files
 %.o: %.cpp

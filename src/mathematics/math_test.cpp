@@ -1,7 +1,6 @@
 #include <iostream>
 #include "state.hpp"
 
-
 int main(void)
 {
     // TIMINGS @note 2-qubit gates take half the time of singles.
