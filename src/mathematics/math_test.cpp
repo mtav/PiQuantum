@@ -2,7 +2,7 @@
 #include "state.hpp"
 
 int main(void)
-{
+                                                                                {
     // TIMINGS @note 2-qubit gates take half the time of singles.
     //      0.01s/gate for 20 qubits
     //      0.9s/gate for 26 qubits
@@ -20,9 +20,9 @@ int main(void)
     Rotation_X CNOT(2);
 
     for(int i=0; i<10; i++)
-    {
+                                                                                {
         state.apply(X,0);
-    }
+                                                                                }
     //// max sup state
     // state.apply(H,0);
     // state.apply(H,1);
@@ -32,4 +32,4 @@ int main(void)
     //  state.print();
 
     return 0;
-}
+                                                                                }
