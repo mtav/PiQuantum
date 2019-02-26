@@ -1,0 +1,30 @@
+## General compilation options
+CXXFLAGS = -Wall -g -O2
+CXXFLAGS += -I../eigen3
+DEPDIR := .d
+$(shell mkdir -p $(DEPDIR) > /dev/null)
+LIBS = 
+
+EXE = math_test
+
+## Dependencies
+-include $(patsubst %.o, $(DEPDIR)/%.d, $(wildcard *.d))
+
+## Pattern matching for linking files
+$(EXE):
+	g++ -MM $@.cpp > $(DEPDIR)/$@.d
+
+## Pattern matching for linking files
+##$(EXE): %.o
+##	g++ $(CXXFLAGS) $^ -o $@ $(LIBS)
+##	g++ -MM $< > $(DEPDIR)/$@.d
+
+## Pattern matching for compiling object files
+%.o: %.cppkeep track of binaries for clean makefile
+	g++ $(CXXFLAGS) -c $< -o $*.o
+	g++ -MM $< > $(DEPDIR)/$*.d
+
+# Clean target
+.PHONY: clean
+clean:
+	-rm -rf $(EXE) *.o .d
