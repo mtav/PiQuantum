@@ -60,6 +60,9 @@ void LedDriver::func() {
   // Check for counter reset
   if(counter == period) {
     counter = 0; // Reset counter
+    std::cout << (int)button_states[0] << " "
+	      << (int)button_states[1]
+	      << std::endl;
     set(write); // Set all to zero
   }
 
@@ -79,8 +82,12 @@ void LedDriver::func() {
   for(int i = 0; i < chips; i++)
     write[i] &= mask[i]; // Mask the write array
   set(write); // Write the data to the chip
+
+  // Put button reading stuff here
+  read_button_states(2);
+
   
-  //if((counter/period) >= test_led.red) set({0,0});
+
 } // end of func
 
 void LedDriver::register_led(Led * led) {

@@ -95,13 +95,22 @@ private:
   void func();
 
 public:
+
+  // Public just to test
+  std::vector<unsigned char> button_states;
+
   LedDriver(std::shared_ptr<SpiChannel> spi) 
     : spi(spi), chips(2), period(10), 
-      counter(0), Alarm(500) {
+      counter(0), Alarm(50000), button_states({0,0}) {
 
-    // Set up pins
+    // Set up pins for LEDs
+    // Need to set initial state
     pinMode(PIN::LE, OUTPUT); // Set LE to output
     pinMode(PIN::OE, OUTPUT); // Set OE to output    
+
+    // set up pins for button input
+    pinMode(PIN::SHLD, OUTPUT);    //set inhibit to output mode
+    digitalWrite(PIN::SHLD, HIGH);
 
     // Initialise data and mask arrays
     write = std::vector<unsigned char>(chips, 0);    
@@ -160,6 +169,22 @@ public:
     return 0;
   } // end of set
 
+  // Read button stuff
+  void read_button_states(int num){
+    // empty_data is number of chips elements as each unsignd char is 1 byte.
+    // eg 2 chips empty_data = {0, 0} 2 bytes long
+    
+    // bring SHLD momentarily low to enable parallel load
+    digitalWrite(PIN::SHLD, LOW); 
+    digitalWrite(PIN::SHLD, HIGH);
+    
+    button_states = spi -> read(num); 
+
+    return;
+  }
+  
+
+  
   /** 
    * @brief Register LED
    *

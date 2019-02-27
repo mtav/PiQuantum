@@ -42,9 +42,6 @@ class Button_driver {
         // setup wiring pi
         wiringPiSetup();    // what is this alternating caps...
 
-        // set up pins for input
-        pinMode(PIN::SHLD, OUTPUT);    //set inhibit to output mode
-        digitalWrite(PIN::SHLD, HIGH);
     }
         // methods
         unsgn_char_vect read_spi_bytes(int num){
