@@ -30,28 +30,12 @@ private:
   
 public:
   
-  // Initialise with zero RGB values
-  Led(Lines r, Lines g, Lines b)
-    : driver(getInputOutput()), lines({r,g,b}), rgb_values(3,0)
-  {
-    // Register the Led object with the driver
-    driver -> register_led(this); 
-  }
-
-  ~Led() {
-    // De register the Led object from the driver
-    // Something like this. Don't really want a
-    // memory leak, but in practice it'll be fine for now.
-    //driver -> deregister_led(id);
-  }
-
+  // Constructor and destructor
+  Led(Lines r, Lines g, Lines b);
+  ~Led();
+  
   // Read and write the RGB value
-  // May as well just make this public...
-  void rgb(double red, double green, double blue) {
-    rgb_values[0] = red;
-    rgb_values[1] = green;
-    rgb_values[2] = blue;
-  }
+  void rgb(double red, double green, double blue);
   std::vector<double> rgb() { return rgb_values; }
 
   // Return the chip and line numbers
