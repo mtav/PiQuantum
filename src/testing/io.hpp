@@ -1,9 +1,9 @@
 /** 
- * @file leds.hpp
+ * @file io.hpp
  * @authors J Scott, O Thomas
  * @date Feb 2019 
  *
- * @detail LED control. 
+ * @detail IO control. 
  *
  */
 

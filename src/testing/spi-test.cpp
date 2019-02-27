@@ -10,7 +10,7 @@
 #include <iostream>
 #include "spi.hpp"
 #include "wpi.hpp"
-#include "leds.hpp"
+#include "io.hpp"
 
 #include <cstdlib>
 #include <cstring>

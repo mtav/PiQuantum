@@ -5,14 +5,14 @@ CFLAGS = -Wall -g -std=c++11
 all: main.cpp
 	g++ main.cpp -o prog -lmenu -lncurses
 
-spi-test: spi.o leds.o wpi.o spi-test.cpp
-	g++ $(CFLAGS) spi-test.cpp spi.o wpi.o leds.o -o spi-test -lwiringPi
+spi-test: spi.o io.o wpi.o spi-test.cpp
+	g++ $(CFLAGS) spi-test.cpp spi.o wpi.o io.o -o spi-test -lwiringPi
 
 spi.o: spi.cpp spi.hpp
 	g++ $(CFLAGS)-c spi.cpp -o spi.o
 
-leds.o: leds.cpp leds.hpp
-	g++ $(CFLAG)-c leds.cpp -o leds.o
+io.o: io.cpp io.hpp
+	g++ $(CFLAG)-c io.cpp -o io.o
 
 menu.o: menu.cpp menu.hpp 
 	g++ -std=c++11 -Wall -c menu.cpp -o menu.o

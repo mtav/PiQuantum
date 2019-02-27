@@ -1,14 +1,14 @@
 /** 
- * @file leds.cpp
+ * @file io.cpp
  * @authors J Scott, O Thomas
  * @date Feb 2019 
  *
- * @detail LED control. 
+ * @detail IO control 
  *
  */
 
 #include <wiringPi.h>
-#include "leds.hpp"
+#include "io.hpp"
 
 /**
  * @brief Wrapper to return LedDriver class
