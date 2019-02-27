@@ -153,7 +153,7 @@ class State_vector                                                              
 
         /// @todo this list makes the program take @ 10x as long at start up
         // probably worth it if more than a few gates are performed
-        // populate_qubit_indices(qubit_index);
+         populate_qubit_indices(qubit_index);
                                                                                 }
 
         // use to apply gates
@@ -213,6 +213,18 @@ class State_vector                                                              
             }
 
         }
+        
+        void disp_list_all()
+        {
+            for(int i=0; i<num_qubits; i++)
+            {
+                disp_list(i, qubit_index);
+                std::cout << "qubit " << i << " (|0>, |1>) (" << qubit_state[i].zero_amp << ", " << qubit_state[i].one_amp << ") " << std::endl;
+        }
+        }
+        void disp_list(int qubit, const std::vector<Qubit_index> & list);
+
+
 };
 
 

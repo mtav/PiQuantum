@@ -327,14 +327,14 @@ void State_vector::display_avg(std::vector<Qubit_states> & qubit_state)
 
                 // abs**2 for amplitude 
                 // for the i-th qubit calc amplitudes
-               // qubit_state[i].zero_amp += pow(abs(temp_v(0)), 2);
-               // qubit_state[i].one_amp += pow(abs(temp_v(1)), 2);
+                qubit_state[i].zero_amp += pow(abs(temp_v(0)), 2);
+                qubit_state[i].one_amp += pow(abs(temp_v(1)), 2);
                 
                 // not using the vector saves <8% about 2s or .2s per cycle
-                zero_amp += pow(abs(temp_v(0)), 2);
-                one_amp += pow(abs(temp_v(1)), 2);
+////                zero_amp += pow(abs(temp_v(0)), 2);
+    //            one_amp += pow(abs(temp_v(1)), 2);
                 // @todo do phase stuff
-        //        qubit_state[i].phase = 0.0;
+                qubit_state[i].phase = 0.0;
                                                                                     }
 
                                                                                     }
@@ -346,4 +346,13 @@ void State_vector::display_avg(std::vector<Qubit_states> & qubit_state)
                                                                                     }
 
                                                                                     }
+void State_vector::disp_list(int qubit, const std::vector<Qubit_index> & list)
+{
+    // go through every 0 & 1 pair
+    for(int i=0; i< size/2; i++)
+    {
+        qubit_state[qubit].zero_amp += pow(abs(vect(list[qubit].zero[i])),2);
+        qubit_state[qubit].one_amp += pow(abs(vect(list[qubit].one[i])),2);
+}
+}
 

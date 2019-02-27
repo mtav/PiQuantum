@@ -25,6 +25,7 @@ int main(void)
         state.apply(X,0)                                    ;
 //        state.apply(CNOT, 0,1);
         state.disp();
+//        state.disp_list_all();
                                                             }
     //// max sup state
     // state.apply(H,0);
