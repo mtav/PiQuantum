@@ -1,0 +1,4 @@
+#+TITLE: Quantum Circuit Simulator
+
+* Notes
+1) Malloc is able to allocate 28 double precision qubits but not 29. This makes sense because my computer has 8GiB of RAM, and 29 qubits of double precision requires 8 GiB (2^29 * 8 * 2 / 2^30 = 8; 8 bytes per double, 2 complex doubles per amplitude, 2^29 amplitudes). It's interesting watching htop broadly speaking confirm the memory requirements. Also, changing to single precision allows 29 qubits but not 30.
