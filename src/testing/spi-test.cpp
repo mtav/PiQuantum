@@ -29,7 +29,7 @@ int main() {
   led2.rgb(1.0, 0.0, 0.0);
   led3.rgb(1.0, 0.0, 1.0);
   
-  getLedDriver(0) -> print();
+  getInputOutput() -> print();
   
   //std::cout << "red:" << led.get_rgb()[0] << std::endl;
   //std::cout << "greed:" << led.get_rgb()[1] << std::endl;

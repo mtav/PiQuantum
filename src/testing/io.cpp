@@ -11,18 +11,18 @@
 #include "io.hpp"
 
 /**
- * @brief Wrapper to return LedDriver class
+ * @brief Wrapper to return InputOutput class
  *
- * @detail Return a shared_ptr object to an LedDriver. Pass 
+ * @detail Return a shared_ptr object to an InputOutput. Pass 
  * a channel to indicate which SPI channel to use
  * 
  */
-std::shared_ptr<LedDriver> getLedDriver(int channel) {
+std::shared_ptr<InputOutput> getInputOutput() {
   // Static pointer to LED driver
-  static std::shared_ptr<LedDriver> driver;
+  static std::shared_ptr<InputOutput> driver;
   // If necessary, make a new SPI channel
   if(driver == nullptr)
-    driver = std::make_shared<LedDriver>(getSpiChannel(channel));
+    driver = std::make_shared<InputOutput>(getSpiChannel(0));
   // Return the spi channel pointer
   return driver; 
 }
@@ -30,7 +30,7 @@ std::shared_ptr<LedDriver> getLedDriver(int channel) {
 Alarm * Alarm::alrm = nullptr; // A pointer to an alarm class
 
 // Print the registered LEDs
-void LedDriver::print() {
+void InputOutput::print() {
   int count = 0; // Index the LEDs
   for(Led * i : leds) {
     std::cout << "------------------------------------"
@@ -50,7 +50,7 @@ void LedDriver::print() {
   }
 }
 
-void LedDriver::func() {    
+void InputOutput::func() {    
 
   // Initiliase data to write to chips
   write = std::vector<unsigned char>(chips, 0);    
@@ -90,7 +90,7 @@ void LedDriver::func() {
 
 } // end of func
 
-void LedDriver::register_led(Led * led) {
+void InputOutput::register_led(Led * led) {
   // Add the LED to the leds vector or pointers
   leds.push_back(led);
 

@@ -49,16 +49,14 @@ class Alarm {
 
 // Forward declaration
 class Led;
-class LedDriver;
+class InputOutput;
 
 /**
- * @brief Wrapper to return LedDriver class
+ * @brief Wrapper to return InputOutput class
  *
- * @detail Return a shared_ptr object to an LedDriver. Pass 
- * a channel to indicate which SPI channel to use
- * 
+ * @detail Return a shared_ptr object to an InputOutput. 
  */
-std::shared_ptr<LedDriver> getLedDriver(int channel);
+std::shared_ptr<InputOutput> getInputOutput();
 
 // Store the chip and line number for a particular
 // LED
@@ -70,7 +68,7 @@ typedef struct {
 // Print the chip/lines for an LED
 std::ostream & operator << (std::ostream & stream, Lines lines);
 
-class LedDriver : public Alarm {
+class InputOutput : public Alarm {
 private:
   const int chips; // Number of TLC591x chips
   std::shared_ptr<SpiChannel> spi; // SPI interface
@@ -99,7 +97,7 @@ public:
   // Public just to test
   std::vector<unsigned char> button_states;
 
-  LedDriver(std::shared_ptr<SpiChannel> spi) 
+  InputOutput(std::shared_ptr<SpiChannel> spi) 
     : spi(spi), chips(2), period(10), 
       counter(0), Alarm(50000), button_states({0,0}) {
 
@@ -117,7 +115,7 @@ public:
     mask = std::vector<unsigned char>(chips, 0);    
 
     
-  } // end of LedDriver()
+  } // end of InputOutput()
 
   // Print the registered LEDs
   void print();
@@ -196,7 +194,7 @@ public:
    */
   void register_led(Led * led);
   
-}; // end of LedDriver
+}; // end of InputOutput
 
 class Led {
 private:
@@ -206,7 +204,7 @@ private:
   // driver. The driver then polls the
   // Led objects to read their color and
   // write it to the hardware device
-  std::shared_ptr<LedDriver> driver;
+  std::shared_ptr<InputOutput> driver;
     
   // Chip and line numbers 
   const std::vector<Lines> lines;
@@ -218,7 +216,7 @@ public:
   
   // Initialise with zero RGB values
   Led(Lines r, Lines g, Lines b)
-    : rgb_values(3,0), lines({r,g,b}), driver(getLedDriver(0))
+    : rgb_values(3,0), lines({r,g,b}), driver(getInputOutput())
   {
     // Register the Led object with the driver
     driver -> register_led(this); 
