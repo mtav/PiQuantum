@@ -142,7 +142,7 @@ void InputOutput::func() {
 	      << std::endl;
     set_leds(write); // Set all to zero
   }
-
+[B
   // Loop over all the pointers in the leds vector, turning
   // the LEDs off if counter is high enough
   // Start with an empty std::vector to populate with LED state
@@ -161,7 +161,7 @@ void InputOutput::func() {
   set_leds(write); // Write the data to the chip
 
   // Put button reading stuff here
-  read_button_states(2);
+ std::vector<unsigned char> button_states = read_button_states(2);
 
   
 
@@ -174,6 +174,16 @@ void InputOutput::register_led(Led * led) {
   // Enable LED lines
   for(int k=0; k < 3; k++)
     mask[led -> get_lines()[k].chip] |= (1 << led -> get_lines()[k].line);
+
+}
+
+void InputOutput::register_button(Button * btn) {
+  // Add the LED to the leds vector or pointers
+  buttons.push_back(btn);
+
+  // Enable LED lines -- Is this necessary for buttons?
+  //for(int k=0; k < 3; k++)
+  //  mask[led -> get_lines()[k].chip] |= (1 << led -> get_lines()[k].line);
 
 }
 

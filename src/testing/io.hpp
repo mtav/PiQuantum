@@ -36,6 +36,7 @@ public:
 
 // Forward declaration
 class Led;
+class Button;
 class InputOutput;
 
 /**
@@ -59,7 +60,9 @@ class InputOutput : public Alarm {
 private:
   std::shared_ptr<SpiChannel> spi; // SPI interface
   const unsigned int chips; // Number of TLC591x chips
-  std::vector<Led * > leds; // A list of pointers to LED objects
+  std::vector<Led * > leds; // A list of pointers to Led objects
+  std::vector<Button * > buttons; // A list of pointers to Button objects
+
   
   /**
    * @brief Function for simulating dimmable LEDs
@@ -81,9 +84,6 @@ private:
   std::vector<unsigned char> mask; // Enable or disable LED lines 
 
 public:
-
-  // Public just to test
-  std::vector<unsigned char> button_states;
 
   // Constructor
   InputOutput(std::shared_ptr<SpiChannel> spi);
@@ -118,19 +118,21 @@ public:
    */
   int set_leds(std::vector<unsigned char> data);
 
-    // Read button stuff
-  void read_button_states(int num);
+  // Read button stuff
+  std::vector<unsigned char> read_button_states(int num);
   
   /** 
-   * @brief Register LED
+   * @brief Register LEDs and buttons
    *
-   * @detail Register an Led object with the driver. The function stores a 
-   * pointer to the Led object. There's a problem still to solve: how to
+   * @detail Register a objects with the driver. The function stores a 
+   * pointer to the object. There's a problem still to solve: how to
    * remove the entry when the Led object no longer exists. That can be 
    * fixed later.
    *
    */
   void register_led(Led * led);
+  void register_button(Button * btn);
+
   
 }; // end of InputOutput
 
