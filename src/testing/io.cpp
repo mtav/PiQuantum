@@ -9,6 +9,7 @@
 
 #include <wiringPi.h>
 #include "io.hpp"
+#include "leds.hpp"
 
 /**
  * @brief Wrapper to return InputOutput class

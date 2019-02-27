@@ -5,7 +5,7 @@ $(shell mkdir -p $(DEPDIR) > /dev/null)
 LIBS = -lwiringPi
 
 ## Testing SPI LEDs and buttons
-spi-test: spi-test.o spi.o io.o wpi.o
+spi-test: spi-test.o spi.o io.o leds.o wpi.o
 	g++ $(CPPFLAGS) $(LDLIBS)  $^ -o spi-test $(LIBS)
 
 
