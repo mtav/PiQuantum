@@ -184,6 +184,36 @@ void sgate(COMPLEX * U, COMPLEX * state, const int n) {
   }
 }
 
+// Display average
+// The result is stored in the averages array
+void state_average(COMPLEX * state, double * averages) {
+
+  // Loop over all the qubits
+  for(int k = 0; k < NUM_QUBITS; k++) {
+    double zero_mag = 0;
+    double one_mag = 0;
+    
+    int bit = (1 << k); // The bit position corresponding to the kth qubit
+    int high_incr = (bit << 1); 
+    // Increment through the indices above bit
+    for(int i=0; i<STATE_LENGTH; i+=high_incr) {
+      // Increment through the indices less than bit
+      for(int j=0; j<bit; j++) {
+	// zero_mag += (r^2 + i^2)
+	zero_mag += ((*(state + 2*(i+j))) * (*(state + 2*(i+j)))
+		     + (*(state + 2*(i+j)+1)) * (*(state + 2*(i+j)+1)));
+	// one_mag += (r^2 + i^2)
+	one_mag += ((*(state + 2*(i+j+bit))) * (*(state + 2*(i+j+bit)))
+		    + (*(state + 2*(i+j+bit)+1)) * (*(state + 2*(i+j+bit)+1)));
+      }
+    }
+    // Store the results in the averages vector
+    *(averages + 2*k) = zero_mag;
+    *(averages + 2*k+1) = one_mag;
+  }
+}
+  
+
 int main() {
 
   // Function timer
@@ -217,10 +247,19 @@ int main() {
   //return 0;
   //  sgate(H, state, 3);
   time.start();
-  
+
+  // Make space
+  double * average = (double * ) malloc(2 * NUM_QUBITS * sizeof(double));
+ 
   // Make equal superposition
   for(int n=0; n < NUM_QUBITS; n++) {
+    std::cout << "Operation " << n << std::endl;
     sgate(H, state, n);
+    state_average(state, average);
+    for(int k=0; k<NUM_QUBITS; k++) {
+      std::cout << "(" << *(average+2*k)<< "," <<*(average+2*k+1)<< "), "; 
+    }
+    std::cout << std::endl;
   }
 
   time.stop();

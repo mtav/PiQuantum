@@ -225,10 +225,8 @@ class State_vector
 
         // ----------------------------- Display uses the list of statevector elements rather than computing new ones everytime.
         // call to get all qubit states
-        void disp_list_all()
-        {
-            for(int i=0; i<num_qubits; i++)
-            {
+        void disp_list_all() {
+            for(int i=0; i<num_qubits; i++) {
                 disp_list(i);
             }
         }

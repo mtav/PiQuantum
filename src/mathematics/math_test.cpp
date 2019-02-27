@@ -20,14 +20,14 @@ int main(void)
     Rotation_X CNOT(2);
 
     //state.print();
-    for(int i=0; i<10; i++)
+    for(int i=0; i<20; i++)
     {
-        state.apply(X,0);
-        state.apply(CNOT, 0,1);
+      //state.apply(X,0);
+        //state.apply(CNOT, 0,1);
         // use state.disp_list_all() to calculate the average state of all qubits. 
         state.disp_list_all();
         // use state.disp_list(number of qubit) to calc average state of a specific qubit
-        state.disp_list(0);
+        //state.disp_list(0);
     }
     //// max sup state
     // state.apply(H,0);
