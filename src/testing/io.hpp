@@ -19,35 +19,19 @@
 #include "pin_mappings.hpp"
 
 class Alarm {
-    private:
+private:
+  static Alarm * alrm; // A pointer to an alarm class
+  static void handler(int sig);  
+  // Set the function called by the alarm 
+  virtual void func() = 0;
+  
+  // Set up pointer to alarm object
+  void set_pointer(Alarm * ptr) { alrm = ptr; }
+  
+public:
+  // Constructor
+  Alarm(int delay_us);
 
-        static Alarm * alrm; // A pointer to an alarm class
-
-        static void handler(int sig) {
-            if(sig != SIGALRM) {
-                std::cerr << "Error: unexpected signal " << sig << ", expected SIGALRM"
-                    << std::endl;
-            }
-            if(alrm != nullptr) alrm -> func(); // execute the intended function
-        }// end of handler
-
-        // Set the function called by the alarm 
-        virtual void func() = 0;
-
-        // Set up pointer to alarm object
-        void set_pointer(Alarm * ptr) { alrm = ptr; }
-
-    public:
-        Alarm(int delay_us) { 
-            // Set up alarm handler
-            signal(SIGALRM, handler);
-
-            // Schedule alarm
-            ualarm(delay_us,delay_us);
-
-            // Set pointer to this class
-            set_pointer(this);
-        }
 };
 
 // Forward declaration
@@ -96,32 +80,14 @@ private:
   std::vector<unsigned char> write; // Data to write to chips
   std::vector<unsigned char> mask; // Enable or disable LED lines 
 
-  
 public:
 
   // Public just to test
   std::vector<unsigned char> button_states;
 
-  InputOutput(std::shared_ptr<SpiChannel> spi) 
-    : Alarm(50000), spi(spi), chips(2), period(10), counter(0),
-      button_states({0,0}) {
-
-    // Set up pins for LEDs
-    // Need to set initial state
-    pinMode(PIN::LE, OUTPUT); // Set LE to output
-    pinMode(PIN::OE, OUTPUT); // Set OE to output    
-
-    // set up pins for button input
-    pinMode(PIN::SHLD, OUTPUT);    //set inhibit to output mode
-    digitalWrite(PIN::SHLD, HIGH);
-
-    // Initialise data and mask arrays
-    write = std::vector<unsigned char>(chips, 0);    
-    mask = std::vector<unsigned char>(chips, 0);    
-
-    
-  } // end of InputOutput()
-
+  // Constructor
+  InputOutput(std::shared_ptr<SpiChannel> spi);
+  
   // Print the registered LEDs
   void print();
   
@@ -150,43 +116,10 @@ public:
    * Arguments: a std::vector of the data to write to the display chips
    * 
    */
-  int set(std::vector<unsigned char> data) {
+  int set_leds(std::vector<unsigned char> data);
 
-    // Check data is the right length
-    if(data.size() != chips) {
-      std::cerr << "LED driver error: wrong number of bytes in data"
-		<< std::endl;
-      abort();
-    }
-
-    // Read and write data (multiple bytes)
-    spi -> write(data);
-
-    // Bring LE high momentarily
-    digitalWrite(PIN::LE, HIGH);
-    digitalWrite(PIN::LE, LOW); // Is this enough of a delay?
-
-    // Bring the output enable low
-    digitalWrite(PIN::OE, LOW); // No need to bring high again?
-
-    return 0;
-  } // end of set
-
-  // Read button stuff
-  void read_button_states(int num){
-    // empty_data is number of chips elements as each unsignd char is 1 byte.
-    // eg 2 chips empty_data = {0, 0} 2 bytes long
-    
-    // bring SHLD momentarily low to enable parallel load
-    digitalWrite(PIN::SHLD, LOW); 
-    digitalWrite(PIN::SHLD, HIGH);
-    
-    button_states = spi -> read(num); 
-
-    return;
-  }
-  
-
+    // Read button stuff
+  void read_button_states(int num);
   
   /** 
    * @brief Register LED

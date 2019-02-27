@@ -11,6 +11,82 @@
 #include "io.hpp"
 #include "leds.hpp"
 
+void Alarm::handler(int sig) {
+  if(sig != SIGALRM) {
+    std::cerr << "Error: unexpected signal " << sig << ", expected SIGALRM"
+	      << std::endl;
+  }
+  if(alrm != nullptr) alrm -> func(); // execute the intended function
+}// end of handler
+
+// Constructor
+Alarm::Alarm(int delay_us) { 
+  // Set up alarm handler
+  signal(SIGALRM, handler);
+  
+  // Schedule alarm
+  ualarm(delay_us,delay_us);
+  
+  // Set pointer to this class
+  set_pointer(this);
+}
+
+// Constructor
+InputOutput::InputOutput(std::shared_ptr<SpiChannel> spi) 
+  : Alarm(50000), spi(spi), chips(2), period(10), counter(0),
+    button_states({0,0}) {
+  
+  // Set up pins for LEDs
+  // Need to set initial state
+  pinMode(PIN::LE, OUTPUT); // Set LE to output
+  pinMode(PIN::OE, OUTPUT); // Set OE to output    
+  
+  // set up pins for button input
+  pinMode(PIN::SHLD, OUTPUT);    //set inhibit to output mode
+  digitalWrite(PIN::SHLD, HIGH);
+  
+  // Initialise data and mask arrays
+  write = std::vector<unsigned char>(chips, 0);    
+  mask = std::vector<unsigned char>(chips, 0);    
+    
+} // end of InputOutput()
+
+int InputOutput::set_leds(std::vector<unsigned char> data) {
+  
+  // Check data is the right length
+  if(data.size() != chips) {
+    std::cerr << "LED driver error: wrong number of bytes in data"
+	      << std::endl;
+    abort();
+  }
+  
+  // Read and write data (multiple bytes)
+  spi -> write(data);
+  
+  // Bring LE high momentarily
+  digitalWrite(PIN::LE, HIGH);
+  digitalWrite(PIN::LE, LOW); // Is this enough of a delay?
+  
+  // Bring the output enable low
+  digitalWrite(PIN::OE, LOW); // No need to bring high again?
+  
+    return 0;
+} // end of set
+
+// Read button stuff
+void InputOutput::read_button_states(int num) {
+  // empty_data is number of chips elements as each unsignd char is 1 byte.
+  // eg 2 chips empty_data = {0, 0} 2 bytes long
+  
+  // bring SHLD momentarily low to enable parallel load
+  digitalWrite(PIN::SHLD, LOW); 
+  digitalWrite(PIN::SHLD, HIGH);
+  
+  button_states = spi -> read(num); 
+  
+  return;
+}
+
 /**
  * @brief Wrapper to return InputOutput class
  *
@@ -64,7 +140,7 @@ void InputOutput::func() {
     std::cout << (int)button_states[0] << " "
 	      << (int)button_states[1]
 	      << std::endl;
-    set(write); // Set all to zero
+    set_leds(write); // Set all to zero
   }
 
   // Loop over all the pointers in the leds vector, turning
@@ -82,7 +158,7 @@ void InputOutput::func() {
   } // Turn on LED
   for(unsigned int i = 0; i < chips; i++)
     write[i] &= mask[i]; // Mask the write array
-  set(write); // Write the data to the chip
+  set_leds(write); // Write the data to the chip
 
   // Put button reading stuff here
   read_button_states(2);
