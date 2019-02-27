@@ -214,14 +214,6 @@ void state_average(COMPLEX * state, double * averages) {
 
 	// Check whether the zero index has been accessed before
 	if( cache_val < 0) {
-	  // Check whether the one index has been accessed before
-	  if( cache_val_1 < 0) {
-	    // Compute the magnitude (2 x mem reads)
-	    cache_val_1 = ((*(state + 2*(i+j+bit))) * (*(state + 2*(i+j+bit)))
-			   + (*(state + 2*(i+j+bit)+1)) * (*(state + 2*(i+j+bit)+1)));
-	    // Store in the cache
-	    *(mag_cache + i+j+bit) = cache_val_1; // 1 x mem write
-	  }
 	  // Compute the magnitude (2 x mem reads)
 	  cache_val = ((*(state + 2*(i+j))) * (*(state + 2*(i+j)))
 		       + (*(state + 2*(i+j)+1)) * (*(state + 2*(i+j)+1)));
@@ -229,6 +221,16 @@ void state_average(COMPLEX * state, double * averages) {
 	  *(mag_cache + i+j) = cache_val; // 1 x mem write
 	}
 
+	// Check whether the one index has been accessed before
+	if( cache_val_1 < 0) {
+	  // Compute the magnitude (2 x mem reads)
+	  cache_val_1 = ((*(state + 2*(i+j+bit))) * (*(state + 2*(i+j+bit)))
+			 + (*(state + 2*(i+j+bit)+1)) * (*(state + 2*(i+j+bit)+1)));
+	  // Store in the cache
+	  *(mag_cache + i+j+bit) = cache_val_1; // 1 x mem write
+	}
+
+	
 	// Read from the mag_cache
 	zero_mag += cache_val;
 	one_mag += cache_val_1;
