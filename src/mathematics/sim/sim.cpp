@@ -189,7 +189,12 @@ void sgate(COMPLEX * U, COMPLEX * state, const int n) {
 void state_average(COMPLEX * state, double * averages) {
 
   // Cache
-  double * average_cache = (double * ) malloc(2 * NUM_QUBITS * sizeof(double));
+  double * mag_cache = (double * ) malloc(STATE_LENGTH * sizeof(double));
+
+  // Zero the cache_flags -- STATE_LENGTH x mem writes
+  for(int k=0; k<STATE_LENGTH; k++ ) {
+    *(mag_cache + k) = -1; // -1 value used as cache miss flag
+  }
   
   // Loop over all the qubits
   for(int k = 0; k < NUM_QUBITS; k++) {
@@ -202,18 +207,42 @@ void state_average(COMPLEX * state, double * averages) {
     for(int i=0; i<STATE_LENGTH; i+=high_incr) {
       // Increment through the indices less than bit
       for(int j=0; j<bit; j++) {
-	// zero_mag += (r^2 + i^2)
-	zero_mag += ((*(state + 2*(i+j))) * (*(state + 2*(i+j)))
-		     + (*(state + 2*(i+j)+1)) * (*(state + 2*(i+j)+1)));
-	// one_mag += (r^2 + i^2)
-	one_mag += ((*(state + 2*(i+j+bit))) * (*(state + 2*(i+j+bit)))
-		    + (*(state + 2*(i+j+bit)+1)) * (*(state + 2*(i+j+bit)+1)));
+
+	// Temp variables
+	double cache_val = *(mag_cache + i+j); // 1 x mem read
+	double cache_val_1 = *(mag_cache + i+j+bit); // 1 x mem read
+
+	// Check whether the zero index has been accessed before
+	if( cache_val < 0) {
+	  // Check whether the one index has been accessed before
+	  if( cache_val_1 < 0) {
+	    // Compute the magnitude (2 x mem reads)
+	    cache_val_1 = ((*(state + 2*(i+j+bit))) * (*(state + 2*(i+j+bit)))
+			   + (*(state + 2*(i+j+bit)+1)) * (*(state + 2*(i+j+bit)+1)));
+	    // Store in the cache
+	    *(mag_cache + i+j+bit) = cache_val_1; // 1 x mem write
+	  }
+	  // Compute the magnitude (2 x mem reads)
+	  cache_val = ((*(state + 2*(i+j))) * (*(state + 2*(i+j)))
+		       + (*(state + 2*(i+j)+1)) * (*(state + 2*(i+j)+1)));
+	  // Store in the cache
+	  *(mag_cache + i+j) = cache_val; // 1 x mem write
+	}
+
+	// Read from the mag_cache
+	zero_mag += cache_val;
+	one_mag += cache_val_1;
+
+	
       }
     }
     // Store the results in the averages vector
     *(averages + 2*k) = zero_mag;
     *(averages + 2*k+1) = one_mag;
   }
+
+  // Free the caches
+  free(mag_cache);
 }
   
 
