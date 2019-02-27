@@ -10,17 +10,17 @@
 
 // use to apply gates
 void State_vector::apply(const Operator & op, int qubit)
-                                                                                    {
-    single_qubit_op(op.matrix, qubit)                                               ;
-    std::cout << " You applied " << op.name << " on qubit " << qubit << std::endl   ; 
-                                                                                    }
+{
+    single_qubit_op(op.matrix, qubit);
+    std::cout << " You applied " << op.name << " on qubit " << qubit << std::endl; 
+}
 
 // two qubit version
 void State_vector::apply(const Operator & op, int ctrl, int targ)
-                                                                                    {
-    two_qubit_op(op.matrix, ctrl, targ)                                             ;
+{
+    two_qubit_op(op.matrix, ctrl, targ);
     std::cout <<"You applied " << op.name << " controlled on " << ctrl << " target " << targ << std::endl;
-                                                                                    }
+}
 
 // returns all pairs of values of indices in the state vector
 // i.e. [00 01 10 11], for qubit 0 return (0,1) for [00 01] & (2,3) for [10 11]
@@ -103,23 +103,25 @@ void State_vector::apply(const Operator & op, int ctrl, int targ)
  * the kth bit from zero to one.
  * 
  */
-void State_vector::single_qubit_op(const Eigen::Matrix2cd & op, int qubit)          {
+void State_vector::single_qubit_op(const Eigen::Matrix2cd & op, int qubit){
     int bit = (1 << qubit); // The bit position corresponding to the kth qubit
-    int high_incr = (bit << 1)                                                      ; 
-    Eigen::Vector2cd temp                                                           ;
+    int high_incr = (bit << 1); 
+    Eigen::Vector2cd temp;
     /// @note this order is correct and super important!
     // Increment through the indices less than bit
-    for(int i=0; i<bit; i++)                                                        {
+    for(int i=0; i<bit; i++)
+    {
         // Increment through the indices above bit
-        for(int j=0; j<size; j+=high_incr)                                          {
+        for(int j=0; j<size; j+=high_incr)
+        {
             // 2x2 matrix multiplication on the zero (i+j)
             // and one (i+j+bit) indices
-            temp = mat_mul(op, vect, i+j, i+j+bit)                                  ;
-            vect(i+j) = temp(0)                                                     ; 
-            vect(i+j+bit) = temp(1)                                                 ;
-                                                                                    }
-                                                                                    }
-                                                                                    }
+            temp = mat_mul(op, vect, i+j, i+j+bit);
+            vect(i+j) = temp(0); 
+            vect(i+j+bit) = temp(1);
+        }
+    }
+}
 
 
 /*
@@ -198,18 +200,18 @@ mat_mul(op, state, root + step, root + root_max + step);
 */
 // same as above but different indices for controlled gates.
 void State_vector::two_qubit_op(const Eigen::Matrix2cd & op, int ctrl, int targ)
-                                                                                    {
+{
     // temp matrix
-    Eigen::Vector2cd temp                                                           ;
+    Eigen::Vector2cd temp;
     int root_max = pow(2, targ); // Declared outside the loop
     /// \bug this needs to be a long int for >16 qubits
-    int increment = 2 * root_max                                                    ;
+    int increment = 2 * root_max;
     /// ROOT loop: starts at 0, increases in steps of 1
     for (int root = 0; root < root_max; root++)
-                                                                                    {
+    {
         /// STEP loop: starts at 0, increases in steps of 2^(k+1)
         for (int step = 0; step < size; step += increment)
-                                                                                    {
+        {
             /// First index is ZERO, second index is ONE
             /// @note for 2 qubit case check if the index in the ctrl qubit 
             /// is a 1 then apply the 2x2 unitary else do nothing
@@ -226,13 +228,13 @@ void State_vector::two_qubit_op(const Eigen::Matrix2cd & op, int ctrl, int targ)
             /// The condition for the if statement is that root+step and
             /// root + step + root_max contain 1 in the ctrl-th bit. 
             if( (((root+step) & (1 << ctrl)) && ((root+step+root_max) & (1 << ctrl))) == 1)
-                                                                                    {
-                temp = mat_mul(op, vect, root+step, root+root_max+step)             ;
-                vect(root+step) = temp(0)                                           ;
-                vect(root+step+root_max) = temp(1)                                  ;
-                                                                                    }
-                                                                                    }
-                                                                                    }
+            {
+                temp = mat_mul(op, vect, root+step, root+root_max+step);
+                vect(root+step) = temp(0);
+                vect(root+step+root_max) = temp(1);
+            }
+        }
+    }
 
     /* // SUPER BROKEn
        int small_bit, large_bit;
@@ -281,13 +283,13 @@ void State_vector::two_qubit_op(const Eigen::Matrix2cd & op, int ctrl, int targ)
 // vector 
 // and selects the i-th and j-th elements from the vector
 Eigen::Vector2cd State_vector::mat_mul(const Eigen::Matrix2cd & op, const Eigen::VectorXcd & v, int i, int j)
-                                                                                    {
+{
     // make temp vector of size 2
-    Eigen::Vector2cd temp                                                           ;
-    temp(0) = v(i)                                                                  ;
-    temp(1) = v(j)                                                                  ;
-    return op*temp                                                                  ;
-                                                                                    }
+    Eigen::Vector2cd temp;
+    temp(0) = v(i);
+    temp(1) = v(j);
+    return op*temp;
+}
 
 
 // --------------------- Display stuff, uses the weird index looping above 
@@ -297,28 +299,28 @@ Eigen::Vector2cd State_vector::mat_mul(const Eigen::Matrix2cd & op, const Eigen:
 // use the std vector to write to leds this function just updates the amplitudes in 
 // the list
 void State_vector::display_avg(std::vector<Qubit_states> & qubit_state)
-                                                                                    {
+{
     // uses qubit_state vector.
     // temp vector used to check sign/phase of state                                   
-    Eigen::Vector2cd temp_v                                                         ;
+    Eigen::Vector2cd temp_v;
     // vector for each qubit containing zero and one amplitudes
     //std::vector<double> zero_amp(num_qubits, 0), one_amp(num_qubits, 0);
     // for every qubit, 
     for(int i = 0; i < num_qubits; i++)
-        {
+    {
         // or 1 << i
-        int root_max = pow(2, i)                                                    ;
+        int root_max = pow(2, i);
         // or root_max << 1
-        int increment = 2*root_max                                                  ;
+        int increment = 2*root_max;
         // reset state amplitudes.
-    //    qubit_state[i].zero_amp = 0.0;
-    //    qubit_state[i].one_amp = 0.0;
-    //    qubit_state[i].phase = 0.0;
+            qubit_state[i].zero_amp = 0.0;
+            qubit_state[i].one_amp = 0.0;
+            qubit_state[i].phase = 0.0;
 
-        double zero_amp =0.0;
-        double one_amp = 0.0;
+        //double zero_amp =0.0;
+        //double one_amp = 0.0;
         for(int root = 0; root < root_max; root++)
-                                                                                    {
+        {
             for(int step = 0; step < size; step += increment)
             {
                 // use these for phases or something...
@@ -329,30 +331,35 @@ void State_vector::display_avg(std::vector<Qubit_states> & qubit_state)
                 // for the i-th qubit calc amplitudes
                 qubit_state[i].zero_amp += pow(abs(temp_v(0)), 2);
                 qubit_state[i].one_amp += pow(abs(temp_v(1)), 2);
-                
+
                 // not using the vector saves <8% about 2s or .2s per cycle
-////                zero_amp += pow(abs(temp_v(0)), 2);
-    //            one_amp += pow(abs(temp_v(1)), 2);
+                ////                zero_amp += pow(abs(temp_v(0)), 2);
+                //            one_amp += pow(abs(temp_v(1)), 2);
                 // @todo do phase stuff
                 qubit_state[i].phase = 0.0;
-                                                                                    }
+            }
 
-                                                                                    }
+        }
         // after looping through all elements in the state vector 
         // return zero and one amplitudes and phase info to leds.
-       // e.g set_leds(zero_amp, one_amp, phase);
+        // e.g set_leds(zero_amp, one_amp, phase);
 
-        std::cout << "qubit " << i << " (|0>, |1>) (" << zero_amp << ", " << one_amp << ") " << std::endl;
-                                                                                    }
+        std::cout << "qubit " << i << " (|0>, |1>) (" << qubit_state[i].zero_amp << ", " << qubit_state[i].one_amp << ") " << std::endl;
+    }
 
-                                                                                    }
+}
+// uses the qubit_state object def in state vector class. stores each qubits amplitudes
+// and phase
 void State_vector::disp_list(int qubit, const std::vector<Qubit_index> & list)
 {
+    // reset to zero for qubit
+    qubit_state[qubit].zero_amp = 0.0;
+    qubit_state[qubit].one_amp = 0.0;
     // go through every 0 & 1 pair
     for(int i=0; i< size/2; i++)
     {
         qubit_state[qubit].zero_amp += pow(abs(vect(list[qubit].zero[i])),2);
         qubit_state[qubit].one_amp += pow(abs(vect(list[qubit].one[i])),2);
-}
+    }
 }
 
