@@ -235,7 +235,7 @@ class State_vector
         void disp_list(int qubit)
         {
             disp_list(qubit, qubit_index);
-            std::cout << "qubit " << qubit << " (|0>, |1>) (" << qubit_state[qubit].zero_amp << ", " << qubit_state[qubit].one_amp << ") " << std::endl;
+            //std::cout << "qubit " << qubit << " (|0>, |1>) (" << qubit_state[qubit].zero_amp << ", " << qubit_state[qubit].one_amp << ") " << std::endl;
         }
 
         // call to see specific qubits state

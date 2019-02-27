@@ -188,6 +188,9 @@ void sgate(COMPLEX * U, COMPLEX * state, const int n) {
 // The result is stored in the averages array
 void state_average(COMPLEX * state, double * averages) {
 
+  // Cache
+  double * average_cache = (double * ) malloc(2 * NUM_QUBITS * sizeof(double));
+  
   // Loop over all the qubits
   for(int k = 0; k < NUM_QUBITS; k++) {
     double zero_mag = 0;
@@ -252,14 +255,16 @@ int main() {
   double * average = (double * ) malloc(2 * NUM_QUBITS * sizeof(double));
  
   // Make equal superposition
-  for(int n=0; n < NUM_QUBITS; n++) {
+  for(int n=0; n < 5; n++) {
     std::cout << "Operation " << n << std::endl;
     sgate(H, state, n);
     state_average(state, average);
+    /*
     for(int k=0; k<NUM_QUBITS; k++) {
       std::cout << "(" << *(average+2*k)<< "," <<*(average+2*k+1)<< "), "; 
     }
     std::cout << std::endl;
+    */
   }
 
   time.stop();

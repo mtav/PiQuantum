@@ -20,8 +20,9 @@ int main(void)
     Rotation_X CNOT(2);
 
     //state.print();
-    for(int i=0; i<20; i++)
+    for(int i=0; i<5; i++)
     {
+      std::cout << "Loop" << std::endl;
       //state.apply(X,0);
         //state.apply(CNOT, 0,1);
         // use state.disp_list_all() to calculate the average state of all qubits. 

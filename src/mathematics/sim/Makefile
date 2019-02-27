@@ -1,5 +1,5 @@
 BINARY = sim
-OPT = -Wall -g -O2 -march=native -flto
+OPT = -Wall -O2
 
 sim: clean
 	g++ $(OPT) sim.cpp -o $(BINARY)
