@@ -73,11 +73,9 @@ std::ostream & operator << (std::ostream & stream, Lines lines);
 
 class InputOutput : public Alarm {
 private:
-  const int chips; // Number of TLC591x chips
   std::shared_ptr<SpiChannel> spi; // SPI interface
+  const unsigned int chips; // Number of TLC591x chips
   std::vector<Led * > leds; // A list of pointers to LED objects
-  std::vector<unsigned char> write; // Data to write to chips
-  std::vector<unsigned char> mask; // Enable or disable LED lines 
   
   /**
    * @brief Function for simulating dimmable LEDs
@@ -95,14 +93,18 @@ private:
   double counter; // To avoid integer division
   void func();
 
+  std::vector<unsigned char> write; // Data to write to chips
+  std::vector<unsigned char> mask; // Enable or disable LED lines 
+
+  
 public:
 
   // Public just to test
   std::vector<unsigned char> button_states;
 
   InputOutput(std::shared_ptr<SpiChannel> spi) 
-    : spi(spi), chips(2), period(10), 
-      counter(0), Alarm(50000), button_states({0,0}) {
+    : Alarm(50000), spi(spi), chips(2), period(10), counter(0),
+      button_states({0,0}) {
 
     // Set up pins for LEDs
     // Need to set initial state

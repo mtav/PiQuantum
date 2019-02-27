@@ -80,7 +80,7 @@ void InputOutput::func() {
 	  |= (1 << i -> get_lines()[k].line); // Write a 1 in correct position
     }
   } // Turn on LED
-  for(int i = 0; i < chips; i++)
+  for(unsigned int i = 0; i < chips; i++)
     write[i] &= mask[i]; // Mask the write array
   set(write); // Write the data to the chip
 

@@ -32,7 +32,7 @@ public:
   
   // Initialise with zero RGB values
   Led(Lines r, Lines g, Lines b)
-    : rgb_values(3,0), lines({r,g,b}), driver(getInputOutput())
+    : driver(getInputOutput()), lines({r,g,b}), rgb_values(3,0)
   {
     // Register the Led object with the driver
     driver -> register_led(this); 
