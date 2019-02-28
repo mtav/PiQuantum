@@ -23,7 +23,7 @@ private:
   std::shared_ptr<InputOutput> driver;
     
   // Chip and line numbers 
-  const Lines lines;
+  const Position position;
 
   // RGB values (between zero and one)
   std::vector<double> rgb_values; // In order [0]=r, [1]=g, [2]=b
@@ -39,7 +39,7 @@ private:
 public:
   
   // Constructor and destructor
-  Button(Lines lines);
+  Button(Position position);
   ~Button();
   
   // Read the button state
@@ -47,7 +47,7 @@ public:
   std::vector<double> rgb() { return rgb_values; }
 
   // Return the chip and line numbers
-  Lines get_lines() { return lines; }
+  Position get_position() { return position; }
 
 };
 

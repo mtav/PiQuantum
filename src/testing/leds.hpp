@@ -23,7 +23,7 @@ private:
   std::shared_ptr<InputOutput> driver;
     
   // Chip and line numbers 
-  const std::vector<Lines> lines;
+  const std::vector<Position> positions;
 
   // RGB values (between zero and one)
   std::vector<double> rgb_values; // In order [0]=r, [1]=g, [2]=b
@@ -31,7 +31,7 @@ private:
 public:
   
   // Constructor and destructor
-  Led(Lines r, Lines g, Lines b);
+  Led(Position r, Position g, Position b);
   ~Led();
   
   // Read and write the RGB value
@@ -39,7 +39,7 @@ public:
   std::vector<double> rgb() { return rgb_values; }
 
   // Return the chip and line numbers
-  std::vector<Lines> get_lines() { return lines; }
+  std::vector<Position> get_positions() { return positions; }
 
 };
 

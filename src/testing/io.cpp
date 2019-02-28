@@ -114,9 +114,9 @@ void InputOutput::print() {
             << std::endl;
         std::cout << "LED " << count << ": "<< std::endl;
         std::cout << "Lines: "
-            << "R: " << i -> get_lines()[0] << ", " 
-            << "G: " << i -> get_lines()[1] << ", "
-            << "B: " << i -> get_lines()[2] << ", "
+            << "R: " << i -> get_positions()[0] << ", " 
+            << "G: " << i -> get_positions()[1] << ", "
+            << "B: " << i -> get_positions()[2] << ", "
             << std::endl
             << "Levels: "
             << "R: " << i -> rgb()[0] << ", " 
@@ -149,8 +149,8 @@ void InputOutput::func() {
     // Loop over RGB setting corresponding bits
     for(int k = 0; k < 3; k++) {
       if((counter/period) > (1 - i -> rgb()[k]))
-	write[i -> get_lines()[k].chip]
-	  |= (1 << i -> get_lines()[k].line); // Write a 1 in correct position
+	write[i -> get_positions()[k].chip]
+	  |= (1 << i -> get_positions()[k].line); // Write a 1 in correct position
     }
     
     // Loop over all the pointers in the leds vector, turning
@@ -162,8 +162,8 @@ void InputOutput::func() {
       // Loop over RGB setting corresponding bits
       for(int k = 0; k < 3; k++) {
 	if((counter/period) > (1 - i -> rgb()[k]))
-	  write[i -> get_lines()[k].chip]
-	    |= (1 << i -> get_lines()[k].line); // Write a 1 in correct position
+	  write[i -> get_positions()[k].chip]
+	    |= (1 << i -> get_positions()[k].line); // Write a 1 in correct position
       }
     } // Turn on LED
     for(unsigned int i = 0; i < chips; i++)
@@ -178,9 +178,9 @@ void InputOutput::func() {
   // to the button objects
   for(Button * b : buttons) {
     // Get the chip for b
-    int chip = b -> get_lines().chip;
+    int chip = b -> get_position().chip;
     // Create a mask for the correct bit
-    int line = b -> get_lines().line;
+    int line = b -> get_position().line;
     int mask = (1 << line);
     b -> btn_state = (( button_states[chip] & mask ) >> line);
   }
@@ -193,7 +193,8 @@ void InputOutput::register_led(Led * led) {
   
   // Enable LED lines
   for(int k=0; k < 3; k++)
-      mask[led -> get_lines()[k].chip] |= (1 << led -> get_lines()[k].line);
+      mask[led -> get_positions()[k].chip] |=
+	(1 << led -> get_positions ()[k].line);
   
 }
 
@@ -208,7 +209,7 @@ void InputOutput::register_button(Button * btn) {
 }
 
 // Print the chip/lines for an LED
-std::ostream & operator << (std::ostream & stream, Lines lines) {
+std::ostream & operator << (std::ostream & stream, Position lines) {
     stream << "(" << lines.chip << ", " << lines.line << ")"; 
     return stream;
 }
