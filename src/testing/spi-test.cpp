@@ -10,6 +10,7 @@
 #include <iostream>
 #include "spi.hpp"
 #include "wpi.hpp"
+#include "io.hpp"
 #include "leds.hpp"
 
 #include <cstdlib>
@@ -23,14 +24,13 @@ int main() {
   Led led1({0,7}, {0,5}, {0,6});
   Led led2({1,4}, {1,2}, {1,3});
   Led led3({1,7}, {1,5}, {1,6});
-
   
   led0.rgb(0.0, 0, 1.0);
   led1.rgb(0.0, 1.0, 0.0);
   led2.rgb(1.0, 0.0, 0.0);
   led3.rgb(1.0, 0.0, 1.0);
   
-  getLedDriver(0) -> print();
+  getInputOutput() -> print();
   
   //std::cout << "red:" << led.get_rgb()[0] << std::endl;
   //std::cout << "greed:" << led.get_rgb()[1] << std::endl;
