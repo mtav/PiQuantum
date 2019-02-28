@@ -4,10 +4,12 @@
 int main(void)
 {
     // TIMINGS @note 2-qubit gates take half the time of singles.
-    //      0.01s/gate for 20 qubits
+    //      0.01s/gate for 20 qubits (on Oli's laptop)
     //      0.9s/gate for 26 qubits
     //      1.8s/gate for 27
     // makes the vacuum state.
+  // On PI: 0.07 per gate for 20 qubits
+  // 
     State_vector state(20);
 
     // take args, num of qubits to act on and angle
