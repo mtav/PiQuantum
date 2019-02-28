@@ -155,7 +155,7 @@ void InputOutput::print() {
 void InputOutput::interrupt() {    
 
   // Initiliase data to write to chips
-  write = std::vector<unsigned char>(chips, 0);    
+  write = std::vector<byte>(chips, 0);    
 
   // Increment counter
   counter++;
@@ -164,40 +164,27 @@ void InputOutput::interrupt() {
     counter = 0; // Reset counter
     set_leds(write); // Set all to zero
   }
-
+  
   // Loop over all the pointers in the leds vector, turning
-  // the LEDs off if counter is high enough
+  // the LEDs on if counter is high enough
   // Start with an empty std::vector to populate with LED state
   // data (length = chips, value = 0)
   for(Led * i : leds) {
-    // Need to ensure i still exists here
     // Loop over RGB setting corresponding bits
     for(int k = 0; k < 3; k++) {
       if((counter/period) > (1 - i -> get_rgb()[k]))
 	write[i -> get_positions()[k].chip]
 	  |= (1 << i -> get_positions()[k].line); // Write a 1 in correct position
-    }
     
-    // Loop over all the pointers in the leds vector, turning
-    // the LEDs off if counter is high enough
-    // Start with an empty std::vector to populate with LED state
-    // data (length = chips, value = 0)
-    for(Led * i : leds) {
-      // Need to ensure i still exists here
-      // Loop over RGB setting corresponding bits
-      for(int k = 0; k < 3; k++) {
-	if((counter/period) > (1 - i -> get_rgb()[k]))
-	  write[i -> get_positions()[k].chip]
-	    |= (1 << i -> get_positions()[k].line); // Write a 1 in correct position
-      }
-    } // Turn on LED
+    }
+    // Apply the mask
     for(unsigned int i = 0; i < chips; i++)
       write[i] &= mask[i]; // Mask the write array
     set_leds(write); // Write the data to the chip
   }
   
   // Read all the button states
-  std::vector<unsigned char> button_states = read_button_states(2);
+  std::vector<byte> button_states = read_button_states(2);
   
   // Loop over all the button pointers writing the state
   // to the button objects
@@ -212,7 +199,11 @@ void InputOutput::interrupt() {
   
 } // end of func
 
-void InputOutput::register_led(Led * led) {
+int InputOutput::register_led(Led * led) {
+
+  // Get the first empty index position
+  int id = leds.size();
+  
   // Add the LED to the leds vector or pointers
   leds.push_back(led);
   
@@ -220,12 +211,35 @@ void InputOutput::register_led(Led * led) {
   for(int k=0; k < 3; k++)
       mask[led -> get_positions()[k].chip] |=
 	(1 << led -> get_positions ()[k].line);
+
+  // Return the index position as an id
+  return id;
   
 }
 
-void InputOutput::register_button(Button * btn) {
-    // Add the LED to the leds vector or pointers
-    buttons.push_back(btn);
+void InputOutput::deregister_led(int id)
+{
+  // Remove the LED pointer from the list
+  leds.erase(leds.begin() + id);
+}
+
+void InputOutput::deregister_button(int id)
+{
+  // Remove the LED pointer from the list
+  buttons.erase(buttons.begin() + id);
+}
+
+int InputOutput::register_button(Button * btn)
+{
+  // Get the first empty index position
+  int id = buttons.size();
+  
+  // Add the LED to the leds vector or pointers
+  buttons.push_back(btn);
+
+  // Return the index position as an id
+  return id;
+
 }
 
 // Print the chip/lines for an LED

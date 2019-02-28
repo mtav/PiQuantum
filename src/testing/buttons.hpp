@@ -21,10 +21,13 @@ private:
   // Led objects to read their color and
   // write it to the hardware device
   std::shared_ptr<InputOutput> driver;
-    
+  int id; // Identifying the Button object to the driver
+  
   // Chip and line numbers 
   const Position position;
 
+
+  
   // RGB values (between zero and one)
   std::vector<double> rgb_values; // In order [0]=r, [1]=g, [2]=b
 

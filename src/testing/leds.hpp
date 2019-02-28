@@ -12,7 +12,6 @@
 
 #include "io.hpp"
 
-
 /**
  * @brief RGB Led class
  *
@@ -36,6 +35,7 @@ class Led {
 private:
   
   std::shared_ptr<InputOutput> driver; // Underlying hardware driver  
+  int id; // Used to identify the LED to the driver
   const std::vector<Position> positions; // Chip and line numbers 
   std::vector<double> rgb; // RGB values (0 to 1): In order [0]=r, [1]=g, [2]=b
   

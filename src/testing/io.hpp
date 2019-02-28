@@ -135,7 +135,7 @@ public:
   std::vector<byte> read_button_states(int num);
   
   /** 
-   * @brief Register LEDs and buttons
+   * @brief Register and deregister LEDs and buttons
    *
    * @detail Register a objects with the driver. The function stores a 
    * pointer to the object. There's a problem still to solve: how to
@@ -143,8 +143,11 @@ public:
    * fixed later.
    *
    */
-  void register_led(Led * led);
-  void register_button(Button * btn);
+  int register_led(Led * led);
+  void deregister_led(int id);
+  int register_button(Button * btn);
+  void deregister_button(int id);
+
   
 }; // end of InputOutput
 
