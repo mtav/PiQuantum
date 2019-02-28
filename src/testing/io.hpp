@@ -23,12 +23,13 @@
  *
  * @detail This class implements the SIGALARM function in Linux. 
  * SIGALARM can be setup to call a function at regular intervals.
- * The function (func) does not have an implementation in this class
- * -- it is defined in the derived InputOutput class. The constructor
+ * The function (func) does not have an implementation in this class.
+ * It is defined in the derived InputOutput class. The constructor
  * sets up the SIGALARM (defining the period, etc.)
  *
  */
-class Alarm {
+class Alarm
+{
 private:
   static Alarm * alrm; // A pointer to an alarm class
   static void handler(int sig);  
@@ -67,6 +68,31 @@ typedef struct {
 // Print the chip/lines for an LED
 std::ostream & operator << (std::ostream & stream, Position lines);
 
+/**
+ * @brief Class for reading buttons and writing to LEDs
+ *
+ * @detail There are two main parts to the class. The first part is 
+ * two arrays of pointers (one for button objects and one for LEDs)
+ * which are `registered' with this class automatically when they are
+ * instantiated. 
+ *
+ * The second part is a function, called func(), which is called at
+ * regular intervals by the SIGALARM signal (a linux thing). This function
+ * is responsible for updating the states of the LEDs and reading the 
+ * state of all the buttons.
+ *
+ * The LEDs are controlled using a pulse width modulation type scheme, 
+ * which func() simulates. I keeps track of a counter, which is incremented
+ * by 1 every time func() is called. When it gets to period, it is reset 
+ * to zero. As the counter ranges through 0 to period, each registered LED
+ * object is queried to get an RGB values (between 0 and 1). If this value
+ * exceeds counter/period (also between 0 and 1), then the LED is turned off.
+ * The LEDs are all switched back on when the counter is reset to zero
+ *
+ * The user program never uses this program. It is implicitely instantiated 
+ * when Led and Button objects are instantiated.
+ *
+ */
 class InputOutput : public Alarm {
 private:
 
@@ -75,9 +101,13 @@ private:
   const unsigned int chips; // Number of TLC591x chips
   std::vector<class Led * > leds; // A list of pointers to Led objects
   std::vector<class Button * > buttons; // A list of pointers to Button objects
+  const int period; // The period of pulsed LED control
+  double counter; // To avoid integer division in func()
+  std::vector<unsigned char> write; // Data to write to chips
+  std::vector<unsigned char> mask; // Enable or disable LED lines 
   
   /**
-   * @brief Function for simulating dimmable LEDs
+   * @brief Function for simulating dimmable LEDs and reading buttons
    *
    * @detail This function is repeatedly called at a high 
    * rate by the alarm signal. Each time it is called it 
@@ -88,12 +118,7 @@ private:
    * LEDs are switches back on.
    *
    */
-  const int period;
-  double counter; // To avoid integer division
   void func();
-
-  std::vector<unsigned char> write; // Data to write to chips
-  std::vector<unsigned char> mask; // Enable or disable LED lines 
 
 public:
 
@@ -134,7 +159,6 @@ public:
    */
   void register_led(Led * led);
   void register_button(Button * btn);
-
   
 }; // end of InputOutput
 
