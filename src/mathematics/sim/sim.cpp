@@ -301,10 +301,10 @@ int main() {
   double * average = (double * ) malloc(2 * NUM_QUBITS * sizeof(double));
  
   // Make equal superposition
-  for(int n=0; n < 5; n++) {
+  for(int n=0; n < 20; n++) {
     std::cout << "Operation " << n << std::endl;
     sgate(H, state, n);
-    state_average(state, average);
+    //state_average(state, average);
     /*
     for(int k=0; k<NUM_QUBITS; k++) {
       std::cout << "(" << *(average+2*k)<< "," <<*(average+2*k+1)<< "), "; 
