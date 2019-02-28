@@ -34,7 +34,7 @@ Alarm::Alarm(int delay_us) {
 
 // Constructor
 InputOutput::InputOutput(std::shared_ptr<SpiChannel> spi) 
-    : Alarm(50000), spi(spi), chips(2), period(10),
+    : Alarm(500), spi(spi), chips(2), period(10),
       counter(0) {
 
         // Set up pins for LEDs
