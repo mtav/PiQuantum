@@ -36,7 +36,10 @@ int main() {
   Button btn1({0,1});
   Button btn2({0,1});
 
-  while(1) 
+  while(1) {
+    delay(5000);
+    std::cout << btn1.get_state() << std::endl;
+  }
   
   //std::cout << "red:" << led.get_rgb()[0] << std::endl;
   //std::cout << "greed:" << led.get_rgb()[1] << std::endl;
