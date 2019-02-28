@@ -38,18 +38,18 @@ std::shared_ptr<SpiChannel> getSpiChannel() {
 }
 
 SpiChannel::SpiChannel()
-  : channel(0), frequency(500000) {
-
+  : channel(0), frequency(500000)
+{
     // Set up SPI channel
     int result = wiringPiSPISetup(channel, frequency);
     if(result == -1) {
         std::cout << strerror(errno) << std::endl;
     }
-
 }
 
 // Change frequency in Hz
-void SpiChannel::change_frequency(int frequency) {
+void SpiChannel::change_frequency(int frequency)
+{
     // Reset the SPI channel
     int result = wiringPiSPISetup(channel, frequency);
     if(result == -1) {
@@ -66,8 +66,8 @@ void SpiChannel::change_frequency(int frequency) {
  * std::vector is a valid C style array
  *
  */
-std::vector<byte> SpiChannel::read_write(const std::vector<byte> & write) {
-
+std::vector<byte> SpiChannel::read_write(const std::vector<byte> & write)
+{
   // Allocate a buffer which is a copy of write and store its length
   std::vector<byte> buffer(write);   
   int len = write.size();
@@ -80,7 +80,6 @@ std::vector<byte> SpiChannel::read_write(const std::vector<byte> & write) {
   
   // Buffer now contains data read from SPI
   return buffer;
-
 }
 
 /**
@@ -90,8 +89,9 @@ std::vector<byte> SpiChannel::read_write(const std::vector<byte> & write) {
  * spi device. Data is returned as a standard vector.
  *
  */
-std::vector<byte> SpiChannel::read(int num_bytes) {
-    // makes a vector of size num_bytes with entries = 0
+std::vector<byte> SpiChannel::read(int num_bytes)
+{
+  // makes a vector of size num_bytes with entries = 0
   std::vector<byte> empty(num_bytes, 0);
   return SpiChannel::read_write(empty);
 }
