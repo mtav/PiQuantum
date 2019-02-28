@@ -98,43 +98,29 @@ class State_vector
         int size;
         Eigen::VectorXcd vect;
 
+        // for applying gates.
         void single_qubit_op(const Eigen::Matrix2cd & op, int qubit);
-
         void two_qubit_op(const Eigen::Matrix2cd & op, int ctrl, int targ);
         Eigen::Vector2cd mat_mul(const Eigen::Matrix2cd & op, const Eigen::VectorXcd & v, int i, int j);
 
-
         // holdes the qubit zero & one amplitudes and their phase info
+        // the leds will read this list.
         struct Qubit_states
         {
             double zero_amp;
             double one_amp;
             // @todo think about this.
             // needs to be double (REal) for leds... 
-            std::complex<double> phase;
+            double phase;
         };
+
         // see cpp for imp, should ONLY every use qubit_state so the default is public
         // this must be private
-        void display_avg(std::vector<Qubit_states> & qubit_state);
-        std::vector<int> qubit_indices(int qubit);
-
-        // @todo remove this .
-        // [000 001 010 011 100 101 110 111] 
-        // right most qubit 0
-        // 0,1 [000 001]
-        // 2,3 [010 011]
-        // 4,5 [100 101]
-        // 6,7 [110 111]
-        struct Qubit_index                       
-        {
-            std::vector<int> zero;
-            std::vector<int> one; 
-        };
+        void display_avg(std::vector<Qubit_states> & qubit_state, const Eigen::VectorXcd & vect);
 
     public:
         // for each qubits zero_amp, one_amp and phase info.
         std::vector<Qubit_states> qubit_state; 
-        std::vector<Qubit_index> qubit_index;
         // ------------------ methods --------------------------
         int get_num_qubits(){return num_qubits;};
         int get_size(){return size;}; 
@@ -158,10 +144,6 @@ class State_vector
         // the display functions will use this list, the led stuff can then 
         // read it when needed 
         qubit_state.resize(num_qubits);
-
-        /// @todo this list makes the program take @ 10x as long at start up
-        // probably worth it if more than a few gates are performed
-        populate_qubit_indices(qubit_index);
     }
 
         // use to apply gates
@@ -169,31 +151,16 @@ class State_vector
         // two qubit version
         void apply(const Operator & op, int ctrl, int targ);
 
-        // fill qubit_index with elements
-        // takes the std vector of qubits where each qubit has a zero & one int
-        //
-        void populate_qubit_indices(std::vector<Qubit_index> & list)
+        // ---------------------------- Display modes, slightly faster 
+        // to check display_avg works
+        void disp()
         {
-            list.resize(num_qubits);
-            // loop over all qubits.
+            display_avg();
             for(int i=0; i<num_qubits; i++)
             {
-                // list[i].zero.resize(num_amplitudes);
-                // list[i].one.resize(num_amplitudes);
-                // the bit pos for qubit i
-                int bit = (1 << i);
-                int high_incr = (bit << 1);
-                // calc the positions of the pairs of zeros and ones
-                // like the mat mul and disp averaging 
-                for(int j=0; j<bit; j++)
-                {
-                    for(int k=0; k<size; k+=high_incr)
-                    {
-                        list[i].zero.push_back(j+k);
-                        list[i].one.push_back(j+k+bit);
-                    }
-                }
+                std::cout << "qubit " << i << " (|0>, |1>) (" << qubit_state[i].zero_amp << ", " << qubit_state[i].one_amp << ") " << std::endl;
             }
+
         }
         // loops over the state vector for every qubit,
         // uses num_qubits from the state vector 
@@ -202,13 +169,15 @@ class State_vector
         void display_avg() 
         {
             // see constructor
-            display_avg(qubit_state);
+            // private function 
+            display_avg(qubit_state, vect);
         }
 
         // placeholder display_avg updates qubit.state 
         // led function needs to map qubit_state.zero_amp to RED
         // qubit_state.one_amp to BLUE
         // qubit_state.phase to GREEN!!!!
+<<<<<<< HEAD
 
 
         // ---------------------------- Display modes, slightly faster 
@@ -242,7 +211,7 @@ class State_vector
         void disp_list(int qubit, const std::vector<Qubit_index> & list);
         // ----------------------------------------------------------------- END
 
+=======
+>>>>>>> 482f9d331bdadb902e40db7379df22135c545e31
 };
-
-
 #endif

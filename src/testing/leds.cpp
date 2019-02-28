@@ -10,8 +10,8 @@
 #include "leds.hpp"
 
 // Initialise with zero RGB values
-Led::Led(Lines r, Lines g, Lines b)
-  : driver(getInputOutput()), lines({r,g,b}), rgb_values(3,0) {
+Led::Led(Position r, Position g, Position b)
+  : driver(getInputOutput()), positions({r,g,b}), rgb_values(3,0) {
   // Register the Led object with the driver
   driver -> register_led(this); 
 }

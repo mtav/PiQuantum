@@ -51,10 +51,10 @@ std::shared_ptr<InputOutput> getInputOutput();
 typedef struct {
   int chip;
   int line;
-} Lines;
+} Position;
 
 // Print the chip/lines for an LED
-std::ostream & operator << (std::ostream & stream, Lines lines);
+std::ostream & operator << (std::ostream & stream, Position lines);
 
 class InputOutput : public Alarm {
 private:
@@ -62,7 +62,6 @@ private:
   const unsigned int chips; // Number of TLC591x chips
   std::vector<Led * > leds; // A list of pointers to Led objects
   std::vector<Button * > buttons; // A list of pointers to Button objects
-
   
   /**
    * @brief Function for simulating dimmable LEDs

@@ -291,20 +291,18 @@ Eigen::Vector2cd State_vector::mat_mul(const Eigen::Matrix2cd & op, const Eigen:
     return op*temp;
 }
 
-
 // --------------------- Display stuff, uses the weird index looping above 
 //
 // the (semi)-global qubit_state list. 
 // has zero and one amp vars, and phase.
 // use the std vector to write to leds this function just updates the amplitudes in 
 // the list
-void State_vector::display_avg(std::vector<Qubit_states> & qubit_state)
+void State_vector::display_avg(std::vector<Qubit_states> & qubit_state, const Eigen::VectorXcd & vect)
 {
+    std::complex<double> zero=0.0, one=0.0;
     // uses qubit_state vector.
     // temp vector used to check sign/phase of state                                   
-    Eigen::Vector2cd temp_v;
     // vector for each qubit containing zero and one amplitudes
-    //std::vector<double> zero_amp(num_qubits, 0), one_amp(num_qubits, 0);
     // for every qubit, 
     for(int i = 0; i < num_qubits; i++)
     {
@@ -313,53 +311,35 @@ void State_vector::display_avg(std::vector<Qubit_states> & qubit_state)
         // or root_max << 1
         int increment = 2*root_max;
         // reset state amplitudes.
-            qubit_state[i].zero_amp = 0.0;
-            qubit_state[i].one_amp = 0.0;
-            qubit_state[i].phase = 0.0;
+        double zero_amp =0.0;
+        double one_amp = 0.0;
+        double phase = 0.0;
 
-        //double zero_amp =0.0;
-        //double one_amp = 0.0;
         for(int root = 0; root < root_max; root++)
         {
             for(int step = 0; step < size; step += increment)
             {
                 // use these for phases or something...
-                temp_v(0) = vect(root + step);
-                temp_v(1) = vect(root + root_max + step);
+                zero = vect(root + step);
+                one = vect(root + step +root_max);
+                // for the i-th qubit calc amplitudes |a|^2
+                zero_amp += std::norm(zero); 
+                one_amp += std::norm(one);
 
-                // abs**2 for amplitude 
-                // for the i-th qubit calc amplitudes
-                qubit_state[i].zero_amp += pow(abs(temp_v(0)), 2);
-                qubit_state[i].one_amp += pow(abs(temp_v(1)), 2);
-
-                // not using the vector saves <8% about 2s or .2s per cycle
-                ////                zero_amp += pow(abs(temp_v(0)), 2);
-                //            one_amp += pow(abs(temp_v(1)), 2);
                 // @todo do phase stuff
-                qubit_state[i].phase = 0.0;
+                phase = 0.0;
             }
 
         }
         // after looping through all elements in the state vector 
         // return zero and one amplitudes and phase info to leds.
         // e.g set_leds(zero_amp, one_amp, phase);
+        qubit_state[i].zero_amp = zero_amp;
+        qubit_state[i].one_amp = one_amp;
+        qubit_state[i].phase = phase;
 
-        std::cout << "qubit " << i << " (|0>, |1>) (" << qubit_state[i].zero_amp << ", " << qubit_state[i].one_amp << ") " << std::endl;
+        //std::cout << "qubit " << i << " (|0>, |1>) (" << qubit_state[i].zero_amp << ", " << qubit_state[i].one_amp << ") " << std::endl;
     }
 
-}
-// uses the qubit_state object def in state vector class. stores each qubits amplitudes
-// and phase
-void State_vector::disp_list(int qubit, const std::vector<Qubit_index> & list)
-{
-    // reset to zero for qubit
-    qubit_state[qubit].zero_amp = 0.0;
-    qubit_state[qubit].one_amp = 0.0;
-    // go through every 0 & 1 pair
-    for(int i=0; i< size/2; i++)
-    {
-        qubit_state[qubit].zero_amp += pow(abs(vect(list[qubit].zero[i])),2);
-        qubit_state[qubit].one_amp += pow(abs(vect(list[qubit].one[i])),2);
-    }
 }
 

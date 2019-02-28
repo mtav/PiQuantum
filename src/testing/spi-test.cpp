@@ -12,6 +12,7 @@
 #include "wpi.hpp"
 #include "io.hpp"
 #include "leds.hpp"
+#include "buttons.hpp"
 
 #include <cstdlib>
 #include <cstring>
@@ -31,25 +32,30 @@ int main() {
   led3.rgb(1.0, 0.0, 1.0);
   
   getInputOutput() -> print();
+
+  Button btn0({0,2});
+  Button btn1({1,7});
+  Button btn2({1,1});
+  Button btn3({1,2});
+  Button btn4({1,0});
+  Button btn5({1,3});
+  Button btn6({0,1});
+  Button btn7({0,0});
+
   
-  //std::cout << "red:" << led.get_rgb()[0] << std::endl;
-  //std::cout << "greed:" << led.get_rgb()[1] << std::endl;
-  //std::cout << "blue:" << led.get_rgb()[2] << std::endl;
-  
-  
-  /*
-    unsigned char byte = 0;
-    while(1) {
-    byte ++;
-    delay(100);
-    leds.set({byte,byte});
-    }
-  */
-  //  double thing = 0;
-  //while(1) {
-  //  std::cin >> thing;
-  //  leds.test_led.red = thing; 
-  //};
+  while(1) {
+    delay(5000);
+    std::cout << btn0.get_state() << " "
+	      << btn1.get_state() << " "
+	      << btn2.get_state() << " "
+	      << btn3.get_state() << " "
+	      << btn4.get_state() << " "
+	      << btn5.get_state() << " "
+	      << btn6.get_state() << " "
+	      << btn7.get_state() << " "
+	      << "                   \r";
+  }
+
 
   while(1);
 }

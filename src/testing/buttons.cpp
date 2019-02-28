@@ -10,8 +10,8 @@
 #include "buttons.hpp"
 
 // Initialise with zero RGB values
-Button::Button(Lines lines)
-  : driver(getInputOutput()), lines(lines) {
+Button::Button(Position position)
+  : driver(getInputOutput()), position(position) {
   // Register the Button object with the driver
   driver -> register_button(this); 
 }
@@ -24,6 +24,6 @@ Button::~Button() {
 }
 
 // Read the button
-int Button::state() {
+int Button::get_state() {
   return btn_state;
 }

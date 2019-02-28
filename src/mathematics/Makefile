@@ -1,5 +1,5 @@
 ## General compilation options
-CPPFLAGS = -Wall -g -O2 -march=native -flto
+CPPFLAGS = -Wall -g -O2 -march=native -flto -std=c++11
 LDLIBS = -I../eigen3
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) > /dev/null)
