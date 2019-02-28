@@ -19,22 +19,22 @@
  * retain their value between function calls.   
  *
  */
-std::shared_ptr<SpiChannel> getSpiChannel() {
-
+std::shared_ptr<SpiChannel> getSpiChannel()
+{
   // Variables to store the SpiChannels for channel
   // zero and 1. Initialisation takes place the first time
   // the function is called and not subsequently, so the
   // variable starts as a nullptr and then takes on values
   // when new SpiChannels are created.
-
   std::shared_ptr<SpiChannel> spi = nullptr;
+
   // If necessary, make a new SPI channel
   if(spi == nullptr) {
     spi = std::make_shared<SpiChannel>();
   }
+
   // Return the spi channel pointer
-  return spi;
-  
+  return spi; 
 }
 
 SpiChannel::SpiChannel()
@@ -43,18 +43,21 @@ SpiChannel::SpiChannel()
     // Set up SPI channel
     int result = wiringPiSPISetup(channel, frequency);
     if(result == -1) {
-        std::cout << strerror(errno) << std::endl;
+        std::cerr << strerror(errno) << std::endl;
     }
 }
 
 // Change frequency in Hz
-void SpiChannel::change_frequency(int frequency)
+void SpiChannel::change_frequency(int freq_hz)
 {
-    // Reset the SPI channel
-    int result = wiringPiSPISetup(channel, frequency);
-    if(result == -1) {
-        std::cout << strerror(errno) << std::endl;
-    }
+  // Store the new freq
+  frequency = freq_hz;
+  
+  // Reset the SPI channel
+  int result = wiringPiSPISetup(channel, frequency);
+  if(result == -1) {
+    std::cerr << strerror(errno) << std::endl;
+  }
 }
 
 /** 

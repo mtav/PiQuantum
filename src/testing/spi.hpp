@@ -42,7 +42,7 @@ typedef unsigned char byte;
  * retains its value between function calls.   
  *
  */
-std::shared_ptr<SpiChannel> getSpiChannel();
+std::shared_ptr<class SpiChannel> getSpiChannel();
 
 /**
  * @brief SpiChannel class
@@ -61,7 +61,7 @@ class SpiChannel
 {
 private:
   const int channel; // Pi channel Either 0 or 1
-  const int frequency; // SPI frequency
+  int frequency; // SPI frequency
   WiringPi wpi; // Constructing this object ensures wiringPi is setup
   std::vector<byte> read_write(const std::vector<byte> & write);
   
