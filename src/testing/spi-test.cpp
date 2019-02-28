@@ -12,6 +12,7 @@
 #include "wpi.hpp"
 #include "io.hpp"
 #include "leds.hpp"
+#include "buttons.hpp"
 
 #include <cstdlib>
 #include <cstring>
@@ -31,6 +32,11 @@ int main() {
   led3.rgb(1.0, 0.0, 1.0);
   
   getInputOutput() -> print();
+
+  Button btn1({0,1});
+  Button btn2({0,1});
+
+  while(1) 
   
   //std::cout << "red:" << led.get_rgb()[0] << std::endl;
   //std::cout << "greed:" << led.get_rgb()[1] << std::endl;

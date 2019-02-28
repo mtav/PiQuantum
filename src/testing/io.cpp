@@ -137,9 +137,6 @@ void InputOutput::func() {
   // Check for counter reset
   if(counter == period) {
     counter = 0; // Reset counter
-    std::cout << (int)button_states[0] << " "
-	      << (int)button_states[1]
-	      << std::endl;
     set_leds(write); // Set all to zero
   }
 [B
