@@ -59,40 +59,57 @@ void SpiChannel::change_frequency(int frequency) {
     }
 }
 
-//---------------------------------- Read write spi ---------------------------
-//
-// Simultaneous read/write data to the SPI interface
-// Pass a std::vector to write. Read data is returned as a std::vector
-unsgn_char_vect SpiChannel::read_write(const unsgn_char_vect & write) {
+/** 
+ * @brief Read/write spi
+ *
+ * @detail Simultaneous read/write data to the SPI interface
+ * Pass a std::vector to write. Read data is returned as a std::vector
+ *
+ */
+std::vector<byte> SpiChannel::read_write(const std::vector<byte> & write) {
     // Allocate memory for a data buffer 
     int len = write.size();
-    unsigned char * buffer = static_cast<unsigned char * >(malloc(sizeof(unsigned char)*len));
+    byte * buffer = static_cast<byte * >(malloc(sizeof(byte)*len));
 
     // Store std::vector in char array
     std::copy(write.begin(), write.end(), buffer);
 
     // Send the data
-    int result = wiringPiSPIDataRW(channel, buffer, len);
-    if(result != len) {std::cout << "SPI Error: wrong amount of data sent" << std::endl;}
+    int result = wiringPiSPIDataRW(channel,
+				   buffer ,
+				   len);
+    if(result != len) {
+      std::cout << "SPI Error: wrong amount of data sent" << std::endl;
+    }
 
     // Store returned data in std::vector<unsigned char>
-    unsgn_char_vect read(buffer, buffer+len);
+    std::vector<byte> read(buffer, buffer+len);
 
     // Free the buffer memory
     free(buffer);
     return read;
 }
 
-// read takes int returns vector
-unsgn_char_vect SpiChannel::read(int num_bytes)
-{
+/**
+ * @brief Read spi data
+ *
+ * @detail Function for reading @param num_bytes from an 
+ * spi device. Data is returned as a standard vector.
+ *
+ */
+std::vector<byte> SpiChannel::read(int num_bytes) {
     // makes a vector of size num_bytes with entries = 0
-    unsgn_char_vect v_empty(num_bytes, 0);
-    return SpiChannel::read_write(v_empty);
+  std::vector<byte> empty(num_bytes, 0);
+  return SpiChannel::read_write(empty);
 }
 
-// write takes ref vector 
-void SpiChannel::write(const unsgn_char_vect & write)
-{
+/**
+ * @brief Write spi data
+ *
+ * @detail Function for writing @param write from an 
+ * spi device. Data is returned as a standard vector.
+ *
+ */
+void SpiChannel::write(const std::vector<byte> & write) {
     read_write(write);
 }

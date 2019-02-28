@@ -23,8 +23,14 @@
 #include <algorithm>
 #include <memory>
 
-// easier to read.
-typedef std::vector<unsigned char> unsgn_char_vect;
+/**
+ * @brief Byte (8 bits) type
+ *
+ * @detail Alias for unsigned char. Type to store 8 bits of
+ * data for hardware reads and writes.
+ *
+ */
+typedef unsigned char byte;
 
 /**
  * SpiChannel class
@@ -43,15 +49,7 @@ class SpiChannel {
 private:
   const int channel; // Pi channel Either 0 or 1
   WiringPi wpi; // Constructing this object ensures wiringPi is setup
-  
-  // ------------------ read_write as vector or unsigned char ----------
-  // Simultaneous read/write data to the SPI interface
-  // Pass a std::vector to write. Read data is returned as a std::vector
-  unsgn_char_vect read_write(const unsgn_char_vect & write);
-  
-  // Simultaneous read/write data to the SPI interface
-  // Read and write a single byte of data
-  // unsigned char read_write(const unsigned char write);
+  std::vector<byte> read_write(const std::vector<byte> & write);
   
 public:
   // Constructor
@@ -61,10 +59,10 @@ public:
   void change_frequency(int frequency);
   
   // read takes int returns vector
-  unsgn_char_vect read(int num_bytes);
+  std::vector<byte> read(int num_bytes);
 
   // write takes ref vector 
-  void write(const unsgn_char_vect & write);
+  void write(const std::vector<byte> & write);
 };
 
 /**
