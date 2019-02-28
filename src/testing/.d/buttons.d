@@ -1,2 +1,2 @@
-buttons.o: buttons.cpp buttons.hpp io.hpp spi.hpp wpi.hpp \
+buttons.o: buttons.cpp buttons.hpp io.hpp wpi.hpp spi.hpp \
  pin_mappings.hpp

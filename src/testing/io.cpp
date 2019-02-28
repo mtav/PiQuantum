@@ -17,7 +17,7 @@ void Alarm::handler(int sig) {
         std::cerr << "Error: unexpected signal " << sig << ", expected SIGALRM"
             << std::endl;
     }
-    if(alrm != nullptr) alrm -> func(); // execute the intended function
+    if(alrm != nullptr) alrm -> interrupt(); // execute the intended function
 }// end of handler
 
 // Constructor
@@ -152,7 +152,7 @@ void InputOutput::print() {
     }
 }
 
-void InputOutput::func() {    
+void InputOutput::interrupt() {    
 
   // Initiliase data to write to chips
   write = std::vector<unsigned char>(chips, 0);    

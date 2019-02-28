@@ -10,7 +10,7 @@
 #ifndef IO_HPP
 #define IO_HPP
 
-#include <wiringPi.h>
+#include "wpi.hpp"
 #include <signal.h>
 #include <unistd.h>
 #include <iostream>
@@ -23,7 +23,7 @@
  *
  * @detail This class implements the SIGALARM function in Linux. 
  * SIGALARM can be setup to call a function at regular intervals.
- * The function (func) does not have an implementation in this class.
+ * The function (interrupt) does not have an implementation in this class.
  * It is defined in the derived InputOutput class. The constructor
  * sets up the SIGALARM (defining the period, etc.)
  *
@@ -31,9 +31,10 @@
 class Alarm
 {
 private:
+  WiringPi wpi; // Constructor ensures that wiringPi is setup
   static Alarm * alrm; // A pointer to an alarm class
   static void handler(int sig);  
-  virtual void func() = 0;   // Set the function called by the alarm 
+  virtual void interrupt() = 0;   // Set the function called by the alarm 
   void set_pointer(Alarm * ptr) { alrm = ptr; } // Set up pointer to alarm object
   
 public:
@@ -53,21 +54,6 @@ public:
  */
 std::shared_ptr<class InputOutput> getInputOutput();
 
-/** 
- * @brief Chip/line structure 
- *
- * @detail Store the chip and line number for 
- * a particular LED or button.
- *
- */
-typedef struct {
-  int chip;
-  int line;
-} Position;
-
-// Print the chip/lines for an LED
-std::ostream & operator << (std::ostream & stream, Position lines);
-
 /**
  * @brief Class for reading buttons and writing to LEDs
  *
@@ -76,14 +62,14 @@ std::ostream & operator << (std::ostream & stream, Position lines);
  * which are `registered' with this class automatically when they are
  * instantiated. 
  *
- * The second part is a function, called func(), which is called at
+ * The second part is a function, called interrupt(), which is called at
  * regular intervals by the SIGALARM signal (a linux thing). This function
  * is responsible for updating the states of the LEDs and reading the 
  * state of all the buttons.
  *
  * The LEDs are controlled using a pulse width modulation type scheme, 
- * which func() simulates. I keeps track of a counter, which is incremented
- * by 1 every time func() is called. When it gets to period, it is reset 
+ * which interrupt() simulates. I keeps track of a counter, which is incremented
+ * by 1 every time interrupt() is called. When it gets to period, it is reset 
  * to zero. As the counter ranges through 0 to period, each registered LED
  * object is queried to get an RGB values (between 0 and 1). If this value
  * exceeds counter/period (also between 0 and 1), then the LED is turned off.
@@ -118,7 +104,7 @@ private:
    * LEDs are switches back on.
    *
    */
-  void func();
+  void interrupt();
 
 public:
 
@@ -161,5 +147,27 @@ public:
   void register_button(Button * btn);
   
 }; // end of InputOutput
+
+/** 
+ * @brief Chip/line structure 
+ *
+ * @detail Store the chip and line number for 
+ * a particular LED or button.
+ *
+ */
+typedef struct {
+  int chip;
+  int line;
+} Position;
+
+/** 
+ * @brief Print the chip/lines for an LED
+ *
+ * @detail Useful for easily printing out Position structs in
+ * an easy to read format.
+ *
+ */
+std::ostream & operator << (std::ostream & stream, Position lines);
+
 
 #endif
