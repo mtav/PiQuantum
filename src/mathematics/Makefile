@@ -1,15 +1,17 @@
 ## General compilation options
+VPATH = ../testing
 CPPFLAGS = -Wall -g -O2 -march=native -flto -std=c++11
+CPPFLAGS += -I../testing
 LDLIBS = -I../eigen3
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) > /dev/null)
-LIBS = 
+LIBS = -lwiringPi
 
 ## Target 1
 ## List the required object files after the target
 ##
 TEST_BIN = test
-$(TEST_BIN): math_test.o state.o
+$(TEST_BIN): math_test.o state.o spi.o io.o leds.o buttons.o wpi.o
 	g++ $(CPPFLAGS) $(LDLIBS)  $^ -o $(TEST_BIN) $(LIBS)
 
 ## Target 2
