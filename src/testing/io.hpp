@@ -58,6 +58,8 @@ std::ostream & operator << (std::ostream & stream, Position lines);
 
 class InputOutput : public Alarm {
 private:
+
+  WiringPi wpi; // Constructing this object ensures wiringPi is setup
   std::shared_ptr<SpiChannel> spi; // SPI interface
   const unsigned int chips; // Number of TLC591x chips
   std::vector<Led * > leds; // A list of pointers to Led objects

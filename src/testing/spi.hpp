@@ -42,7 +42,7 @@ typedef std::vector<unsigned char> unsgn_char_vect;
 class SpiChannel {
 private:
   const int channel; // Pi channel Either 0 or 1
-  WiringPi wpi; // Constructing this object initialises wiringPi
+  WiringPi wpi; // Constructing this object ensures wiringPi is setup
   
   // ------------------ read_write as vector or unsigned char ----------
   // Simultaneous read/write data to the SPI interface
