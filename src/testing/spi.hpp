@@ -48,12 +48,13 @@ typedef unsigned char byte;
 class SpiChannel {
 private:
   const int channel; // Pi channel Either 0 or 1
+  const int frequency; // SPI frequency
   WiringPi wpi; // Constructing this object ensures wiringPi is setup
   std::vector<byte> read_write(const std::vector<byte> & write);
   
 public:
   // Constructor
-  SpiChannel(int channel, int frequency);
+  SpiChannel();
   
   // Change frequency in Hz
   void change_frequency(int frequency);
@@ -71,10 +72,10 @@ public:
  * @detail Return a shared_ptr object to an SPI channel.
  * This function is a kind of singleton implementation, 
  * preventing multiple copies of the SPI class. The actual
- * SPI objects are stored in static variables so that they 
- * retain their value between function calls.   
+ * SPI object is stored in a static variables so that it 
+ * retains its value between function calls.   
  *
  */
-std::shared_ptr<SpiChannel> getSpiChannel(int channel);
+std::shared_ptr<SpiChannel> getSpiChannel();
 
 #endif

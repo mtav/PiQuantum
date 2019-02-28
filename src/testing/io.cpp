@@ -99,7 +99,7 @@ std::shared_ptr<InputOutput> getInputOutput() {
     static std::shared_ptr<InputOutput> driver;
     // If necessary, make a new SPI channel
     if(driver == nullptr)
-        driver = std::make_shared<InputOutput>(getSpiChannel(0));
+        driver = std::make_shared<InputOutput>(getSpiChannel());
     // Return the spi channel pointer
     return driver; 
 }
@@ -201,11 +201,6 @@ void InputOutput::register_led(Led * led) {
 void InputOutput::register_button(Button * btn) {
     // Add the LED to the leds vector or pointers
     buttons.push_back(btn);
-
-    // Enable LED lines -- Is this necessary for buttons?
-    //for(int k=0; k < 3; k++)
-    //  mask[led -> get_lines()[k].chip] |= (1 << led -> get_lines()[k].line);
-
 }
 
 // Print the chip/lines for an LED
