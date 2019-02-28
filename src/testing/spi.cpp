@@ -61,29 +61,26 @@ void SpiChannel::change_frequency(int frequency) {
  * @brief Read/write spi
  *
  * @detail Simultaneous read/write data to the SPI interface
- * Pass a std::vector to write. Read data is returned as a std::vector
+ * Pass a std::vector to write. Read data is returned as a std::vector.
+ * The function uses the fact that a pointer to the first element of a 
+ * std::vector is a valid C style array
  *
  */
 std::vector<byte> SpiChannel::read_write(const std::vector<byte> & write) {
-    // Allocate memory for a data buffer 
-    int len = write.size();
-    byte * buffer = static_cast<byte * >(malloc(sizeof(byte)*len));
 
-    // Store std::vector in char array
-    std::copy(write.begin(), write.end(), buffer);
+  // Allocate a buffer which is a copy of write and store its length
+  std::vector<byte> buffer(write);   
+  int len = write.size();
+  
+  // Send the data
+  int result = wiringPiSPIDataRW(channel, &buffer[0], len);
+  if(result != len) {
+    std::cerr << "SPI Error: wrong amount of data sent" << std::endl;
+  }
+  
+  // Buffer now contains data read from SPI
+  return buffer;
 
-    // Send the data
-    int result = wiringPiSPIDataRW(channel, buffer, len);
-    if(result != len) {
-      std::cerr << "SPI Error: wrong amount of data sent" << std::endl;
-    }
-
-    // Store returned data in std::vector<unsigned char>
-    std::vector<byte> read(buffer, buffer+len);
-
-    // Free the buffer memory
-    free(buffer);
-    return read;
 }
 
 /**
