@@ -142,7 +142,7 @@ void InputOutput::func() {
 	      << std::endl;
     set_leds(write); // Set all to zero
   }
-[B
+
   // Loop over all the pointers in the leds vector, turning
   // the LEDs off if counter is high enough
   // Start with an empty std::vector to populate with LED state
@@ -160,10 +160,18 @@ void InputOutput::func() {
     write[i] &= mask[i]; // Mask the write array
   set_leds(write); // Write the data to the chip
 
-  // Put button reading stuff here
- std::vector<unsigned char> button_states = read_button_states(2);
-
+  // Read all the button states
+  std::vector<unsigned char> button_states = read_button_states(2);
   
+  // Loop over all the button pointers writing the state
+  // to the button objects
+  for(Button * b : buttons) {
+    // Get the chip for b
+    int chip = b -> get_lines.chip;
+    // Create a mask for the correct bit
+    int mask = (1 << b -> get_lines.line);
+    b -> button state = ( button_states[chip] && mask) ;
+  }
 
 } // end of func
 

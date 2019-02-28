@@ -24,6 +24,6 @@ Button::~Button() {
 }
 
 // Read the button
-int Button::state() {
+int Button::get_state() {
   return btn_state;
 }
