@@ -144,9 +144,9 @@ void InputOutput::print() {
             << "B: " << i -> get_positions()[2] << ", "
             << std::endl
             << "Levels: "
-            << "R: " << i -> rgb()[0] << ", " 
-            << "G: " << i -> rgb()[1] << ", "
-            << "B: " << i -> rgb()[2] << ", "
+            << "R: " << i -> get_rgb()[0] << ", " 
+            << "G: " << i -> get_rgb()[1] << ", "
+            << "B: " << i -> get_rgb()[2] << ", "
             << std::endl;
         count ++;
     }
@@ -173,7 +173,7 @@ void InputOutput::interrupt() {
     // Need to ensure i still exists here
     // Loop over RGB setting corresponding bits
     for(int k = 0; k < 3; k++) {
-      if((counter/period) > (1 - i -> rgb()[k]))
+      if((counter/period) > (1 - i -> get_rgb()[k]))
 	write[i -> get_positions()[k].chip]
 	  |= (1 << i -> get_positions()[k].line); // Write a 1 in correct position
     }
@@ -186,7 +186,7 @@ void InputOutput::interrupt() {
       // Need to ensure i still exists here
       // Loop over RGB setting corresponding bits
       for(int k = 0; k < 3; k++) {
-	if((counter/period) > (1 - i -> rgb()[k]))
+	if((counter/period) > (1 - i -> get_rgb()[k]))
 	  write[i -> get_positions()[k].chip]
 	    |= (1 << i -> get_positions()[k].line); // Write a 1 in correct position
       }

@@ -11,7 +11,7 @@
 
 // Initialise with zero RGB values
 Led::Led(Position r, Position g, Position b)
-  : driver(getInputOutput()), positions({r,g,b}), rgb_values(3,0) {
+  : driver(getInputOutput()), positions({r,g,b}), rgb(3,0) {
   // Register the Led object with the driver
   driver -> register_led(this); 
 }
@@ -25,8 +25,20 @@ Led::~Led() {
 
 // Read and write the RGB value
 // May as well just make this public...
-void Led::rgb(double red, double green, double blue) {
-  rgb_values[0] = red;
-  rgb_values[1] = green;
-  rgb_values[2] = blue;
+void Led::set_rgb(double red, double green, double blue) {
+  rgb[0] = red;
+  rgb[1] = green;
+  rgb[2] = blue;
+}
+
+// Return the chip and line numbers
+std::vector<Position> Led::get_positions()
+{
+  return positions;
+}
+
+// Read RGB values
+std::vector<double> Led::get_rgb()
+{
+  return rgb;
 }
