@@ -18,33 +18,39 @@
 #include "spi.hpp"
 #include "pin_mappings.hpp"
 
+/**
+ * @brief Interrupts in Linux
+ *
+ * @detail This class implements the SIGALARM function in Linux. 
+ * SIGALARM can be setup to call a function at regular intervals.
+ * The function (func) does not have an implementation in this class
+ * -- it is defined in the derived InputOutput class. The constructor
+ * sets up the SIGALARM (defining the period, etc.)
+ *
+ */
 class Alarm {
 private:
   static Alarm * alrm; // A pointer to an alarm class
   static void handler(int sig);  
-  // Set the function called by the alarm 
-  virtual void func() = 0;
-  
-  // Set up pointer to alarm object
-  void set_pointer(Alarm * ptr) { alrm = ptr; }
+  virtual void func() = 0;   // Set the function called by the alarm 
+  void set_pointer(Alarm * ptr) { alrm = ptr; } // Set up pointer to alarm object
   
 public:
   // Constructor
   Alarm(int delay_us);
-
 };
-
-// Forward declaration
-class Led;
-class Button;
-class InputOutput;
 
 /**
  * @brief Wrapper to return InputOutput class
  *
- * @detail Return a shared_ptr object to an InputOutput. 
+ * @detail Return a shared_ptr object to an InputOutput.
+ * Functions should use this function to get a shared pointer
+ * to the InputOutput object. This function ensures that there is
+ * only ever one. Functions should not instantiate InputOutput objects
+ * directly 
+ *
  */
-std::shared_ptr<InputOutput> getInputOutput();
+std::shared_ptr<class InputOutput> getInputOutput();
 
 /** 
  * @brief Chip/line structure 
@@ -67,8 +73,8 @@ private:
   WiringPi wpi; // Constructing this object ensures wiringPi is setup
   std::shared_ptr<SpiChannel> spi; // SPI interface
   const unsigned int chips; // Number of TLC591x chips
-  std::vector<Led * > leds; // A list of pointers to Led objects
-  std::vector<Button * > buttons; // A list of pointers to Button objects
+  std::vector<class Led * > leds; // A list of pointers to Led objects
+  std::vector<class Button * > buttons; // A list of pointers to Button objects
   
   /**
    * @brief Function for simulating dimmable LEDs
@@ -98,34 +104,24 @@ public:
   void print();
   
   /** 
-   * @brief Turn on an LED via the external display driver TLC591x
+   * @brief Send data to the LEDs 
    *
-   * On power on, the chip (TLC591x) is in normal mode which means that
-   * the clocked bytes sent to the chip set which LEDs are on and which 
-   * are off (as opposed to setting the current of the LEDs).
+   * @detail Send a std::vector of bytes to the LED drivers. This function is
+   * called repeatedly in the func SIGALARM function to update the state of the
+   * LEDs
    *
-   * This function assumes that a number of the TLC591 chips are connected
-   * together. Data is sent via SPI to the first chip and passed along the
-   * chain to other devices.
-   *
-   * To write to the device:
-   *
-   *  1) Write a number of bytes to the SPI port, equal to the number of
-   *     chips connected together
-   *  2) Momentarily set the LE(ED1) pin to latch the data onto the output 
-   *     register.
-   *  3) Bring the OE(ED2) pin low to enable the current sinking to turn 
-   *     on the LEDs.
-   *
-   * See the timing diagram on page 17 of the datasheet for details.  
-   *
-   * Arguments: a std::vector of the data to write to the display chips
-   * 
    */
-  int set_leds(std::vector<unsigned char> data);
+  int set_leds(std::vector<byte> data);
 
-  // Read button stuff
-  std::vector<unsigned char> read_button_states(int num);
+  /**
+   * @brief Read all the button states
+   *
+   * @detail Read a number @param num of bytes from the button shift 
+   * registers and return it in a standard vector. The SIGALARM function (func)
+   * calls this function to update the state of all the button objects
+   *
+   */
+  std::vector<byte> read_button_states(int num);
   
   /** 
    * @brief Register LEDs and buttons
