@@ -23,8 +23,8 @@ int main(void)
     for(int i=0; i<10; i++)
     {
         state.apply(X,0);
-        state.apply(CNOT, 0,1);
-        state.disp();
+      //  state.apply(CNOT, 0,1);
+     //   state.disp();
 
         // use state.disp_list_all() to calculate the average state of all qubits. 
 //        state.disp_list_all();
