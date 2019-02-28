@@ -25,17 +25,6 @@ int main(void)
     Rotation_X CNOT(2);
 
     //state.print();
-<<<<<<< HEAD
-    for(int i=0; i<5; i++)
-    {
-      std::cout << "Loop" << std::endl;
-      //state.apply(X,0);
-        //state.apply(CNOT, 0,1);
-        // use state.disp_list_all() to calculate the average state of all qubits. 
-        state.disp_list_all();
-        // use state.disp_list(number of qubit) to calc average state of a specific qubit
-        //state.disp_list(0);
-=======
     for(int k=0; k<10; k++) {
       for(int i=0; i<20; i++)
 	{
@@ -48,7 +37,6 @@ int main(void)
 	  //      // use state.disp_list(number of qubit) to calc average state of a specific qubit
 	  //    state.disp_list(0);
 	}
->>>>>>> 482f9d331bdadb902e40db7379df22135c545e31
     }
     //// max sup state
     // state.apply(H,0);

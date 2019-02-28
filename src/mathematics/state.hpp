@@ -177,41 +177,5 @@ class State_vector
         // led function needs to map qubit_state.zero_amp to RED
         // qubit_state.one_amp to BLUE
         // qubit_state.phase to GREEN!!!!
-<<<<<<< HEAD
-
-
-        // ---------------------------- Display modes, slightly faster 
-        // to check display_avg works
-        void disp()
-        {
-            display_avg();
-            for(int i=0; i<num_qubits; i++)
-            {
-                std::cout << "qubit " << i << " (|0>, |1>) (" << qubit_state[i].zero_amp << ", " << qubit_state[i].one_amp << ") " << std::endl;
-            }
-
-        }
-
-        // ----------------------------- Display uses the list of statevector elements rather than computing new ones everytime.
-        // call to get all qubit states
-        void disp_list_all() {
-            for(int i=0; i<num_qubits; i++) {
-                disp_list(i);
-            }
-        }
-        
-        // overloading to only take a qubit and pass the state vector obj qubit_index
-        void disp_list(int qubit)
-        {
-            disp_list(qubit, qubit_index);
-            //std::cout << "qubit " << qubit << " (|0>, |1>) (" << qubit_state[qubit].zero_amp << ", " << qubit_state[qubit].one_amp << ") " << std::endl;
-        }
-
-        // call to see specific qubits state
-        void disp_list(int qubit, const std::vector<Qubit_index> & list);
-        // ----------------------------------------------------------------- END
-
-=======
->>>>>>> 482f9d331bdadb902e40db7379df22135c545e31
 };
 #endif
