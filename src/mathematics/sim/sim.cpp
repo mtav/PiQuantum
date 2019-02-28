@@ -286,6 +286,10 @@ int main() {
     * (state+n) = 0.0;
 
 
+  // Benchmarks on the PI
+  // 0.026s per gate for 20 qubits (averaged over all the qubits)
+  // 0.15s per display average of 20 qubits
+  
   //prints(state);
 
   // Print matrix
@@ -301,16 +305,18 @@ int main() {
   double * average = (double * ) malloc(2 * NUM_QUBITS * sizeof(double));
  
   // Make equal superposition
-  for(int n=0; n < 20; n++) {
-    std::cout << "Operation " << n << std::endl;
-    sgate(H, state, n);
-    //state_average(state, average);
-    /*
-    for(int k=0; k<NUM_QUBITS; k++) {
-      std::cout << "(" << *(average+2*k)<< "," <<*(average+2*k+1)<< "), "; 
+  for(int k=0; k<10; k++) {
+    for(int n=0; n < 20; n++) {
+      std::cout << "Operation " << n << std::endl;
+      //sgate(H, state, n);
+      state_average(state, average);
+      /*
+	for(int k=0; k<NUM_QUBITS; k++) {
+	std::cout << "(" << *(average+2*k)<< "," <<*(average+2*k+1)<< "), "; 
+	}
+	std::cout << std::endl;
+      */
     }
-    std::cout << std::endl;
-    */
   }
 
   time.stop();
