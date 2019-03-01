@@ -19,7 +19,9 @@ void State_vector::apply(const Operator & op, int qubit)
 void State_vector::apply(const Operator & op, int ctrl, int targ)
 {
     two_qubit_op(op.matrix, ctrl, targ);
-    std::cout <<"You applied " << op.name << " controlled on " << ctrl << " target " << targ << std::endl;
+    std::cout << "You applied " << op.name
+	      << " controlled on " << ctrl
+	      << " target " << targ << std::endl;
 }
 
 // returns all pairs of values of indices in the state vector
