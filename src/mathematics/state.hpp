@@ -10,6 +10,7 @@
 #define STATE_HPP
 
 #include <Eigen/Core>
+#include <Eigen/SparseCore>
 #include <iostream>
 #include <vector>
 
@@ -102,7 +103,7 @@ private:
   // for applying gates.
   void single_qubit_op(const Eigen::Matrix2cd & op, int qubit);
   void two_qubit_op(const Eigen::Matrix2cd & op, int ctrl, int targ);
-  Eigen::Vector2cd mat_mul(const Eigen::Matrix2cd & op, const Eigen::VectorXcd & v, int i, int j);
+  Eigen::Vector2cd mat_mul(const Eigen::Matrix2cd & op, const std::complex<double> & i, const std::complex<double> & j);
 
   // holdes the qubit zero & one amplitudes and their phase info
   // the leds will read this list.
@@ -113,12 +114,14 @@ private:
     // @todo think about this.
     // needs to be double (REal) for leds... 
     double phase;
+    bool uptodate;
   };
 
   // see cpp for imp, should ONLY every use qubit_state so the default is public
   // this must be private
   void display_avg(std::vector<Qubit_states> & qubit_state, const Eigen::VectorXcd & vect);
 
+  Eigen::SparseVector<std::complex<double> > vect_sparse;
 public:
   // for each qubits zero_amp, one_amp and phase info.
   std::vector<Qubit_states> qubit_state; 
@@ -145,7 +148,22 @@ public:
     // the display functions will use this list, the led stuff can then 
     // read it when needed 
     qubit_state.resize(num_qubits);
+    // set all to vacuum and display flag to update
+    for(int i=0; i<num_qubits; i++)
+    {
+        qubit_state[i].zero_amp = 1.0;
+        qubit_state[i].one_amp = 0.0;
+        qubit_state[i].phase = 0.0;
+        qubit_state[i].uptodate = true;
+    }
+
+    vect_sparse.resize(size);
+    vect_sparse.coeffRef(0)=1.0;
   }
+    void max_superpos()
+    {
+        vect= Eigen::VectorXcd::Constant(size,1,1/std::sqrt(2));
+    }
 
   // use to apply gates
   void apply(const Operator & op, int qubit);
@@ -161,7 +179,7 @@ public:
       {
 	std::cout << "qubit " << i << " (|0>, |1>) ("
 		  << qubit_state[i].zero_amp << ", "
-		  << qubit_state[i].one_amp << ") " << std::endl;
+		  << qubit_state[i].one_amp << ") " << "Phase " << qubit_state[i].phase << std::endl;
       }
 
   }

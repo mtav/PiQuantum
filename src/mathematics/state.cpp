@@ -13,6 +13,7 @@ void State_vector::apply(const Operator & op, int qubit)
 {
     single_qubit_op(op.matrix, qubit);
     std::cout << " You applied " << op.name << " on qubit " << qubit << std::endl; 
+    qubit_state[qubit].uptodate = false;
 }
 
 // two qubit version
@@ -20,8 +21,9 @@ void State_vector::apply(const Operator & op, int ctrl, int targ)
 {
     two_qubit_op(op.matrix, ctrl, targ);
     std::cout << "You applied " << op.name
-	      << " controlled on " << ctrl
-	      << " target " << targ << std::endl;
+        << " controlled on " << ctrl
+        << " target " << targ << std::endl;
+    qubit_state[targ].uptodate = false;
 }
 
 // returns all pairs of values of indices in the state vector
@@ -109,8 +111,12 @@ void State_vector::single_qubit_op(const Eigen::Matrix2cd & op, int qubit){
     int bit = (1 << qubit); // The bit position corresponding to the kth qubit
     int high_incr = (bit << 1); 
     Eigen::Vector2cd temp;
+    double epsilon = 1e-5;
     /// @note this order is correct and super important!
     // Increment through the indices less than bit
+    long unsigned int skipped=0, not_skipped=0; 
+    std::vector<int> index;
+
     for(int i=0; i<bit; i++)
     {
         // Increment through the indices above bit
@@ -118,11 +124,23 @@ void State_vector::single_qubit_op(const Eigen::Matrix2cd & op, int qubit){
         {
             // 2x2 matrix multiplication on the zero (i+j)
             // and one (i+j+bit) indices
-            temp = mat_mul(op, vect, i+j, i+j+bit);
-            vect(i+j) = temp(0); 
-            vect(i+j+bit) = temp(1);
+            // same speed up these two ifs
+            //if ((abs(vect(i+j)) >= epsilon) || (abs(vect(i+j+bit)) >= epsilon))
+            // if ((std::abs(vect(i+j)) + std::abs(vect(i+j+bit))) >= epsilon)
+            if ((abs(vect(i+j)) >= epsilon) || (abs(vect(i+j+bit)) >= epsilon))
+            {
+                temp = mat_mul(op, vect(i+j), vect(i+j+bit));
+                vect(i+j) = temp(0); 
+                vect(i+j+bit) = temp(1);
+
+                index;
+                not_skipped++;
+
+            }
+            else skipped++;
         }
     }
+    std::cout << "Qubit " << qubit << " (not_skipped, skipped) (" << not_skipped << ", " << skipped << ")" << std::endl;
 }
 
 
@@ -231,7 +249,7 @@ void State_vector::two_qubit_op(const Eigen::Matrix2cd & op, int ctrl, int targ)
             /// root + step + root_max contain 1 in the ctrl-th bit. 
             if( (((root+step) & (1 << ctrl)) && ((root+step+root_max) & (1 << ctrl))) == 1)
             {
-                temp = mat_mul(op, vect, root+step, root+root_max+step);
+                temp = mat_mul(op, vect(root+step), vect(root+root_max+step));
                 vect(root+step) = temp(0);
                 vect(root+step+root_max) = temp(1);
             }
@@ -284,12 +302,12 @@ void State_vector::two_qubit_op(const Eigen::Matrix2cd & op, int ctrl, int targ)
 // takes 2x2 matrix
 // vector 
 // and selects the i-th and j-th elements from the vector
-Eigen::Vector2cd State_vector::mat_mul(const Eigen::Matrix2cd & op, const Eigen::VectorXcd & v, int i, int j)
+Eigen::Vector2cd State_vector::mat_mul(const Eigen::Matrix2cd & op, const std::complex<double> & i,const std::complex<double> & j)
 {
     // make temp vector of size 2
     Eigen::Vector2cd temp;
-    temp(0) = v(i);
-    temp(1) = v(j);
+    temp(0) = i;
+    temp(1) = j;
     return op*temp;
 }
 
@@ -305,43 +323,54 @@ void State_vector::display_avg(std::vector<Qubit_states> & qubit_state, const Ei
     // uses qubit_state vector.
     // temp vector used to check sign/phase of state                                   
     // vector for each qubit containing zero and one amplitudes
-    // for every qubit, 
     for(int i = 0; i < num_qubits; i++)
     {
-        // or 1 << i
-        int root_max = pow(2, i);
-        // or root_max << 1
-        int increment = 2*root_max;
-        // reset state amplitudes.
-        double zero_amp =0.0;
-        double one_amp = 0.0;
-        double phase = 0.0;
-
-        for(int root = 0; root < root_max; root++)
+        if(!qubit_state[i].uptodate)
         {
-            for(int step = 0; step < size; step += increment)
+            // or 1 << i
+            int root_max = pow(2, i);
+            // or root_max << 1
+            int increment = 2*root_max;
+            // reset state amplitudes.
+            double zero_amp =0.0;
+            double one_amp = 0.0;
+            double phase = 0.0;
+
+            double epsilon = 1e-5;
+
+            for(int root = 0; root < root_max; root++)
             {
-                // use these for phases or something...
-                zero = vect(root + step);
-                one = vect(root + step +root_max);
-                // for the i-th qubit calc amplitudes |a|^2
-                zero_amp += std::norm(zero); 
-                one_amp += std::norm(one);
+                for(int step = 0; step < size; step += increment)
+                {
+                    // only add if the values are larger than epsilon
+                    if ((abs(vect(root+step)) >= epsilon) || (abs(vect(root+step+root_max)) >= epsilon))
+                    {
+                        // use these for phases or something...
+                        zero = vect(root + step);
+                        one = vect(root + step +root_max);
+                        // for the i-th qubit calc amplitudes |a|^2
+                        zero_amp += std::norm(zero); 
+                        one_amp += std::norm(one);
 
-                // @todo do phase stuff
-                phase = 0.0;
+                        // @todo do phase stuff
+                        // arg() of zero/one = arg(zero) - arg(one)
+                        phase += (arg(zero) - arg(one));
+                    }
+                }
             }
+            // after looping through all elements in the state vector 
+            // return zero and one amplitudes and phase info to leds.
+            // e.g set_leds(zero_amp, one_amp, phase);
+            qubit_state[i].zero_amp = zero_amp;
+            qubit_state[i].one_amp = one_amp;
+            qubit_state[i].phase = phase;
 
+            qubit_state[i].uptodate = true;
+            //std::cout << "qubit " << i << " (|0>, |1>) (" << qubit_state[i].zero_amp << ", " << qubit_state[i].one_amp << ") " << std::endl;
         }
-        // after looping through all elements in the state vector 
-        // return zero and one amplitudes and phase info to leds.
-        // e.g set_leds(zero_amp, one_amp, phase);
-        qubit_state[i].zero_amp = zero_amp;
-        qubit_state[i].one_amp = one_amp;
-        qubit_state[i].phase = phase;
-
-        //std::cout << "qubit " << i << " (|0>, |1>) (" << qubit_state[i].zero_amp << ", " << qubit_state[i].one_amp << ") " << std::endl;
+        //else if(qubit_state[i].uptodate) std::cout << "Qubit " << i << " is up to date" << std::endl;
     }
+
 
 }
 
