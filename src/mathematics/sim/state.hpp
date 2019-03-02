@@ -367,15 +367,19 @@ public:
 	zero_mag = ((*(state + 2*(i+j))) * (*(state + 2*(i+j)))
 		    + (*(state + 2*(i+j)+1)) * (*(state + 2*(i+j)+1)));
 	*(magnitudes + i+j) = zero_mag; // Cache the magnitude
-	*(angles + i+j) = atan2(*(state + 2*(i+j)+1),
-				*(state + 2*(i+j))); // Cache the angle
+
+	// Angles
+	//*(angles + i+j) = atan2(*(state + 2*(i+j)+1),
+	//			*(state + 2*(i+j))); // Cache the angle
 	
 	// Compute the one magnitude
 	one_mag = ((*(state + 2*(i+j+bit))) * (*(state + 2*(i+j+bit)))
 		   + (*(state + 2*(i+j+bit)+1)) * (*(state + 2*(i+j+bit)+1)));
 	*(magnitudes + i+j+bit) = one_mag; // Cache the value
-	*(angles + i+j+bit) = atan2(*(state + 2*(i+j+bit)+1),
-				    *(state + 2*(i+j+bit))); // Cache the angle
+
+	// Angles
+	//*(angles + i+j+bit) = atan2(*(state + 2*(i+j+bit)+1),
+	//			    *(state + 2*(i+j+bit))); // Cache the angle
 	
       }
     }
@@ -397,7 +401,8 @@ public:
 	  zero_mag += *(magnitudes + i+j); // Cache the value
 	  // Accumulate to the zero_mag value
 	  one_mag += *(magnitudes + i+j+bit); // Cache the value
-	
+	  
+	  
 	}
       }
 
