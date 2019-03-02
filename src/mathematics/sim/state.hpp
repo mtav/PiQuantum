@@ -217,6 +217,7 @@ private:
     *(state+a+1) = *(t2+1);
     *(state+b) = *(t3);
     *(state+b+1) = *(t3+1);
+    
   }
 
 
@@ -282,7 +283,7 @@ public:
       state(nullptr), mem(nullptr) {
 
     // Make space for state vector
-    malloc_state(state_length, 1);
+    malloc_state(state_length, 0);
     
     // Initialise to zero state
     * state = 1.0;
