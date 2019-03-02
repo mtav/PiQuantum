@@ -179,6 +179,9 @@ private:
    */
   COMPLEX * state;
 
+  // Benchmarking variables
+  long int bench;
+  
   /**
    * @brief Complex matrix vector multiplication
    *
@@ -275,7 +278,8 @@ public:
     COMPLEX * U = op.get_mat();    
     int k = (1 << n);
     for(int i=0; i < state_length; i += 2 * k) {
-      for(int j=0; j < k; j++) { 
+      for(int j=0; j < k; j++) {
+	//bench += i+j+k;
 	cmatvec(U, i+j, i+j+k);
       }
     }
@@ -301,6 +305,7 @@ public:
 	for(int k=0; k < r; k++) {
 	  // Add up all the indices, including r to get to the control=1
 	  // indices
+	  //bench += i+j+k+r+s;
 	  cmatvec(U, i+j+k+r, i+j+k+r+s);
 	}
       }
