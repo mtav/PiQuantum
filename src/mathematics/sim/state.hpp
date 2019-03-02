@@ -106,10 +106,10 @@ private:
   }
 
 public:
-  Operator() {
+  Operator(const double a, const double b, const double c, const double d,
+	   const double e, const double f, const double g, const double h)  {
     // Make H gate
-    M = make_gate(1/std::sqrt(2), 0, 1/std::sqrt(2),
-		  0, 1/std::sqrt(2), 0, -1/std::sqrt(2), 0);  
+    M = make_gate(a,b,c,d,e,f,g,h);  
   }
   
   ~Operator() {
@@ -134,6 +134,13 @@ public:
     std::cout << std::endl;
   }
   
+};
+
+class Hadamard : public Operator {
+public:
+  Hadamard()
+    : Operator(1/std::sqrt(2), 0, 1/std::sqrt(2),
+	       0, 1/std::sqrt(2), 0, -1/std::sqrt(2), 0) { }
 };
 
 
