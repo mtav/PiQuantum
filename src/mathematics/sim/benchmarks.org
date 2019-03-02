@@ -1,0 +1,5 @@
+* Operators
+** Single qubit gates
+*** 2nd March 2019
+Added single qubit gates. For a 20 qubit state vector, applying H to all 20 qubits 20 times takes 9.15s. So each single qubit gate takes 0.23s.
+ 
