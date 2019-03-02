@@ -10,7 +10,7 @@
 int main() {
 
   // 20 qubit state
-  State state(20);
+  State state(2);
 
   // Print the state
   state.print();
@@ -18,16 +18,17 @@ int main() {
   // Make Hadamard
   Operator H;
 
+  // Apply H to all qubits
+  //for(int i=0; i<2; i++){
+  //  state.sgate(H,i);
+  //}
+
+  state.sgate(H,0);
+  state.cgate(H,0,1);
+  
   // Print matrix
   H.print();
 
-  // Apply the H gate to all qubits 20 times for benchmarking
-  for (int k=0; k<20; k++) {
-    for (int i=0; i<20; i++) {
-      state.sgate(H, i);
-      std::cout << "Operator " << i << std::endl;
-    }
-  }
 
   // Print the state
   state.print();
