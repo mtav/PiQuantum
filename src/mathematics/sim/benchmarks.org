@@ -3,8 +3,11 @@
 *** 2nd March 2019
 Added single qubit gates. For a 20 qubit state vector, applying H to all 20 qubits 20 times takes 9.15s. So each single qubit gate takes 0.023s.
 
-Tested the sgate routine without a function body (incrementing a private class member variable t to stop it optimising the loops away). The same 20 loops of 20 tests takes 0.6s (0.0015s per operation) indicating that the for loops don't add very much overhead (unless the compiler is still finding a way to remove/simplify them).
+Tested the sgate routine without a function body (incrementing a private class member variable bench to stop it optimising the loops away). The same 20 loops of 20 tests takes 0.6s (0.0015s per operation) indicating that the for loops don't add very much overhead (unless the compiler is still finding a way to 
+remove/simplify them).
  
+Aligning the state vector doesn't make any substantial difference to single qubit gate times.
+
 ** Controlled gates
 *** 2nd March 2019
 Controlled gates also seem to take a similar time to single qubit gates which is confusing since they have half the matrix multiplications. The time for 20 runs of 20 controlled H operations is 8.83s corresponding to 0.022s per controlled gate. Using X instead of H makes basically no difference. Inlining the matrix multiplication and removing print statements makes no difference. (-O2 was probably inlining anyway, and there weren't very many print statements)

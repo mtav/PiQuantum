@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <cmath>
+#include <memory>
 
 typedef double COMPLEX; 
 
@@ -179,6 +180,9 @@ private:
    */
   COMPLEX * state;
 
+  // Aligned memory for store the state
+  void * mem;
+  
   // Benchmarking variables
   long int bench;
   
@@ -227,6 +231,44 @@ private:
   double * magnitudes;
   double * angles;
 
+  /**
+   * @brief Allocate space for the state vector
+   *
+   * @detail Allocate aligned or unaligned space using
+   * the second int argument
+   *
+   */
+  void malloc_state(int length, int align) {
+    if(align == 0) {
+      // Make state vector space
+      mem = malloc(2 * length * sizeof(COMPLEX));
+      if(mem == nullptr) {
+	std::cerr << "Unable to allocate memory. Exiting" << std::endl;
+	exit(1);
+      }
+      state = (COMPLEX * ) mem;
+    } else {
+      // Size of initial storage (twice as much as necessary)
+      std::size_t space = 4 * length * sizeof(COMPLEX);
+      // Make state vector space (twice as much as necessary)
+      void * memory = malloc(space);
+      mem = memory; // Save a copy of the location to free later
+      if(mem == nullptr) {
+	std::cerr << "Unable to allocate memory. Exiting" << std::endl;
+	exit(1);
+      }
+      // Required alignement (state_length boundary)
+      int alignment = 2 * length * sizeof(COMPLEX);
+      // Re-align the memory and store in state
+      state = (COMPLEX * )std::align(alignment, space >> 1, memory, space);
+      if(state == nullptr) {
+	std::cerr << "Failed to align state vector. Exiting" << std::endl;
+	exit(1);
+      }
+    }
+    std::cout << "State vector allocated at: " << state << std::endl;
+  }
+  
 public:
 
   
@@ -236,15 +278,12 @@ public:
    * @detail Pass the number of qubits as an argument
    */
   State(const int num_qubits)
-    : num_qubits(num_qubits), state_length(1 << num_qubits) {
+    : num_qubits(num_qubits), state_length(1 << num_qubits),
+      state(nullptr), mem(nullptr) {
 
-    // Make space
-    state = (COMPLEX * ) malloc(2 * state_length * sizeof(COMPLEX));
-    if(state == nullptr) {
-      std::cerr << "Unable to allocate memory. Exiting" << std::endl;
-      exit(1);
-    }
-
+    // Make space for state vector
+    malloc_state(state_length, 1);
+    
     // Initialise to zero state
     * state = 1.0;
     for(int n=1; n < (2 * state_length); n++)
@@ -262,7 +301,7 @@ public:
    *
    */
   ~State() {
-    free(state);
+    free(mem);
     free(magnitudes);
     free(angles);
   }

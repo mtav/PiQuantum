@@ -21,23 +21,11 @@ int main() {
   YGate Y;
   ZGate Z;
 
-  // Apply H to all qubits
-  //for(int i=0; i<2; i++){
-  //  state.sgate(H,i);
-  //}
-
-  //state.sgate(X,0);
-  //state.print();
-  //state.sgate(Y,0);
-  //state.cgate(X,0,1);
-
-  // Make space
-  double * average = (double * ) malloc(2 * 20 * sizeof(double));
-
-  for(int i=0; i<100; i++) {
-    //state.sgate(X,j);
-    state.average(average);
-    std::cout << "Operation " << i << std::endl;
+  for(int i=0; i<20; i++) {
+    for(int j=0; j<20; j++) {
+      state.sgate(X,j);
+      std::cout << "Operation " << j << std::endl;
+    }
   }
   
   // Print matrix
