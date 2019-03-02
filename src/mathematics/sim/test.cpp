@@ -31,11 +31,13 @@ int main() {
   //state.sgate(Y,0);
   //state.cgate(X,0,1);
 
-  for(int i=0; i<20; i++) {
-    for(int j=0; j<20; j++) {
-      state.sgate(X,j);
-      std::cout << "Operation " << j << std::endl;
-    }
+  // Make space
+  double * average = (double * ) malloc(2 * 20 * sizeof(double));
+
+  for(int i=0; i<100; i++) {
+    //state.sgate(X,j);
+    state.average(average);
+    std::cout << "Operation " << i << std::endl;
   }
   
   // Print matrix

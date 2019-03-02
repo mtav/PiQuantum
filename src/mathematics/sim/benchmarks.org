@@ -1,7 +1,7 @@
 * Operators
 ** Single qubit gates
 *** 2nd March 2019
-Added single qubit gates. For a 20 qubit state vector, applying H to all 20 qubits 20 times takes 9.15s. So each single qubit gate takes 0.23s.
+Added single qubit gates. For a 20 qubit state vector, applying H to all 20 qubits 20 times takes 9.15s. So each single qubit gate takes 0.023s.
 
 Tested the sgate routine without a function body (incrementing a private class member variable t to stop it optimising the loops away). The same 20 loops of 20 tests takes 0.6s (0.0015s per operation) indicating that the for loops don't add very much overhead (unless the compiler is still finding a way to remove/simplify them).
  
@@ -12,3 +12,7 @@ Controlled gates also seem to take a similar time to single qubit gates which is
 The same for loop overhead test as above (incrementing a private member variable in the for loop) for 20 loops of 20 qubits took 0.36s in total (about 0.00075s) per loop, about half of the time for a single qubit operation. That makes since since there are half as many evaluations of the inner for loop body for the controlled gate case compared to the single qubit gate case.  
 
 Re running the proper controlled and single qubit gate tests shows that the single qubit gates do take a bit longer than control qubit gates (not double). There might be other effects at play (caching etc.) that behave differently in the two cases that accounts for the difference in speed.
+
+** Display averaging
+*** 2nd March 2019
+100 state averages of 20 qubits takes 14.3s, so 0.14s per average. To be honest this is still quite slow -- you can see the operation happen. Removing the dynamic cache allocation from the function does not make a difference (not surprising since there was only one, but still an improvement).
