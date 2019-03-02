@@ -143,6 +143,24 @@ public:
 	       0, 1/std::sqrt(2), 0, -1/std::sqrt(2), 0) { }
 };
 
+class XGate : public Operator {
+public:
+  XGate()
+    : Operator(0, 0, 1, 0, 1, 0, 0, 0) { }
+};
+
+class YGate : public Operator {
+public:
+  YGate()
+    : Operator(0, 0, 0, -1, 0, 1, 0, 0) { }
+};
+
+class ZGate : public Operator {
+public:
+  ZGate()
+    : Operator(1, 0, 0, 0, 0, 0, -1, 0) { }
+};
+
 
 class State {
 
@@ -191,7 +209,7 @@ private:
     *(state+a) = *(t2);
     *(state+a+1) = *(t2+1);
     *(state+b) = *(t3);
-    *(state+a+1) = *(t3+1);
+    *(state+b+1) = *(t3+1);
   }
 
   

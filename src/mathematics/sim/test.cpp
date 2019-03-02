@@ -15,16 +15,23 @@ int main() {
   // Print the state
   state.print();
 
-  // Make Hadamard
+  // Make gates
   Hadamard H;
+  XGate X;
+  YGate Y;
+  ZGate Z;
 
+  Y.print();
+  
   // Apply H to all qubits
   //for(int i=0; i<2; i++){
   //  state.sgate(H,i);
   //}
 
-  //state.sgate(H,0);
-  state.cgate(H,0,1);
+  //state.sgate(X,0);
+  state.print();
+  state.sgate(Y,0);
+  //state.cgate(H,0,1);
   
   // Print matrix
   //H.print();
