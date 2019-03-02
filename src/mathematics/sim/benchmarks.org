@@ -16,3 +16,5 @@ Re running the proper controlled and single qubit gate tests shows that the sing
 ** Display averaging
 *** 2nd March 2019
 100 state averages of 20 qubits takes 14.3s, so 0.14s per average. To be honest this is still quite slow -- you can see the operation happen. Removing the dynamic cache allocation from the function does not make a difference (not surprising since there was only one, but still an improvement).
+
+Adding arctan caching on the first qubit only significantly slows down the function. Now 100 averages of 20 qubits takes 28s, which is 0.28s per average. That's long enough to be easily noticeable. 

@@ -217,15 +217,16 @@ private:
 
 
   /**
-   * @brief Vector of state vector magnitudes
+   * @brief Vector of state vector magnitudes and angles
    *
    * @detail Used as a cache during the state averaging routine.
-   * Functions should not assume that the data in this array is
+   * Functions should not assume that the data in these arrays is
    * up to date unless they write it themself.
    *
    */ 
   double * magnitudes;
-  
+  double * angles;
+
 public:
 
   
@@ -249,8 +250,10 @@ public:
     for(int n=1; n < (2 * state_length); n++)
       * (state+n) = 0.0;
 
-    // Allocate memory for the magnitudes cache
+    // Allocate memory for the caches
     magnitudes = (double * ) malloc(state_length * sizeof(double));
+    angles = (double * ) malloc(state_length * sizeof(double));
+
     
   }
 
@@ -261,6 +264,7 @@ public:
   ~State() {
     free(state);
     free(magnitudes);
+    free(angles);
   }
 
 
@@ -362,12 +366,17 @@ public:
 	// Compute the zero magnitude 
 	zero_mag = ((*(state + 2*(i+j))) * (*(state + 2*(i+j)))
 		    + (*(state + 2*(i+j)+1)) * (*(state + 2*(i+j)+1)));
-	*(magnitudes + i+j) = zero_mag; // Cache the value
-
+	*(magnitudes + i+j) = zero_mag; // Cache the magnitude
+	*(angles + i+j) = atan2(*(state + 2*(i+j)+1),
+				*(state + 2*(i+j))); // Cache the angle
+	
 	// Compute the one magnitude
 	one_mag = ((*(state + 2*(i+j+bit))) * (*(state + 2*(i+j+bit)))
 		   + (*(state + 2*(i+j+bit)+1)) * (*(state + 2*(i+j+bit)+1)));
 	*(magnitudes + i+j+bit) = one_mag; // Cache the value
+	*(angles + i+j+bit) = atan2(*(state + 2*(i+j+bit)+1),
+				    *(state + 2*(i+j+bit))); // Cache the angle
+	
       }
     }
   
