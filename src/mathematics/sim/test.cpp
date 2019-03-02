@@ -10,7 +10,7 @@
 int main() {
 
   // 20 qubit state
-  State state(2);
+  State state(20);
 
   // Print the state
   state.print();
@@ -26,10 +26,17 @@ int main() {
   //  state.sgate(H,i);
   //}
 
-  state.sgate(X,0);
+  //state.sgate(X,0);
   //state.print();
   //state.sgate(Y,0);
-  state.cgate(X,0,1);
+  //state.cgate(X,0,1);
+
+  for(int i=0; i<20; i++) {
+    for(int j=0; j<20; j++) {
+      state.sgate(X,j);
+      std::cout << "Operation " << j << std::endl;
+    }
+  }
   
   // Print matrix
   //H.print();

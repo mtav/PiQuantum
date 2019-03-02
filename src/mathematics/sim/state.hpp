@@ -267,6 +267,9 @@ public:
    * vector. The integer specifies which qubit to 
    * apply to operator to.
    *
+   * Optimisations:
+   * - Only computes the indices that are necessary: there
+   *   are no conditional statements.
    */
   void sgate(const Operator & op, const int n) {
     COMPLEX * U = op.get_mat();    

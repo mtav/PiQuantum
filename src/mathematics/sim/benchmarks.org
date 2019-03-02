@@ -3,3 +3,6 @@
 *** 2nd March 2019
 Added single qubit gates. For a 20 qubit state vector, applying H to all 20 qubits 20 times takes 9.15s. So each single qubit gate takes 0.23s.
  
+** Controlled gates
+*** 2nd March 2019
+Controlled gates also seem to take a similar time to single qubit gates which is confusing since they have half the matrix multiplications. The time for 20 runs of 20 controlled H operations is 8.83s corresponding to 0.022s per controlled gate. Using X instead of H makes basically no difference. Inlining the matrix multiplication and removing print statements makes no difference. (-O2 was probably inlining anyway, and there weren't very many print statements)
