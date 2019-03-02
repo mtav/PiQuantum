@@ -285,25 +285,20 @@ public:
    * control c and target t. The operation is given by
    * op.
    *
+   * Currently assumes c < t.
+   *
    */
   void cgate(const Operator & op, const int c, const int t) {
     COMPLEX * U = op.get_mat();    
-    int small_bit, large_bit;
-    if(c > t) {
-      small_bit = (1 << t);
-      large_bit = (1 << c);
-    } else {
-      small_bit = (1 << c);
-      large_bit = (1 << t);
-    }
-    int mid_incr = (small_bit << 1);
-    int high_incr = (large_bit << 1);
-    int targ_bit = (1 << t);
-    
-    for(int i=0; i<state_length; i+=high_incr) {
-      for(int j=0; j<large_bit; j+=mid_incr) {
-	for(int k=0; j<small_bit; j++) {
-	  cmatvec(U, i+j+k, i+j+k+targ_bit);
+
+    int r = (1 << c); // Control: smaller
+    int s = (1 << t); // Target: bigger
+    for(int i=0; i < state_length; i += 2 * s) {
+      for(int j=0; j < s; j += 2 * r) {
+	for(int k=0; k < r; k++) {
+	  // Add up all the indices, including r to get to the control=1
+	  // indices
+	  cmatvec(U, i+j+k+r, i+j+k+r+s);
 	}
       }
     }

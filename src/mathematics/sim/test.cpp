@@ -26,7 +26,7 @@ int main() {
   //  state.sgate(H,i);
   //}
 
-  //state.sgate(X,0);
+  state.sgate(X,0);
   //state.print();
   //state.sgate(Y,0);
   state.cgate(X,0,1);
