@@ -8,6 +8,8 @@ remove/simplify them).
  
 Aligning the state vector doesn't make any substantial difference to single qubit gate times.
 
+Splitting the functions up into seperate source files (so that they end up in different translation units) slows down the single qubit gate times a bit -- to 13.5s for 20 rounds of 20 qubit operations, corresponding to 0.033s per single qubit operation. Adding link time optimisation (-flto) gets the time back down to before. Adding -march=native and -O3 makes no difference to the times
+ 
 ** Controlled gates
 *** 2nd March 2019
 Controlled gates also seem to take a similar time to single qubit gates which is confusing since they have half the matrix multiplications. The time for 20 runs of 20 controlled H operations is 8.83s corresponding to 0.022s per controlled gate. Using X instead of H makes basically no difference. Inlining the matrix multiplication and removing print statements makes no difference. (-O2 was probably inlining anyway, and there weren't very many print statements)
