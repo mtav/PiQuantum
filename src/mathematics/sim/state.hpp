@@ -98,7 +98,8 @@ private:
    * 
    */
   void cmatvec(const COMPLEX * m, const int i, const int j);
-
+  void cmatvec_inline(const COMPLEX * m, const int i, const int j);
+  
   /**
    * @brief Vector of state vector magnitudes and angles
    *

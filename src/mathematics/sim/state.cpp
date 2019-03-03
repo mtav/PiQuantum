@@ -40,6 +40,7 @@ void cmul(const COMPLEX * a, const COMPLEX * b, COMPLEX * c) {
   *(c+1) = (*(a+1))*(*b) + (*a)*(*(b+1));
 }
 
+
 // Complex matrix multiplication using the pointer to
 // double complex type
 void cmatmul(const COMPLEX * a, const COMPLEX * b, COMPLEX * c) {
@@ -128,6 +129,62 @@ void Operator::print() {
   }
   // Line break
   std::cout << std::endl;
+}
+
+// Inlining everything
+void State::cmatvec_inline(const COMPLEX * m, const int i, const int j) {
+
+  // Create working space
+  //COMPLEX t0[2], t1[2], t2[2], t3[2];
+  
+  // True indices
+  int a = 2 * i;
+  int b = 2 * j;
+
+  // State vector elements
+  double state_a = *(state+a);
+  double state_b = *(state+b);
+  double state_a_1 = *(state+a+1);
+  double state_b_1 = *(state+b+1);
+
+  double m_0 = *m;
+  double m_1 = *(m+1);
+  double m_2 = *(m+2);
+  double m_3 = *(m+3);
+  double m_4 = *(m+4);
+  double m_5 = *(m+5);
+  double m_6 = *(m+6);
+  double m_7 = *(m+7);
+   
+  // Element i ----------------------------------------
+  // Multiplication 1
+  double y0 = m_0 * state_a - m_1 * state_a_1;
+  double y1 = m_1 * state_a + m_0 * state_a_1;
+  // Multiplication 2
+  double z0 = m_2 * state_b - m_3 * state_b_1;
+  double z1 = m_3 * state_b + m_3 * state_b_1;
+  // Addition
+  double p0 = y0 + z0;
+  double p1 = y1 + z1;
+
+  
+  // Element j ---------------------------------------
+  // Multiplication 1
+  y0 = m_4 * state_a - m_5 * state_a_1;
+  y1 = m_5 * state_a + m_4 * state_a_1;
+  // Multiplication 2
+  z0 = m_6 * state_b - m_7 * state_b_1;
+  z1 = m_7 * state_b + m_6 * state_b_1;
+  // Addition
+  double q0 = y0 + z0;
+  double q1 = y1 + z1;
+
+  // Write results to state
+  *(state+a) = p0;
+  *(state+a+1) = p1;
+  *(state+b) = q0;
+  *(state+b+1) = q1;
+  
 }
 
 /**
@@ -266,7 +323,7 @@ void State::sgate(const Operator & op, const int n) {
   int k = (1 << n);
   for(int i=0; i < state_length; i += 2 * k) {
     for(int j=0; j < k; j++) {
-      cmatvec(U, i+j, i+j+k);
+      cmatvec_inline(U, i+j, i+j+k);
     }
   }
 }
