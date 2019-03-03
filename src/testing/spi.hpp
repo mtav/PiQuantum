@@ -59,17 +59,18 @@ std::shared_ptr<class SpiChannel> getSpiChannel();
  */
 class SpiChannel
 {
-private:
-  const int channel; // Pi channel Either 0 or 1
-  int frequency; // SPI frequency
-  WiringPi wpi; // Constructing this object ensures wiringPi is setup
-  std::vector<byte> read_write(const std::vector<byte> & write);
-  
-public:
-  SpiChannel(); // Constructor
-  void change_frequency(int frequency); // Change frequency in Hz
-  std::vector<byte> read(int num_bytes); // read takes int returns vector
-  void write(const std::vector<byte> & write);   // write takes ref vector  
+    private:
+        const int channel; // Pi channel Either 0 or 1
+        int frequency; // SPI frequency
+        WiringPi wpi; // Constructing this object ensures wiringPi is setup
+        std::vector<byte> read_write(const std::vector<byte> & write);
+
+    public:
+        SpiChannel(); // Constructor
+        void change_frequency(int frequency); // Change frequency in Hz
+
+        std::vector<byte> read(int num_bytes); // read takes int returns vector
+        void write(const std::vector<byte> & write);   // write takes ref vector  
 };
 
 #endif

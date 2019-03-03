@@ -21,43 +21,38 @@
  */
 std::shared_ptr<SpiChannel> getSpiChannel()
 {
-  // Variables to store the SpiChannels for channel
-  // zero and 1. Initialisation takes place the first time
-  // the function is called and not subsequently, so the
-  // variable starts as a nullptr and then takes on values
-  // when new SpiChannels are created.
-  std::shared_ptr<SpiChannel> spi = nullptr;
+    // Variables to store the SpiChannels for channel
+    // zero and 1. Initialisation takes place the first time
+    // the function is called and not subsequently, so the
+    // variable starts as a nullptr and then takes on values
+    // when new SpiChannels are created.
+    std::shared_ptr<SpiChannel> spi = nullptr;
 
-  // If necessary, make a new SPI channel
-  if(spi == nullptr) {
-    spi = std::make_shared<SpiChannel>();
-  }
+    // If necessary, make a new SPI channel
+    if(spi == nullptr) /* lol */ spi = std::make_shared<SpiChannel>();
 
-  // Return the spi channel pointer
-  return spi; 
+    // Return the spi channel pointer
+    return spi; 
 }
 
-SpiChannel::SpiChannel()
-  : channel(0), frequency(500000)
+// @todo check max/good freq for spi
+SpiChannel::SpiChannel() : channel(0), frequency(500000)
 {
     // Set up SPI channel
     int result = wiringPiSPISetup(channel, frequency);
-    if(result == -1) {
-        std::cerr << strerror(errno) << std::endl;
-    }
+    if(result == -1) std::cerr << strerror(errno) << std::endl;
 }
 
 // Change frequency in Hz
 void SpiChannel::change_frequency(int freq_hz)
 {
-  // Store the new freq
-  frequency = freq_hz;
-  
-  // Reset the SPI channel
-  int result = wiringPiSPISetup(channel, frequency);
-  if(result == -1) {
-    std::cerr << strerror(errno) << std::endl;
-  }
+    // Store the new freq
+    frequency = freq_hz;
+
+    // Reset the SPI channel
+    int result = wiringPiSPISetup(channel, frequency);
+    if(result == -1) std::cerr << strerror(errno) << std::endl;
+
 }
 
 /** 
@@ -71,18 +66,16 @@ void SpiChannel::change_frequency(int freq_hz)
  */
 std::vector<byte> SpiChannel::read_write(const std::vector<byte> & write)
 {
-  // Allocate a buffer which is a copy of write and store its length
-  std::vector<byte> buffer(write);   
-  int len = write.size();
-  
-  // Send the data
-  int result = wiringPiSPIDataRW(channel, &buffer[0], len);
-  if(result != len) {
-    std::cerr << "SPI Error: wrong amount of data sent" << std::endl;
-  }
-  
-  // Buffer now contains data read from SPI
-  return buffer;
+    // Allocate a buffer which is a copy of write and store its length
+    std::vector<byte> buffer(write);   
+    int len = write.size();
+
+    // Send the data
+    int result = wiringPiSPIDataRW(channel, &buffer[0], len);
+    if(result != len) std::cerr << "SPI Error: wrong amount of data sent" << std::endl;
+
+    // Buffer now contains data read from SPI
+    return buffer;
 }
 
 /**
@@ -94,9 +87,9 @@ std::vector<byte> SpiChannel::read_write(const std::vector<byte> & write)
  */
 std::vector<byte> SpiChannel::read(int num_bytes)
 {
-  // makes a vector of size num_bytes with entries = 0
-  std::vector<byte> empty(num_bytes, 0);
-  return SpiChannel::read_write(empty);
+    // makes a vector of size num_bytes with entries = 0
+    std::vector<byte> empty(num_bytes, 0);
+    return SpiChannel::read_write(empty);
 }
 
 /**
@@ -106,6 +99,7 @@ std::vector<byte> SpiChannel::read(int num_bytes)
  * spi device. Data is returned as a standard vector.
  *
  */
-void SpiChannel::write(const std::vector<byte> & write) {
+void SpiChannel::write(const std::vector<byte> & write) 
+{
     read_write(write);
 }

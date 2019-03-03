@@ -13,44 +13,42 @@
 #include "io.hpp"
 
 class Button {
-private:
-  // A pointer to the LED driver which writes
-  // data to the hardware. Each Led object
-  // needs to register itself with the
-  // driver. The driver then polls the
-  // Led objects to read their color and
-  // write it to the hardware device
-  std::shared_ptr<InputOutput> driver;
-  int id; // Identifying the Button object to the driver
-  
-  // Chip and line numbers 
-  const Position position;
+    private:
+        // A pointer to the LED driver which writes
+        // data to the hardware. Each Led object
+        // needs to register itself with the
+        // driver. The driver then polls the
+        // Led objects to read their color and
+        // write it to the hardware device
+        std::shared_ptr<InputOutput> driver;
+        int id; // Identifying the Button object to the driver
 
+        // Chip and line numbers 
+        const Position position;
 
-  
-  // RGB values (between zero and one)
-  std::vector<double> rgb_values; // In order [0]=r, [1]=g, [2]=b
+        // RGB values (between zero and one)
+        std::vector<double> rgb_values; // In order [0]=r, [1]=g, [2]=b
 
-  // Button state
-  int btn_state;
+        // Button state
+        int btn_state;
 
-  // So that InputOutput can set the btn_state. I'd prefer it to
-  // only be able to access the btn_state variable but haven't
-  // figured out a good way to do it yet
-  friend class InputOutput;
-  
-public:
-  
-  // Constructor and destructor
-  Button(Position position);
-  ~Button();
-  
-  // Read the button state
-  int get_state();
-  std::vector<double> rgb() { return rgb_values; }
+        // So that InputOutput can set the btn_state. I'd prefer it to
+        // only be able to access the btn_state variable but haven't
+        // figured out a good way to do it yet
+        friend class InputOutput;
 
-  // Return the chip and line numbers
-  Position get_position() { return position; }
+    public:
+
+        // Constructor and destructor
+        Button(Position position);
+        ~Button();
+
+        // Read the button state
+        int get_state();
+        std::vector<double> rgb() { return rgb_values; }
+
+        // Return the chip and line numbers
+        Position get_position() { return position; }
 
 };
 
