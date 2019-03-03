@@ -98,7 +98,32 @@ private:
    * vector amplitudes back to the state vector.
    *
    */
-  std::thread writeback;
+  std::thread writeback_thread;
+
+  /**
+   * @brief Writing amplitudes back to the statevector
+   *
+   * @detail The premise of this function is that it might be
+   * faster to set the amplitude writing process off in a thread
+   * and get on with computing the next amplitude. There won't be
+   * an conflict between amplitudes because the amplitudes to be
+   * written will not get used again until the next operation (after
+   * which the thread has been joined again). 
+   *
+   * The approach will only speed up the operations if the write 
+   * operation finishes before the next write operation is waiting
+   * to begin (to be determined). 
+   *
+   *
+   * The two integers specify where the amplitudes should be written.
+   * The doubles are the real and imaginary parts of the two amplitudes
+   * to be written.
+   *
+   */
+  void writeback(int a, int b,
+		 double u, double v,
+		 double w, double x);
+  
   
   /**
    * @brief Complex matrix vector multiplication

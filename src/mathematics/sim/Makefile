@@ -1,5 +1,5 @@
 ## General compilation options
-CPPFLAGS = -Wall -O2 -flto -std=c++11
+CPPFLAGS = -Wall -O2 -flto -std=c++11 -pthread
 CPPFLAGS += -I../testing
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) > /dev/null)

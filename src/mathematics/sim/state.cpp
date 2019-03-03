@@ -131,6 +131,31 @@ void Operator::print() {
 }
 
 /**
+ * @brief Writing amplitudes back to the statevector
+ *
+ * @detail The premise of this function is that it might be
+ * faster to set the amplitude writing process off in a thread
+ * and get on with computing the next amplitude. There won't be
+ * an conflict between amplitudes because the amplitudes to be
+ * written will not get used again until the next operation (after
+ * which the thread has been joined again). 
+ *
+ * The approach will only speed up the operations if the write 
+ * operation finishes before the next write operation is waiting
+ * to begin (to be determined). 
+ *
+ */
+void State::writeback(int a, int b,
+		      double u, double v,
+		      double w, double x) {
+  // Write results to state
+  *(state+a) = u;
+  *(state+a+1) = v;
+  *(state+b) = w;
+  *(state+b+1) = x;  
+}
+
+/**
  * @brief Complex matrix vector multiplication
  *
  * @detail Multiply selected indices of state by the matrix
@@ -155,12 +180,17 @@ void State::cmatvec(const COMPLEX * m, const int i, const int j) {
   cmul(m+4, state+a, t0);
   cmul(m+6, state+b, t1);
   cadd(t0, t1, t3);
+
+  // Check if the writeback thread is joinable
+  if(writeback_thread.joinable()) {
+    writeback_thread.join(); // Wait for previous write to finish
+  }
   
   // Write results to state
-  *(state+a) = *(t2);
-  *(state+a+1) = *(t2+1);
-  *(state+b) = *(t3);
-  *(state+b+1) = *(t3+1);
+  //*(state+a) = *(t2);
+  //*(state+a+1) = *(t2+1);
+  //*(state+b) = *(t3);
+  //*(state+b+1) = *(t3+1);
   
 }
 
@@ -224,6 +254,8 @@ State::State(const int num_qubits)
   magnitudes = (double * ) malloc(state_length * sizeof(double));
   angles = (double * ) malloc(state_length * sizeof(double));
 
+  // Start new thread
+  writeback_thread = std::thread(&State::writeback, this);
     
 }
 
