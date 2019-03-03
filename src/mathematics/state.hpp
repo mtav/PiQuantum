@@ -15,6 +15,8 @@
 #include <vector>
 // for float std::abs()
 #include <cmath>
+// for rand
+#include <cstdlib>
 
 const double PI=4.0*atan(1.0);
 const std::complex<double> I_unit(0.0, 1.0);
@@ -193,6 +195,41 @@ class State_vector
         // led function needs to map qubit_state.zero_amp to RED
         // qubit_state.one_amp to BLUE
         // qubit_state.phase to GREEN!!!!
+
+        // generates a random number and cycles between the qubit states.
+        // the great waterfall
+        std::vector<Qubit_states> disp_cycle(int num_state_to_show = 4)
+        {
+            double epsilon = 1e-5;
+
+            std::vector<Qubit_states> cycle_states;
+            cycle_states.resize(num_state_to_show);
+
+            int i=0;
+            while( i < num_state_to_show ); 
+            {
+                long unsigned int pos = rand() % size;  
+                if(std::abs(vect(pos)) >= epsilon) // show it 
+                {
+                    i++;
+                    // for each qubit calc led vals and add to list
+                    for(int j=0; j < num_qubits; j++)
+                    {
+                        // is this bit masking?
+                        cycle_states[j].zero_amp = (pos & (0 << j));
+                        cycle_states[j].one_amp = (pos & (1 << j));
+                        // quite complicated so I'm avoiding it.
+                        // @todo do phase but you'll have to find the correct
+                        // index from which ever amplitude is not this one...
+                        cycle_states[j].phase = 0;
+                    }
+                }
+            } // find another great state to show!
+
+            // now cycle through the list sending them to the leds.
+            // either here or just return the Qubit_states struct.
+            return cycle_states;
+        }
 };
 #endif
 
