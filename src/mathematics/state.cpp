@@ -299,7 +299,7 @@ void State_vector::display_avg(std::vector<Qubit_states> & qubit_state, const Ei
                         // arg() of zero/one = arg(zero) - arg(one)
                         //std::cout << "arg (zero, one) " << arg(zero) << ", " << arg(one) << std::endl;
                         double zero_arg = std::abs(arg(zero)), one_arg = std::abs(arg(one));
-
+// @todo phase arg caching!!!!
                         // if same number but not zero write one out
                         // if difference is > epsilon write diff
                             phase += std::abs(zero_arg - one_arg);
