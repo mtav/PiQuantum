@@ -148,7 +148,6 @@ void Operator::print() {
 void State::writeback() {
   while(1) {
     if(write_in_progress == 1) {
-      std::cout << "Thread" << std::endl;
       // Write results to state
       *(state+wb_a) = wb_u;
       *(state+wb_a+1) = wb_v;
@@ -187,10 +186,9 @@ void State::cmatvec(const COMPLEX * m, const int i, const int j) {
   cadd(t0, t1, t3);
 
   // Wait for the last write to finish
-  std::cout << "Here" << std::endl;
   while(write_in_progress == 1)
     ;
-
+  
   // Set write data
   wb_a = a;
   wb_b = b;
@@ -200,7 +198,7 @@ void State::cmatvec(const COMPLEX * m, const int i, const int j) {
   wb_x =  *(t3+1);
   // Request write
   write_in_progress = 1;
-    
+  
   // Write results to state
   //*(state+a) = *(t2);
   //*(state+a+1) = *(t2+1);
@@ -273,7 +271,7 @@ State::State(const int num_qubits)
   angles = (double * ) malloc(state_length * sizeof(double));
 
   // Start new thread
-  writeback_thread = std::thread(&State::writeback, this);
+  writeback_thread = std::thread( [this] { writeback(); } );
     
 }
 

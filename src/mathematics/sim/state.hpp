@@ -13,6 +13,7 @@
 #include <memory>
 #include "dummy.hpp"
 #include <thread>
+#include <atomic>
 
 typedef double COMPLEX; 
 
@@ -99,9 +100,6 @@ private:
    *
    */
   std::thread writeback_thread;
-
-  // Set to 1 while the write operation is still going on
-  int write_in_progress;
   
   /**
    * @brief Writing amplitudes back to the statevector
@@ -129,6 +127,8 @@ private:
   int wb_a, wb_b; // Where to write the new data
   double wb_u, wb_v, wb_w, wb_x; // Data to write
 
+  // Set to 1 while the write operation is still going on
+  std::atomic<int> write_in_progress;
   
   /**
    * @brief Complex matrix vector multiplication

@@ -14,6 +14,8 @@ Splitting the functions up into seperate source files (so that they end up in di
 Disassembled the single qubit gate function. The top level (sgate) comprises 28 instructions, one of which is a call to cmatvec which comprises 43 instructions. All the cadds and cmuls have been inlined.
 
 It doesn't slow things down adding threading overhead (checking for joinable) in the cmatvec function. Bizarrely it actually seems to speed up the sgate function. Starting a thread in the cmatvec function is horrendously slow (10s of seconds per single qubit gate).
+
+Using a common thread to do the writing isn't as bad as before but is still much slower (probably an order of magnitude) than just doing the writing as before.
  
 ** Controlled gates
 *** 2nd March 2019
