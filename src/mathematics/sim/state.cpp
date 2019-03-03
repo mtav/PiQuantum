@@ -150,18 +150,18 @@ void State::cmatvec(const COMPLEX * m, const int i, const int j) {
   cmul(m, state+a, t0);
   cmul(m+2, state+b, t1);
   cadd(t0, t1, t2);
-  
+
   // Element j
   cmul(m+4, state+a, t0);
   cmul(m+6, state+b, t1);
   cadd(t0, t1, t3);
-  
+
   // Write results to state
   *(state+a) = *(t2);
   *(state+a+1) = *(t2+1);
   *(state+b) = *(t3);
   *(state+b+1) = *(t3+1);
-  
+
 }
 
 
@@ -266,7 +266,6 @@ void State::sgate(const Operator & op, const int n) {
   int k = (1 << n);
   for(int i=0; i < state_length; i += 2 * k) {
     for(int j=0; j < k; j++) {
-      //bench += i+j+k;
       cmatvec(U, i+j, i+j+k);
     }
   }
