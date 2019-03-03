@@ -291,7 +291,7 @@ void State::print() {
 }
 
 /**
- * @brief Single qubit gate
+ * @brief Singl   e qubit gate
  *
  * @detail Apply a single qubit gate to the state
  * vector. The integer specifies which qubit to 
@@ -352,17 +352,21 @@ void State::sgate_inline(const Operator & op, const int n) {
       double state_b_1 = *(state+b+1);
                  
       // Compute new element i
-      *(state+a) = m_0 * state_a - m_1 * state_a_1
+      double p0 = m_0 * state_a - m_1 * state_a_1
 	+ m_2 * state_b - m_3 * state_b_1;
-      
-      *(state+a+1) = m_1 * state_a + m_0 * state_a_1
+      double p1 = m_1 * state_a + m_0 * state_a_1
 	+ m_3 * state_b + m_2 * state_b_1;
       
       // Compute new element j 
-      *(state+b) = m_4 * state_a - m_5 * state_a_1
+      double p2 = m_4 * state_a - m_5 * state_a_1
 	+ m_6 * state_b - m_7 * state_b_1;
-      *(state+b+1) = m_5 * state_a + m_4 * state_a_1
-	+ m_7 * state_b + m_6 * state_b_1;      
+      double p3 = m_5 * state_a + m_4 * state_a_1
+	+ m_7 * state_b + m_6 * state_b_1;
+
+      *(state+a) = p0;
+      *(state+a+1) = p1;
+      *(state+b) = p2;
+      *(state+b+1) = p3;
     }
   }
 }

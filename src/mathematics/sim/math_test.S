@@ -150,7 +150,7 @@ Disassembly of section .text:
 
 00010a38 <main>:
    10a38:	e92d4ff0 	push	{r4, r5, r6, r7, r8, r9, sl, fp, lr}
-   10a3c:	ed2d8b0e 	vpush	{d8-d14}
+   10a3c:	ed2d8b0a 	vpush	{d8-d12}
    10a40:	e3a01014 	mov	r1, #20
    10a44:	e3a02601 	mov	r2, #1048576	; 0x100000
    10a48:	e3a03000 	mov	r3, #0
@@ -251,109 +251,109 @@ Disassembly of section .text:
    10bc4:	eb000107 	bl	10fe8 <_ZN8Operator11malloc_gateEi.constprop.3>
    10bc8:	e1a05007 	mov	r5, r7
    10bcc:	e1a04006 	mov	r4, r6
-   10bd0:	e59f7298 	ldr	r7, [pc, #664]	; 10e70 <main+0x438>
-   10bd4:	e3a06000 	mov	r6, #0
-   10bd8:	e3a03000 	mov	r3, #0
-   10bdc:	e3a02000 	mov	r2, #0
-   10be0:	e1c043f0 	strd	r4, [r0, #48]	; 0x30
-   10be4:	e59f8298 	ldr	r8, [pc, #664]	; 10e84 <main+0x44c>
-   10be8:	e59f527c 	ldr	r5, [pc, #636]	; 10e6c <main+0x434>
-   10bec:	e1c060f0 	strd	r6, [r0]
-   10bf0:	e3a07010 	mov	r7, #16
-   10bf4:	e3a0600a 	mov	r6, #10
-   10bf8:	e1c020f8 	strd	r2, [r0, #8]
-   10bfc:	e1c021f0 	strd	r2, [r0, #16]
-   10c00:	e1c021f8 	strd	r2, [r0, #24]
-   10c04:	e1c022f0 	strd	r2, [r0, #32]
-   10c08:	e1c022f8 	strd	r2, [r0, #40]	; 0x28
-   10c0c:	e1c023f8 	strd	r2, [r0, #56]	; 0x38
-   10c10:	e3a03014 	mov	r3, #20
-   10c14:	e58d3004 	str	r3, [sp, #4]
-   10c18:	e58d000c 	str	r0, [sp, #12]
-   10c1c:	e3a04000 	mov	r4, #0
+   10bd0:	e3a03000 	mov	r3, #0
+   10bd4:	e3a02000 	mov	r2, #0
+   10bd8:	e59f9290 	ldr	r9, [pc, #656]	; 10e70 <main+0x438>
+   10bdc:	e1c043f0 	strd	r4, [r0, #48]	; 0x30
+   10be0:	e59f729c 	ldr	r7, [pc, #668]	; 10e84 <main+0x44c>
+   10be4:	e59f5280 	ldr	r5, [pc, #640]	; 10e6c <main+0x434>
+   10be8:	e3a08000 	mov	r8, #0
+   10bec:	e3a0600a 	mov	r6, #10
+   10bf0:	e1c020f8 	strd	r2, [r0, #8]
+   10bf4:	e1c021f0 	strd	r2, [r0, #16]
+   10bf8:	e1c021f8 	strd	r2, [r0, #24]
+   10bfc:	e1c022f0 	strd	r2, [r0, #32]
+   10c00:	e1c022f8 	strd	r2, [r0, #40]	; 0x28
+   10c04:	e1c023f8 	strd	r2, [r0, #56]	; 0x38
+   10c08:	e3a03014 	mov	r3, #20
+   10c0c:	e1c080f0 	strd	r8, [r0]
+   10c10:	e58d3004 	str	r3, [sp, #4]
+   10c14:	e58d000c 	str	r0, [sp, #12]
+   10c18:	e3a04000 	mov	r4, #0
+   10c1c:	e59db030 	ldr	fp, [sp, #48]	; 0x30
    10c20:	e59d301c 	ldr	r3, [sp, #28]
-   10c24:	e59db030 	ldr	fp, [sp, #48]	; 0x30
-   10c28:	e35b0000 	cmp	fp, #0
-   10c2c:	ed93bb00 	vldr	d11, [r3]
-   10c30:	ed933b02 	vldr	d3, [r3, #8]
-   10c34:	ed932b04 	vldr	d2, [r3, #16]
-   10c38:	ed931b06 	vldr	d1, [r3, #24]
-   10c3c:	ed930b08 	vldr	d0, [r3, #32]
-   10c40:	ed938b0a 	vldr	d8, [r3, #40]	; 0x28
-   10c44:	ed939b0c 	vldr	d9, [r3, #48]	; 0x30
-   10c48:	ed93ab0e 	vldr	d10, [r3, #56]	; 0x38
-   10c4c:	da00002a 	ble	10cfc <main+0x2c4>
-   10c50:	e3a03002 	mov	r3, #2
-   10c54:	e59dc034 	ldr	ip, [sp, #52]	; 0x34
-   10c58:	e1a0a413 	lsl	sl, r3, r4
-   10c5c:	e08c0417 	add	r0, ip, r7, lsl r4
-   10c60:	e1a0920a 	lsl	r9, sl, #4
-   10c64:	e3a0e000 	mov	lr, #0
-   10c68:	e28c1008 	add	r1, ip, #8
-   10c6c:	e1a03000 	mov	r3, r0
-   10c70:	e1a0200c 	mov	r2, ip
-   10c74:	ed924b02 	vldr	d4, [r2, #8]
-   10c78:	ed115b02 	vldr	d5, [r1, #-8]
-   10c7c:	ed936b00 	vldr	d6, [r3]
-   10c80:	ed937b02 	vldr	d7, [r3, #8]
-   10c84:	ee23cb04 	vmul.f64	d12, d3, d4
-   10c88:	e2822010 	add	r2, r2, #16
-   10c8c:	ee2bdb04 	vmul.f64	d13, d11, d4
-   10c90:	e2811010 	add	r1, r1, #16
-   10c94:	ee28eb04 	vmul.f64	d14, d8, d4
-   10c98:	e2833010 	add	r3, r3, #16
-   10c9c:	ee204b04 	vmul.f64	d4, d0, d4
-   10ca0:	ee1bcb05 	vnmls.f64	d12, d11, d5
-   10ca4:	ee03db05 	vmla.f64	d13, d3, d5
-   10ca8:	ee10eb05 	vnmls.f64	d14, d0, d5
-   10cac:	ee084b05 	vmla.f64	d4, d8, d5
-   10cb0:	ee02cb06 	vmla.f64	d12, d2, d6
-   10cb4:	ee01db06 	vmla.f64	d13, d1, d6
-   10cb8:	ee09eb06 	vmla.f64	d14, d9, d6
-   10cbc:	ee0a4b06 	vmla.f64	d4, d10, d6
-   10cc0:	ee01cb47 	vmls.f64	d12, d1, d7
-   10cc4:	ee02db07 	vmla.f64	d13, d2, d7
-   10cc8:	ee0aeb47 	vmls.f64	d14, d10, d7
-   10ccc:	ee094b07 	vmla.f64	d4, d9, d7
-   10cd0:	ed01cb06 	vstr	d12, [r1, #-24]	; 0xffffffe8
-   10cd4:	ed02db02 	vstr	d13, [r2, #-8]
-   10cd8:	e1500002 	cmp	r0, r2
-   10cdc:	ed03eb04 	vstr	d14, [r3, #-16]
-   10ce0:	ed034b02 	vstr	d4, [r3, #-8]
-   10ce4:	1affffe2 	bne	10c74 <main+0x23c>
-   10ce8:	e08ee00a 	add	lr, lr, sl
-   10cec:	e15b000e 	cmp	fp, lr
-   10cf0:	e08cc009 	add	ip, ip, r9
-   10cf4:	e0800009 	add	r0, r0, r9
-   10cf8:	caffffda 	bgt	10c68 <main+0x230>
+   10c24:	e35b0000 	cmp	fp, #0
+   10c28:	da000033 	ble	10cfc <main+0x2c4>
+   10c2c:	e3a02002 	mov	r2, #2
+   10c30:	e59de034 	ldr	lr, [sp, #52]	; 0x34
+   10c34:	e1a0a412 	lsl	sl, r2, r4
+   10c38:	e3a02010 	mov	r2, #16
+   10c3c:	e1a0920a 	lsl	r9, sl, #4
+   10c40:	e08ec412 	add	ip, lr, r2, lsl r4
+   10c44:	e3a08000 	mov	r8, #0
+   10c48:	e28e0008 	add	r0, lr, #8
+   10c4c:	e1a0200c 	mov	r2, ip
+   10c50:	e1a0100e 	mov	r1, lr
+   10c54:	ed917b02 	vldr	d7, [r1, #8]
+   10c58:	ed939b02 	vldr	d9, [r3, #8]
+   10c5c:	ed93ab00 	vldr	d10, [r3]
+   10c60:	ed938b08 	vldr	d8, [r3, #32]
+   10c64:	ed930b0a 	vldr	d0, [r3, #40]	; 0x28
+   10c68:	ee274b09 	vmul.f64	d4, d7, d9
+   10c6c:	ed102b02 	vldr	d2, [r0, #-8]
+   10c70:	ee275b0a 	vmul.f64	d5, d7, d10
+   10c74:	ed923b00 	vldr	d3, [r2]
+   10c78:	ee276b00 	vmul.f64	d6, d7, d0
+   10c7c:	ed93bb04 	vldr	d11, [r3, #16]
+   10c80:	ee277b08 	vmul.f64	d7, d7, d8
+   10c84:	ed931b06 	vldr	d1, [r3, #24]
+   10c88:	ed93cb0c 	vldr	d12, [r3, #48]	; 0x30
+   10c8c:	ee124b0a 	vnmls.f64	d4, d2, d10
+   10c90:	ed93ab0e 	vldr	d10, [r3, #56]	; 0x38
+   10c94:	ee025b09 	vmla.f64	d5, d2, d9
+   10c98:	ed929b02 	vldr	d9, [r2, #8]
+   10c9c:	ee126b08 	vnmls.f64	d6, d2, d8
+   10ca0:	e2811010 	add	r1, r1, #16
+   10ca4:	ee027b00 	vmla.f64	d7, d2, d0
+   10ca8:	e2800010 	add	r0, r0, #16
+   10cac:	e2822010 	add	r2, r2, #16
+   10cb0:	ee034b0b 	vmla.f64	d4, d3, d11
+   10cb4:	ee035b01 	vmla.f64	d5, d3, d1
+   10cb8:	ee036b0c 	vmla.f64	d6, d3, d12
+   10cbc:	ee037b0a 	vmla.f64	d7, d3, d10
+   10cc0:	ee094b41 	vmls.f64	d4, d9, d1
+   10cc4:	ee095b0b 	vmla.f64	d5, d9, d11
+   10cc8:	ee096b4a 	vmls.f64	d6, d9, d10
+   10ccc:	ee097b0c 	vmla.f64	d7, d9, d12
+   10cd0:	ed004b06 	vstr	d4, [r0, #-24]	; 0xffffffe8
+   10cd4:	ed015b02 	vstr	d5, [r1, #-8]
+   10cd8:	e15c0001 	cmp	ip, r1
+   10cdc:	ed026b04 	vstr	d6, [r2, #-16]
+   10ce0:	ed027b02 	vstr	d7, [r2, #-8]
+   10ce4:	1affffda 	bne	10c54 <main+0x21c>
+   10ce8:	e088800a 	add	r8, r8, sl
+   10cec:	e15b0008 	cmp	fp, r8
+   10cf0:	e08ee009 	add	lr, lr, r9
+   10cf4:	e08cc009 	add	ip, ip, r9
+   10cf8:	caffffd2 	bgt	10c48 <main+0x210>
    10cfc:	e1a02006 	mov	r2, r6
-   10d00:	e1a01008 	mov	r1, r8
+   10d00:	e1a01007 	mov	r1, r7
    10d04:	e1a00005 	mov	r0, r5
    10d08:	ebffff1a 	bl	10978 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_i@plt>
    10d0c:	e1a01004 	mov	r1, r4
    10d10:	e1a00005 	mov	r0, r5
    10d14:	ebffff23 	bl	109a8 <_ZNSolsEi@plt>
    10d18:	e5903000 	ldr	r3, [r0]
-   10d1c:	e1a0a000 	mov	sl, r0
+   10d1c:	e1a09000 	mov	r9, r0
    10d20:	e513300c 	ldr	r3, [r3, #-12]
    10d24:	e0803003 	add	r3, r0, r3
-   10d28:	e593907c 	ldr	r9, [r3, #124]	; 0x7c
-   10d2c:	e3590000 	cmp	r9, #0
+   10d28:	e593807c 	ldr	r8, [r3, #124]	; 0x7c
+   10d2c:	e3580000 	cmp	r8, #0
    10d30:	0a000032 	beq	10e00 <main+0x3c8>
-   10d34:	e5d9301c 	ldrb	r3, [r9, #28]
+   10d34:	e5d8301c 	ldrb	r3, [r8, #28]
    10d38:	e3530000 	cmp	r3, #0
    10d3c:	0a000026 	beq	10ddc <main+0x3a4>
-   10d40:	e5d91027 	ldrb	r1, [r9, #39]	; 0x27
-   10d44:	e1a0000a 	mov	r0, sl
+   10d40:	e5d81027 	ldrb	r1, [r8, #39]	; 0x27
+   10d44:	e1a00009 	mov	r0, r9
    10d48:	ebfffee6 	bl	108e8 <_ZNSo3putEc@plt>
    10d4c:	ebfffef7 	bl	10930 <_ZNSo5flushEv@plt>
    10d50:	e2844001 	add	r4, r4, #1
    10d54:	e3540014 	cmp	r4, #20
-   10d58:	1affffb0 	bne	10c20 <main+0x1e8>
+   10d58:	1affffaf 	bne	10c1c <main+0x1e4>
    10d5c:	e59d3004 	ldr	r3, [sp, #4]
    10d60:	e2533001 	subs	r3, r3, #1
    10d64:	e58d3004 	str	r3, [sp, #4]
-   10d68:	1affffab 	bne	10c1c <main+0x1e4>
+   10d68:	1affffaa 	bne	10c18 <main+0x1e0>
    10d6c:	e28d002c 	add	r0, sp, #44	; 0x2c
    10d70:	eb0000ad 	bl	1102c <_ZN5State5printEv>
    10d74:	e28d000c 	add	r0, sp, #12
@@ -372,7 +372,7 @@ Disassembly of section .text:
    10da8:	ebfffed4 	bl	10900 <free@plt>
    10dac:	e3a00000 	mov	r0, #0
    10db0:	e28dd04c 	add	sp, sp, #76	; 0x4c
-   10db4:	ecbd8b0e 	vpop	{d8-d14}
+   10db4:	ecbd8b0a 	vpop	{d8-d12}
    10db8:	e8bd8ff0 	pop	{r4, r5, r6, r7, r8, r9, sl, fp, pc}
    10dbc:	e3a02022 	mov	r2, #34	; 0x22
    10dc0:	e59f10c0 	ldr	r1, [pc, #192]	; 10e88 <main+0x450>
@@ -382,10 +382,10 @@ Disassembly of section .text:
    10dd0:	ebfffed0 	bl	10918 <_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_@plt>
    10dd4:	e3a00001 	mov	r0, #1
    10dd8:	ebfffed1 	bl	10924 <exit@plt>
-   10ddc:	e1a00009 	mov	r0, r9
+   10ddc:	e1a00008 	mov	r0, r8
    10de0:	ebfffede 	bl	10960 <_ZNKSt5ctypeIcE13_M_widen_initEv@plt>
-   10de4:	e5993000 	ldr	r3, [r9]
-   10de8:	e1a00009 	mov	r0, r9
+   10de4:	e5983000 	ldr	r3, [r8]
+   10de8:	e1a00008 	mov	r0, r8
    10dec:	e1a01006 	mov	r1, r6
    10df0:	e5933018 	ldr	r3, [r3, #24]
    10df4:	e12fff33 	blx	r3
