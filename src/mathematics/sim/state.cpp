@@ -145,14 +145,19 @@ void Operator::print() {
  * to begin (to be determined). 
  *
  */
-void State::writeback(int a, int b,
-		      double u, double v,
-		      double w, double x) {
-  // Write results to state
-  *(state+a) = u;
-  *(state+a+1) = v;
-  *(state+b) = w;
-  *(state+b+1) = x;  
+void State::writeback() {
+  while(1) {
+    if(write_in_progress == 1) {
+      std::cout << "Thread" << std::endl;
+      // Write results to state
+      *(state+wb_a) = wb_u;
+      *(state+wb_a+1) = wb_v;
+      *(state+wb_b) = wb_w;
+      *(state+wb_b+1) = wb_x;
+      // Indicate that write is finished
+      write_in_progress = 0;
+    }
+  }
 }
 
 /**
@@ -181,11 +186,21 @@ void State::cmatvec(const COMPLEX * m, const int i, const int j) {
   cmul(m+6, state+b, t1);
   cadd(t0, t1, t3);
 
-  // Check if the writeback thread is joinable
-  if(writeback_thread.joinable()) {
-    writeback_thread.join(); // Wait for previous write to finish
-  }
-  
+  // Wait for the last write to finish
+  std::cout << "Here" << std::endl;
+  while(write_in_progress == 1)
+    ;
+
+  // Set write data
+  wb_a = a;
+  wb_b = b;
+  wb_u = *(t2);
+  wb_v = *(t2+1);
+  wb_w = *(t3);
+  wb_x =  *(t3+1);
+  // Request write
+  write_in_progress = 1;
+    
   // Write results to state
   //*(state+a) = *(t2);
   //*(state+a+1) = *(t2+1);
@@ -241,6 +256,9 @@ void State::malloc_state(int length, int align) {
 State::State(const int num_qubits)
   : num_qubits(num_qubits), state_length(1 << num_qubits),
     state(nullptr), mem(nullptr) {
+
+  // Set thread variable
+  write_in_progress = 0;
   
   // Make space for state vector
   malloc_state(state_length, 0);
