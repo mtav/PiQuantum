@@ -7,7 +7,6 @@
  */
 
 #include "state.hpp"
-
 // use to apply gates
 void State_vector::apply(const Operator & op, int qubit)
 {
@@ -26,16 +25,6 @@ void State_vector::apply(const Operator & op, int ctrl, int targ)
     qubit_state[targ].uptodate = false;
 }
 
-// returns all pairs of values of indices in the state vector
-// i.e. [00 01 10 11], for qubit 0 return (0,1) for [00 01] & (2,3) for [10 11]
-// for qubit 1 return (0,2) for [00 10] & (1,3) for [01 11]
-//std::vector<int> qubit_indices(int qubit)
-//{
-
-//}
-
-// -------------------------- Matrix multiplication ----------------
-//
 // ------------------- WeIrD iNdEx LoOpInG --------------------
 
 /** apply operator
@@ -115,17 +104,13 @@ void State_vector::single_qubit_op(const Eigen::Matrix2cd & op, int qubit){
     /// @note this order is correct and super important!
     // Increment through the indices less than bit
     long unsigned int skipped=0, not_skipped=0; 
-    std::vector<int> index;
 
     for(int i=0; i<bit; i++)
     {
         // Increment through the indices above bit
         for(int j=0; j<size; j+=high_incr)
         {
-            // 2x2 matrix multiplication on the zero (i+j)
-            // and one (i+j+bit) indices
             // same speed up these two ifs
-            //if ((abs(vect(i+j)) >= epsilon) || (abs(vect(i+j+bit)) >= epsilon))
             // if ((std::abs(vect(i+j)) + std::abs(vect(i+j+bit))) >= epsilon)
             if ((abs(vect(i+j)) >= epsilon) || (abs(vect(i+j+bit)) >= epsilon))
             {
@@ -133,9 +118,7 @@ void State_vector::single_qubit_op(const Eigen::Matrix2cd & op, int qubit){
                 vect(i+j) = temp(0); 
                 vect(i+j+bit) = temp(1);
 
-                index;
                 not_skipped++;
-
             }
             else skipped++;
         }
@@ -255,47 +238,6 @@ void State_vector::two_qubit_op(const Eigen::Matrix2cd & op, int ctrl, int targ)
             }
         }
     }
-
-    /* // SUPER BROKEn
-       int small_bit, large_bit;
-       if(ctrl > targ) 
-       {
-       small_bit = (1 << targ);
-       large_bit = (1 << ctrl);
-       } 
-       else 
-       {
-       small_bit = (1 << ctrl);
-       large_bit = (1 << targ);
-       }
-       Eigen::Vector2cd temp;
-       int mid_incr = (small_bit << 1);
-       int high_incr = (large_bit << 1);
-       int targ_bit =  (1 << targ);
-
-
-       std::cout << "ctrl " << ctrl << " targ " << targ << std::endl;
-       std::cout << " small_bit " << small_bit << " large_bit " << large_bit << std::endl;
-       std::cout << " mid incr " << mid_incr << " high_incr " << high_incr << std::endl;
-    // Increment through the low set of bits
-    for(int k=0; k<small_bit; k++)
-    {
-    // Increment through the middle set of bits
-    for(int j=0; j<large_bit; j+=mid_incr) 
-    {
-    // Increment through the indices above largest bit (ctrl or targ)
-    for(int i = 0; i < size; i += high_incr) 
-    {
-    // 2x2 matrix multiplication on the zero (i+j+k)
-    // and one (i+j+k+targ_bit) indices. 
-    std::cout << "i " << i << " j " << j << " k " << k << i+j+k << std::endl;
-    std::cout << "i " << i << " j " << j << " k " << k << targ_bit << i+j+k << std::endl;
-    temp = mat_mul(op, vect, i+j+k, i+j+k+targ_bit);
-    vect(i+j+k) = temp(0);
-    vect(i+j+k+targ_bit) = temp(1);
-    }
-    }
-    }*/
 }
 
 // returns 2 vector,
@@ -335,6 +277,7 @@ void State_vector::display_avg(std::vector<Qubit_states> & qubit_state, const Ei
             double zero_amp =0.0;
             double one_amp = 0.0;
             double phase = 0.0;
+            int num_non_zero = 0;
 
             double epsilon = 1e-5;
 
@@ -354,7 +297,14 @@ void State_vector::display_avg(std::vector<Qubit_states> & qubit_state, const Ei
 
                         // @todo do phase stuff
                         // arg() of zero/one = arg(zero) - arg(one)
-                        phase += (arg(zero) - arg(one));
+                        //std::cout << "arg (zero, one) " << arg(zero) << ", " << arg(one) << std::endl;
+                        double zero_arg = std::abs(arg(zero)), one_arg = std::abs(arg(one));
+
+                        // if same number but not zero write one out
+                        // if difference is > epsilon write diff
+                            phase += std::abs(zero_arg - one_arg);
+                            num_non_zero++;
+
                     }
                 }
             }
@@ -363,14 +313,15 @@ void State_vector::display_avg(std::vector<Qubit_states> & qubit_state, const Ei
             // e.g set_leds(zero_amp, one_amp, phase);
             qubit_state[i].zero_amp = zero_amp;
             qubit_state[i].one_amp = one_amp;
-            qubit_state[i].phase = phase;
+            
+            // to normalise
+            if(phase >= epsilon) qubit_state[i].phase = phase/num_non_zero/PI;
+            else qubit_state[i].phase = 0.0;
 
             qubit_state[i].uptodate = true;
             //std::cout << "qubit " << i << " (|0>, |1>) (" << qubit_state[i].zero_amp << ", " << qubit_state[i].one_amp << ") " << std::endl;
         }
         //else if(qubit_state[i].uptodate) std::cout << "Qubit " << i << " is up to date" << std::endl;
     }
-
-
 }
 

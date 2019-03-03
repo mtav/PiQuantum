@@ -45,19 +45,24 @@ int main(void)
     for(int k=0; k<1; k++)
     {
         for(int i=0; i<state.get_num_qubits(); i++)
-        {
+       {
             //state.apply(X,i);
             state.apply(H,i);
-            //state.apply(Z,i);
+            state.apply(Z,i);
             //state.apply(CNOT, i,(i+1)%20);
             state.disp();
 
         }
     }
+    Rotation_Z z1(1, PI), z2(1,PI/2);
+    
     state.apply(Z,1);
+    state.disp();
+    state.apply(z2, 1);
     state.disp();
     //  state.print();
     //  state.apply(CNOT, 0, 1);
 
+    std::cout << z1.matrix << "\n" << z2.matrix << std::endl;
     return 0;
 }
