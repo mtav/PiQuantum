@@ -12,6 +12,7 @@
 #include <cmath>
 #include <memory>
 #include "dummy.hpp"
+#include <thread>
 
 typedef double COMPLEX; 
 
@@ -89,6 +90,15 @@ private:
   
   // Benchmarking variables
   long int bench;
+
+  /**
+   * @brief Write-back thread
+   *
+   * @detail FIFO buffer to write updated state
+   * vector amplitudes back to the state vector.
+   *
+   */
+  std::thread writeback;
   
   /**
    * @brief Complex matrix vector multiplication
