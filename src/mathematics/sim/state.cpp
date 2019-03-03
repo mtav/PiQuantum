@@ -153,13 +153,14 @@ void State::cmatvec_inline(const COMPLEX * m, const int i, const int j) {
   double m_5 = *(m+5);
   double m_6 = *(m+6);
   double m_7 = *(m+7);
+
   
   // Element i ----------------------------------------
   *(state+a) = m_0 * state_a - m_1 * state_a_1
     + m_2 * state_b - m_3 * state_b_1;
   
   *(state+a+1) = m_1 * state_a + m_0 * state_a_1
-    + m_3 * state_b + m_3 * state_b_1;
+    + m_3 * state_b + m_2 * state_b_1;
   
   // Element j ---------------------------------------
   *(state+b) = m_4 * state_a - m_5 * state_a_1
