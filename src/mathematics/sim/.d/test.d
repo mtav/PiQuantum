@@ -1,1 +1,1 @@
-test.o: test.cpp state.hpp
+test.o: test.cpp state.hpp dummy.hpp

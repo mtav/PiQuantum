@@ -4,10 +4,14 @@
  *
  */
 
+#ifndef STATE_HPP
+#define STATE_HPP
+
 #include <cstdlib>
 #include <iostream>
 #include <cmath>
 #include <memory>
+#include "dummy.hpp"
 
 typedef double COMPLEX; 
 
@@ -174,3 +178,5 @@ public:
   void average(double * averages);
     
 };
+
+#endif

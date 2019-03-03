@@ -9,6 +9,9 @@ remove/simplify them).
 Aligning the state vector doesn't make any substantial difference to single qubit gate times.
 
 Splitting the functions up into seperate source files (so that they end up in different translation units) slows down the single qubit gate times a bit -- to 13.5s for 20 rounds of 20 qubit operations, corresponding to 0.033s per single qubit operation. Adding link time optimisation (-flto) gets the time back down to before. Adding -march=native and -O3 makes no difference to the times
+
+*** 3rd March 2019
+Disassembled the single qubit gate function. The top level (sgate) comprises 28 instructions, one of which is a call to cmatvec which comprises 43 instructions. All the cadds and cmuls have been inlined.
  
 ** Controlled gates
 *** 2nd March 2019
@@ -17,6 +20,9 @@ Controlled gates also seem to take a similar time to single qubit gates which is
 The same for loop overhead test as above (incrementing a private member variable in the for loop) for 20 loops of 20 qubits took 0.36s in total (about 0.00075s) per loop, about half of the time for a single qubit operation. That makes since since there are half as many evaluations of the inner for loop body for the controlled gate case compared to the single qubit gate case.  
 
 Re running the proper controlled and single qubit gate tests shows that the single qubit gates do take a bit longer than control qubit gates (not double). There might be other effects at play (caching etc.) that behave differently in the two cases that accounts for the difference in speed.
+
+*** 3rd March 2019
+Disassembled the controlled qubit gate function. It seems to have inlined the whole of the cgate function.
 
 ** Display averaging
 *** 2nd March 2019

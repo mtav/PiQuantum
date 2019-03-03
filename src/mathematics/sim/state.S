@@ -1,0 +1,3 @@
+
+state.o:     file format elf32-littlearm
+
