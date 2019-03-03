@@ -46,7 +46,7 @@ void cmatmul(const COMPLEX * a, const COMPLEX * b, COMPLEX * c) {
 
   // Create working space
   COMPLEX t0[2], t1[2];
-
+  
   // Element (0,0)
   cmul(a,b, t0);
   cmul(a+2,b+4, t1);
