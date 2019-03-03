@@ -134,9 +134,6 @@ void Operator::print() {
 // Inlining everything
 void State::cmatvec_inline(const COMPLEX * m, const int i, const int j) {
 
-  // Create working space
-  //COMPLEX t0[2], t1[2], t2[2], t3[2];
-  
   // True indices
   int a = 2 * i;
   int b = 2 * j;
@@ -147,6 +144,7 @@ void State::cmatvec_inline(const COMPLEX * m, const int i, const int j) {
   double state_a_1 = *(state+a+1);
   double state_b_1 = *(state+b+1);
 
+  // Read the matrix
   double m_0 = *m;
   double m_1 = *(m+1);
   double m_2 = *(m+2);
@@ -158,26 +156,18 @@ void State::cmatvec_inline(const COMPLEX * m, const int i, const int j) {
    
   // Element i ----------------------------------------
   // Multiplication 1
-  double y0 = m_0 * state_a - m_1 * state_a_1;
-  double y1 = m_1 * state_a + m_0 * state_a_1;
-  // Multiplication 2
-  double z0 = m_2 * state_b - m_3 * state_b_1;
-  double z1 = m_3 * state_b + m_3 * state_b_1;
-  // Addition
-  double p0 = y0 + z0;
-  double p1 = y1 + z1;
-
+  double p0 = m_0 * state_a - m_1 * state_a_1
+    + m_2 * state_b - m_3 * state_b_1;
+  
+  double p1 = m_1 * state_a + m_0 * state_a_1
+    + m_3 * state_b + m_3 * state_b_1;
   
   // Element j ---------------------------------------
   // Multiplication 1
-  y0 = m_4 * state_a - m_5 * state_a_1;
-  y1 = m_5 * state_a + m_4 * state_a_1;
-  // Multiplication 2
-  z0 = m_6 * state_b - m_7 * state_b_1;
-  z1 = m_7 * state_b + m_6 * state_b_1;
-  // Addition
-  double q0 = y0 + z0;
-  double q1 = y1 + z1;
+  double q0 = m_4 * state_a - m_5 * state_a_1
+    + m_6 * state_b - m_7 * state_b_1;
+  double q1 = m_5 * state_a + m_4 * state_a_1
+    + m_7 * state_b + m_6 * state_b_1;
 
   // Write results to state
   *(state+a) = p0;
