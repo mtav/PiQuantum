@@ -140,8 +140,8 @@ void State::cmatvec_inline(const COMPLEX * m, const int i, const int j) {
 
   // State vector elements
   double state_a = *(state+a);
-  double state_b = *(state+b);
   double state_a_1 = *(state+a+1);
+  double state_b = *(state+b);
   double state_b_1 = *(state+b+1);
 
   // Read the matrix
@@ -155,14 +155,14 @@ void State::cmatvec_inline(const COMPLEX * m, const int i, const int j) {
   double m_7 = *(m+7);
 
   
-  // Element i ----------------------------------------
+  // Element i
   *(state+a) = m_0 * state_a - m_1 * state_a_1
     + m_2 * state_b - m_3 * state_b_1;
   
   *(state+a+1) = m_1 * state_a + m_0 * state_a_1
     + m_3 * state_b + m_2 * state_b_1;
   
-  // Element j ---------------------------------------
+  // Element j 
   *(state+b) = m_4 * state_a - m_5 * state_a_1
     + m_6 * state_b - m_7 * state_b_1;
   *(state+b+1) = m_5 * state_a + m_4 * state_a_1
@@ -310,6 +310,63 @@ void State::sgate(const Operator & op, const int n) {
     }
   }
 }
+
+/**
+ * @brief Single qubit gate (inlined)
+ *
+ * @detail Apply a single qubit gate to the state
+ * vector. The integer specifies which qubit to 
+ * apply to operator to.
+ *
+ * Optimisations:
+ * - Everything is inlined which means that reading 
+ *   the matrix can be factored out of the innermost
+ *   loop.
+ */
+
+void State::sgate_inline(const Operator & op, const int n) {
+  
+  // Read the matrix
+  COMPLEX * U = op.get_mat();
+  double m_0 = * U;
+  double m_1 = * (U+1);
+  double m_2 = * (U+2);
+  double m_3 = * (U+3);
+  double m_4 = * (U+4);
+  double m_5 = * (U+5);
+  double m_6 = * (U+6);
+  double m_7 = * (U+7);
+
+  int k = (1 << n);
+  for(int i=0; i < state_length; i += 2 * k) {
+    for(int j=0; j < k; j++) {
+
+      // Compute true indices
+      int a = 2 * (i+j);
+      int b = 2 * (i+j+k);
+      
+      // Read state vector elements
+      double state_a = *(state+a);
+      double state_a_1 = *(state+a+1);
+      double state_b = *(state+b);
+      double state_b_1 = *(state+b+1);
+                 
+      // Compute new element i
+      *(state+a) = m_0 * state_a - m_1 * state_a_1
+	+ m_2 * state_b - m_3 * state_b_1;
+      
+      *(state+a+1) = m_1 * state_a + m_0 * state_a_1
+	+ m_3 * state_b + m_2 * state_b_1;
+      
+      // Compute new element j 
+      *(state+b) = m_4 * state_a - m_5 * state_a_1
+	+ m_6 * state_b - m_7 * state_b_1;
+      *(state+b+1) = m_5 * state_a + m_4 * state_a_1
+	+ m_7 * state_b + m_6 * state_b_1;      
+    }
+  }
+}
+
 
 /**
  * @brief Controlled gate

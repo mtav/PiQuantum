@@ -145,7 +145,9 @@ public:
    *   are no conditional statements.
    */
   void sgate(const Operator & op, const int n);
+  void sgate_inline(const Operator & op, const int n);
 
+  
   /**
    * @brief Controlled gate
    *
