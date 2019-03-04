@@ -1,6 +1,6 @@
 ## General compilation options
 CPPFLAGS = -Wall -g -O2 -march=native -flto -std=c++11
-LDLIBS = -I../eigen3
+LDLIBS = -I../eigen3 -Ifinal
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) > /dev/null)
 LIBS = 
@@ -9,7 +9,7 @@ LIBS =
 ## List the required object files after the target
 ##
 TEST_BIN = test
-$(TEST_BIN): math_test.o state.o
+$(TEST_BIN): main.o state.o
 	g++ $(CPPFLAGS) $(LDLIBS)  $^ -o $(TEST_BIN) $(LIBS)
 
 ## Target 2
