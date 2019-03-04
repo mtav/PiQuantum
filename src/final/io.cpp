@@ -195,7 +195,6 @@ void InputOutput::interrupt() {
     int mask = (1 << line);
     b -> btn_state = (( button_states[chip] & mask ) >> line);
   }
-  
 } // end of func
 
 int InputOutput::register_led(Led * led) {
