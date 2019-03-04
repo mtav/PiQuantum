@@ -23,7 +23,7 @@ int main() {
 
   for(int i=0; i<20; i++) {
     for(int j=0; j<20; j++) {
-      state.sgate(X,j);
+      state.sgate_thread(X,j);
       std::cout << "Operation " << j << std::endl;
     }
   }

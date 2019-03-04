@@ -1,5 +1,5 @@
 ## General compilation options
-CPPFLAGS = -Wall -O2 -flto -std=c++11
+CPPFLAGS = -Wall -O2 -flto -pthread -std=c++14
 CPPFLAGS += -I../testing
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) > /dev/null)
@@ -24,7 +24,7 @@ $(TEST_BIN): test.o state.o dummy.o
 
 # Compile dummy target seperately
 dummy.o: dummy.cpp
-	g++ -Wall -O2 -std=c++11 -c $< -o $*.o
+	g++ -Wall -O2 -std=c++14 -c $< -o $*.o
 	g++ -MM $< > $(DEPDIR)/$*.d
 	objdump -S $*.o > $*.S
 

@@ -291,7 +291,7 @@ void State::print() {
 }
 
 /**
- * @brief Singl   e qubit gate
+ * @brief Single qubit gate
  *
  * @detail Apply a single qubit gate to the state
  * vector. The integer specifies which qubit to 
@@ -309,6 +309,56 @@ void State::sgate(const Operator & op, const int n) {
       cmatvec_inline(U, i+j, i+j+k);
     }
   }
+}
+
+/**
+ * @brief Single qubit gate with threads
+ *
+ * @detail Apply a single qubit gate to the state
+ * vector. The integer specifies which qubit to 
+ * apply to operator to.
+ *
+ * Optimisations:
+ * - Splits the state vector up into four parts and 
+ *   computes the matrix multiplications in parallel
+ *   threads.
+ *
+ */
+std::thread State::get_cmatvec_thread(COMPLEX * U, int k,
+				      int x, int a, int y, int b) {
+  std::thread t([=] {
+      for(int i=x; i < a; i += 2 * k) {
+	for(int j=y; j < b; j++) {
+	  cmatvec_inline(U, i+j, i+j+k);
+	}
+      }
+    }
+    );
+  return t;
+}
+
+void State::sgate_thread(const Operator & op, const int n) {
+  COMPLEX * U = op.get_mat();    
+  int k = (1 << n);
+  std::thread t0, t1, t2, t3;
+  
+  // Check whether n is high or low
+  if(k < (state_length >> 1)) {
+    // k is low, so split up the outer loop
+    t0 = get_cmatvec_thread(U, k, 0, state_length >> 2, 0, k);
+    t1 = get_cmatvec_thread(U, k, state_length >> 2, state_length >> 1, 0, k);    
+    t2 = get_cmatvec_thread(U, k, state_length >> 1, (state_length >> 1 + state_length >> 2), k);
+    t3 = get_cmatvec_thread(U, k, (state_length >> 1 + state_length >> 2), state_length, 0, k);
+  } else {
+    // k is high, so split up the inner loop
+    t0 = get_cmatvec_thread(U, k, 0, state_length, 0, k >> 1);    
+    t1 = get_cmatvec_thread(U, k, 0, state_length, k >> 1,  k);    
+  }
+
+  t0.join();
+  t1.join();
+  t2.join();
+  t3.join();
 }
 
 /**

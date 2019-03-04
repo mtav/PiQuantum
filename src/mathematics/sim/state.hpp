@@ -12,6 +12,7 @@
 #include <cmath>
 #include <memory>
 #include "dummy.hpp"
+#include <thread>
 
 typedef double COMPLEX; 
 
@@ -99,6 +100,13 @@ private:
    */
   void cmatvec(const COMPLEX * m, const int i, const int j);
   void cmatvec_inline(const COMPLEX * m, const int i, const int j);
+
+  /**
+   * @brief Get a thread for computing cmatvec 
+   */
+  std::thread get_cmatvec_thread(COMPLEX * U, int k,
+				 int x, int y, int a, int b);
+
   
   /**
    * @brief Vector of state vector magnitudes and angles
@@ -119,7 +127,7 @@ private:
    *
    */
   void malloc_state(int length, int align);
-  
+
 public:
   
   /**
@@ -145,6 +153,7 @@ public:
    *   are no conditional statements.
    */
   void sgate(const Operator & op, const int n);
+  void sgate_thread(const Operator & op, const int n);
   void sgate_inline(const Operator & op, const int n);
 
   
