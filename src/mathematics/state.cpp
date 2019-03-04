@@ -112,7 +112,7 @@ void State_vector::single_qubit_op(const Eigen::Matrix2cd & op, int qubit){
         {
             // same speed up these two ifs
             // if ((std::abs(vect(i+j)) + std::abs(vect(i+j+bit))) >= epsilon)
-//            if ((abs(vect(i+j)) >= epsilon) || (abs(vect(i+j+bit)) >= epsilon))
+          //  if ((abs(vect(i+j)) >= epsilon) || (abs(vect(i+j+bit)) >= epsilon))
             {
                 temp = mat_mul(op, vect(i+j), vect(i+j+bit));
                 vect(i+j) = temp(0); 
@@ -120,7 +120,7 @@ void State_vector::single_qubit_op(const Eigen::Matrix2cd & op, int qubit){
 
                 not_skipped++;
             }
- //           else skipped++;
+          // else skipped++;
         }
     }
     std::cout << "Qubit " << qubit << " (not_skipped, skipped) (" << not_skipped << ", " << skipped << ")" << std::endl;
