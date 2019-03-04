@@ -8,11 +8,7 @@
  */
 
 #include <iostream>
-#include "spi.hpp"
-#include "wpi.hpp"
-#include "io.hpp"
-#include "leds.hpp"
-#include "buttons.hpp"
+#include "interface.hpp"
 
 #include <cstdlib>
 #include <cstring>

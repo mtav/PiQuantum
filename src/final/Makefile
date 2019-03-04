@@ -5,7 +5,7 @@ $(shell mkdir -p $(DEPDIR) > /dev/null)
 LIBS = -lwiringPi
 
 ## Testing SPI LEDs and buttons
-io-test: io-test.o spi.o io.o leds.o buttons.o wpi.o
+io-test: io-test.o spi.o io.o interface.o wpi.o
 	g++ $(CPPFLAGS) $(LDLIBS)  $^ -o io-test $(LIBS)
 
 ## Read and include dependency files

@@ -9,8 +9,7 @@
 
 #include <wiringPi.h>
 #include "io.hpp"
-#include "leds.hpp"
-#include "buttons.hpp"
+#include "interface.hpp"
 
 void Alarm::handler(int sig) {
     if(sig != SIGALRM) {
