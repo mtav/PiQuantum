@@ -2,7 +2,7 @@ TARGETS := io-test main
 
 DEPDIR = .d
 
-main_SRC := math_test.cpp state.cpp
+main_SRC := math_test.cpp state.cpp spi.cpp interface.cpp wpi.cpp io.cpp
 io-test_SRC := io-test.cpp spi.cpp io.cpp interface.cpp wpi.cpp 
 
 CC       := g++

@@ -129,7 +129,8 @@ class State_vector
         // this must be private
         void display_avg(std::vector<Qubit_states> & qubit_state, const Eigen::VectorXcd & vect);
 
-        std::vector<Led> qubits;
+        std::vector<Led> qubit_leds;
+        
     public:
         // for each qubits zero_amp, one_amp and phase info.
         std::vector<Qubit_states> qubit_state; 
@@ -165,14 +166,8 @@ class State_vector
             qubit_state[i].uptodate = true;
         }
 
-    }
+ }
         // pass the leds to construct the statevector
-        State_vector(std::vector<Led> qubit_leds) : qubits(qubit_leds)
-    {
-        // calls constructor where number of mapped leds is
-        // the number of qubits.
-        State_vector(qubits.size());
-    }
 
         void max_superpos()
         {
@@ -200,13 +195,13 @@ class State_vector
                     << qubit_state[i].one_amp << ") " << "Phase " 
                     << qubit_state[i].phase << std::endl;
             }
-            update_leds(qubits);
+            update_leds(qubit_leds);
         }
 
         // now write qubit_state to leds
         void update_leds(std::vector<Led> led_vects)
         {   
-            for( int i = 0; i < led_vects.size(); i++)
+            for( int i = 0; i < (int)led_vects.size(); i++)
             {
                 led_vects[i].set_rgb(qubit_state[i].zero_amp,
                         qubit_state[i].phase, 

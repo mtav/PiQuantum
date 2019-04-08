@@ -24,21 +24,36 @@ int main(void)
     //  Times, for a Hadamard on each qubit with disp updating after each gate takes 
     //  20 qubits 6s - 0.3s/gate & disp for each qubit.
     //  20 qubits only gates 3s - 0.15s/gate for each qubit
-    //State_vector state(16);
+    State_vector state(4);
 
     // container for leds. should probs be in state.hpp or something
-    std::vector<Led> qubit_leds;
+   // std::vector<Led> qubit_leds;
    
-    // add the leds with pin mappings
-    qubit_leds.push_back(Led led0({0,4}, {0,2}, {0,3}));
-    qubit_leds.push_back(Led led1({0,7}, {0,5}, {0,6}));
-    qubit_leds.push_back(Led led2({1,4}, {1,2}, {1,3}));
-    qubit_leds.push_back(Led led3({1,7}, {1,5}, {1,6}));
+//////////////////////// OPTION 1
+    
+//    // add the leds with pin mappings
+//    Led led0({0,4}, {0,2}, {0,3});
+//    Led led1({0,7}, {0,5}, {0,6});
+//    Led led2({1,4}, {1,2}, {1,3});
+//    Led led3({1,7}, {1,5}, {1,6});
 
-    std::cout << "number of leds is: " << qubit_leds.size() << std::endl;
+//    qubit_leds.push_back(led0);
+//    qubit_leds.push_back(led1);
+//    qubit_leds.push_back(led2);
+//    qubit_leds.push_back(led3);
+
+//////////////////////// OPTION 2
+
+ //   qubit_leds.push_back(Led ({0,4}, {0,2}, {0,3}));
+ //   qubit_leds.push_back(Led ({0,7}, {0,5}, {0,6}));
+ //   qubit_leds.push_back(Led ({1,4}, {1,2}, {1,3}));
+ //   qubit_leds.push_back(Led ({1,7}, {1,5}, {1,6}));
+
+/////////////////////////////////
+    //std::cout << "number of leds is: " << qubit_leds.size() << std::endl;
 
     // construct the statevector by passing led locations for each qubit
-    State_vector state(qubit_leds);
+    //State_vector state(qubit_leds);
 
     // take args, num of qubits to act on and angle
     Rotation_X X;
