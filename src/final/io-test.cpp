@@ -22,7 +22,7 @@ int main() {
   Led led2({1,4}, {1,2}, {1,3});
   Led led3({1,7}, {1,5}, {1,6});
   
-  led0.set_rgb(0.0, 0, 1.0);
+  led0.set_rgb(0.0, 0.0, 1.0);
   led1.set_rgb(0.0, 1.0, 0.0);
   led2.set_rgb(1.0, 0.0, 0.0);
   led3.set_rgb(1.0, 0.0, 1.0);
