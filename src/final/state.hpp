@@ -206,7 +206,7 @@ class State_vector
             cycle_states.resize(num_state_to_show);
 
             int i=0;
-            while( i < num_state_to_show ); 
+            while( i < num_state_to_show )
             {
                 long unsigned int pos = rand() % size;  
                 if(std::abs(vect(pos)) >= epsilon) // show it 

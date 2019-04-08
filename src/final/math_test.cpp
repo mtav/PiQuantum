@@ -24,7 +24,7 @@ int main(void)
     //  Times, for a Hadamard on each qubit with disp updating after each gate takes 
     //  20 qubits 6s - 0.3s/gate & disp for each qubit.
     //  20 qubits only gates 3s - 0.15s/gate for each qubit
-    State_vector state(20);
+    State_vector state(16);
 
     // take args, num of qubits to act on and angle
     Rotation_X X;
