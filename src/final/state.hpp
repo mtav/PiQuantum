@@ -129,8 +129,13 @@ class State_vector
         // this must be private
         void display_avg(std::vector<Qubit_states> & qubit_state, const Eigen::VectorXcd & vect);
 
-        std::vector<Led> qubit_leds;
-        
+        // container for all qubit leds.
+        std::vector<Led*> qubit_led_ptrs;
+
+
+        // led rgb positions are pushed into in the contructor for the number of qubits
+        std::vector<std::vector<Position> > led_positions;
+
     public:
         // for each qubits zero_amp, one_amp and phase info.
         std::vector<Qubit_states> qubit_state; 
@@ -157,15 +162,38 @@ class State_vector
         // the display functions will use this list, the led stuff can then 
         // read it when needed 
         qubit_state.resize(num_qubits);
-        // set all to vacuum and display flag to update
+       
+        // led 0-3 mappings 
+        led_positions.push_back({(Position){0,4}, (Position){0,2}, (Position){0,3}});
+        led_positions.push_back({(Position){0,7}, (Position){0,5}, (Position){0,6}});
+        led_positions.push_back({(Position){1,4}, (Position){1,2}, (Position){1,3}});
+        led_positions.push_back({(Position){1,7}, (Position){1,5}, (Position){1,6}});
+        
+        // the led type which is pushed back into qubit_leds at constructor call
+      
+        for(int i =0; i<4; i++)
+        {
+            /**
+        // add the leds with pin mappings
+            baseled = new Led(led_positions[i][0], led_positions[i][1], led_positions[i][2]);
+       
+            qubit_leds.push_back(*baseled);
+            std::cout << " i " << i << std::endl;
+        **/
+            qubit_led_ptrs.push_back(new Led(led_positions[i][0],led_positions[i][1],led_positions[i][2]));
+            }
+
+         // set all to vacuum and display flag to update
         for(int i=0; i<num_qubits; i++)
         {
             qubit_state[i].zero_amp = 1.0;
             qubit_state[i].one_amp = 0.0;
             qubit_state[i].phase = 0.0;
             qubit_state[i].uptodate = true;
-        }
 
+                       std::cout << "\t\t\t led_positions[i][0 - 3] " << led_positions[i][0] 
+                << led_positions[i][1] << led_positions[i][2] << std::endl;
+        }
  }
         // pass the leds to construct the statevector
 
@@ -195,15 +223,18 @@ class State_vector
                     << qubit_state[i].one_amp << ") " << "Phase " 
                     << qubit_state[i].phase << std::endl;
             }
-            update_leds(qubit_leds);
+            
+            update_leds(qubit_led_ptrs);
+
         }
 
         // now write qubit_state to leds
-        void update_leds(std::vector<Led> led_vects)
+        void update_leds(std::vector<Led*> led_vects)
         {   
+            std::cout << "update leds called" << std::endl;
             for( int i = 0; i < (int)led_vects.size(); i++)
             {
-                led_vects[i].set_rgb(qubit_state[i].zero_amp,
+                led_vects[i] -> set_rgb(qubit_state[i].zero_amp,
                         qubit_state[i].phase, 
                         qubit_state[i].one_amp);
             }

@@ -71,14 +71,14 @@ int main(void)
     // state.max_superpos();
 
     state.disp();
-    for(int k=0; k<3; k++)
+    for(int k=0; k<1; k++)
     {
         for(int i=0; i<state.get_num_qubits(); i++)
        {
             //state.apply(X,i);
             state.apply(H,i);
             state.apply(Z,i);
-            state.apply(CNOT, i,(i+1)%20);
+//            state.apply(CNOT, i,(i+1)%state.get_num_qubits());
             state.disp();
 
         }
