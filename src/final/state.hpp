@@ -132,11 +132,11 @@ class State_vector
         // container for all qubit leds.
         std::vector<Led*> qubit_led_ptrs;
 
-
         // led rgb positions are pushed into in the contructor for the number of qubits
         std::vector<std::vector<Position> > led_positions;
 
     public:
+        
         // for each qubits zero_amp, one_amp and phase info.
         std::vector<Qubit_states> qubit_state; 
         // ------------------ methods --------------------------
@@ -163,25 +163,13 @@ class State_vector
         // read it when needed 
         qubit_state.resize(num_qubits);
        
+        // the led type which is pushed back into qubit_leds at constructor call
         // led 0-3 mappings 
         led_positions.push_back({(Position){0,4}, (Position){0,2}, (Position){0,3}});
         led_positions.push_back({(Position){0,7}, (Position){0,5}, (Position){0,6}});
         led_positions.push_back({(Position){1,4}, (Position){1,2}, (Position){1,3}});
         led_positions.push_back({(Position){1,7}, (Position){1,5}, (Position){1,6}});
         
-        // the led type which is pushed back into qubit_leds at constructor call
-      
-        for(int i =0; i<4; i++)
-        {
-            /**
-        // add the leds with pin mappings
-            baseled = new Led(led_positions[i][0], led_positions[i][1], led_positions[i][2]);
-       
-            qubit_leds.push_back(*baseled);
-            std::cout << " i " << i << std::endl;
-        **/
-            qubit_led_ptrs.push_back(new Led(led_positions[i][0],led_positions[i][1],led_positions[i][2]));
-            }
 
          // set all to vacuum and display flag to update
         for(int i=0; i<num_qubits; i++)
@@ -191,10 +179,15 @@ class State_vector
             qubit_state[i].phase = 0.0;
             qubit_state[i].uptodate = true;
 
+            // make led ptrs for each qubit R G B
+            qubit_led_ptrs.push_back(new Led(led_positions[i][0],led_positions[i][1],
+                        led_positions[i][2]));
+            // print chip and pin 
                        std::cout << "\t\t\t led_positions[i][0 - 3] " << led_positions[i][0] 
                 << led_positions[i][1] << led_positions[i][2] << std::endl;
         }
- }
+ } // end of awesome constructor
+
         // pass the leds to construct the statevector
 
         void max_superpos()
@@ -237,6 +230,8 @@ class State_vector
                 led_vects[i] -> set_rgb(qubit_state[i].zero_amp,
                         qubit_state[i].phase, 
                         qubit_state[i].one_amp);
+    
+                std::cout << "led " << i << " (" << red(i) << ", " << green(i) << ", " << blue(i) << ")" << std::endl; 
             }
         }
 
@@ -279,6 +274,12 @@ class State_vector
             // either here or just return the Qubit_states struct.
             return cycle_states;
         }
+        
+        //returns rgb led values
+        double red(int qubit){ return qubit_led_ptrs[qubit] -> get_rgb()[0];}
+        double green(int qubit){ return qubit_led_ptrs[qubit] -> get_rgb()[1];}
+        double blue(int qubit){ return qubit_led_ptrs[qubit] -> get_rgb()[2];}
+
 };
 #endif
 
