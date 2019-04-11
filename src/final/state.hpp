@@ -231,7 +231,7 @@ class State_vector
                         qubit_state[i].phase, 
                         qubit_state[i].one_amp);
     
-                std::cout << "led " << i << " (" << red(i) << ", " << green(i) << ", " << blue(i) << ")" << std::endl; 
+//                std::cout << "led " << i << " (" << red(i) << ", " << green(i) << ", " << blue(i) << ")" << std::endl; 
             }
         }
 
