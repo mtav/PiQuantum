@@ -49,7 +49,8 @@ int main(void)
     Rotation_X CNOT(2);
 
     state.disp();
-  
+    
+    /*
     //delay();
 
     for(int k=0; k<1; k++)
@@ -80,6 +81,7 @@ int main(void)
 
     // for qubit i
    // std::cout << "led " << i << " (" <<  state.red(i) << ", " << state.green(i) << ", " << state.blue(i) << ")" << std::endl; 
-    return 0;
+   */ 
+   return 0;
 }
 
