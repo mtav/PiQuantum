@@ -42,6 +42,8 @@ class Led {
     public:
 
         Led(Position r, Position g, Position b); // Constructor
+        Led(std::vector<Position> pos); // takes vector for RGB vals
+        
         ~Led(); // Destructor
         void set_rgb(double red, double green, double blue); // Write RGB values
         std::vector<double> get_rgb(); // Read RGB values

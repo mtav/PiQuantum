@@ -14,6 +14,7 @@
 #include <iostream>
 #include <vector>
 // for float std::abs()
+#include <memory> // unique_ptr
 #include <cmath>
 // for rand
 #include <cstdlib>
@@ -130,7 +131,7 @@ class State_vector
         void display_avg(std::vector<Qubit_states> & qubit_state, const Eigen::VectorXcd & vect);
 
         // container for all qubit leds.
-        std::vector<Led*> qubit_led_ptrs;
+        std::vector<std::shared_ptr<Led> > qubit_led_ptrs;
 
         // led rgb positions are pushed into in the contructor for the number of qubits
         // the led type which is pushed back into qubit_leds at constructor call
@@ -142,11 +143,16 @@ class State_vector
         //    {{1,7}, {1,5}, {1,6}} };
 
         std::vector<std::vector<Position> > led_positions{ 
-        {{0,4}, {0,2}, {0,3}}, 
-            {{0,7}, {0,5}, {0,6}},
-            {{1,4}, {1,2}, {1,3}},
-            {{1,7}, {1,5}, {1,6}} };
+        {(Position){0,4}, (Position){0,2}, (Position){0,3}}, 
+            {(Position){0,7}, (Position){0,5}, (Position){0,6}},
+            {(Position){1,4}, (Position){1,2}, (Position){1,3}},
+            {(Position){1,7}, (Position){1,5}, (Position){1,6}} };
 
+        //std::vector<Led> qubit_leds;
+
+        //Led led0(led_positions[0]);
+        
+        std::vector<std::unique_ptr<Led> > qubit_leds;
     public:
         
         // for each qubits zero_amp, one_amp and phase info.
@@ -174,8 +180,6 @@ class State_vector
         // the display functions will use this list, the led stuff can then 
         // read it when needed 
         qubit_state.resize(num_qubits);
-      
-        qubit_led_ptrs.reserve(num_qubits);
 
         for(int i =0; i< 4; i++)
         {
@@ -192,11 +196,11 @@ class State_vector
             qubit_state[i].uptodate = true;
 
             // make led ptrs for each qubit R G B
-            qubit_led_ptrs.push_back(new Led(led_positions[i][0], led_positions[i][1], led_positions[i][2]));
+            //qubit_led_ptrs.push_back(std::make_shared<Led>(led_positions[i][0], led_positions[i][1], led_positions[i][2]));
             std::cout << "\t\t made led object " << i << std::endl;
 
-            // print chip and pin 
-        }
+            qubit_leds.push_back(std::make_unique<Led>(led_positions[i]));
+     }
  } // end of awesome constructor
 
         // pass the leds to construct the statevector
@@ -214,9 +218,10 @@ class State_vector
         // ---------------------------- Display modes, slightly faster 
 
         // now write qubit_state to leds
-        void update_leds(const std::vector<Qubit_states> & qubit_vals, const std::vector<Led*> & led_vects)
+        void update_leds(std::vector<Qubit_states> qubit_vals, std::vector<std::unique_ptr<Led> > led_vects)
         {   
             std::cout << "update leds called" << std::endl;
+            
             for( int i = 0; i < (int)led_vects.size(); i++)
             {
                 led_vects[i] -> set_rgb(qubit_vals[i].zero_amp,
@@ -240,7 +245,7 @@ class State_vector
                     << qubit_state[i].phase << std::endl;
             }
             
-            update_leds(qubit_state, qubit_led_ptrs);
+            update_leds(qubit_state, qubit_leds);
         }
 
         // placeholder display_avg updates qubit.state 
