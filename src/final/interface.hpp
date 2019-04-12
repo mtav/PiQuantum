@@ -42,11 +42,12 @@ class Led {
     public:
 
         Led(Position r, Position g, Position b); // Constructor
+        Led(std::vector<Position> pos); // takes vector for RGB vals
+        
         ~Led(); // Destructor
         void set_rgb(double red, double green, double blue); // Write RGB values
         std::vector<double> get_rgb(); // Read RGB values
         std::vector<Position> get_positions();  // Return the chip and line numbers
-//        void setpositions(std::vector<Position> pos) { positions = pos;}
 };
 
 class Button {

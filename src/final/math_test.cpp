@@ -1,6 +1,17 @@
 #include <iostream>
 #include "state.hpp"
 
+std::string delay()
+{
+    int a =0;
+    for(long int i=0; i<100000000; i++)
+    {
+        a+=i;
+    }
+    std::cout << std::to_string(a);
+    return std::to_string(a);
+}
+
 int main(void)
 {
     // TIMINGS @note 2-qubit gates take half the time of singles.
@@ -28,11 +39,6 @@ int main(void)
 
     // container for leds. should probs be in state.hpp or something
     
-    //std::cout << "number of leds is: " << qubit_leds.size() << std::endl;
-
-    // construct the statevector by passing led locations for each qubit
-    //State_vector state(qubit_leds);
-
     // take args, num of qubits to act on and angle
     Rotation_X X;
     Rotation_Y Y;
@@ -42,13 +48,11 @@ int main(void)
     // meaning create a X that is controlled on 1 qubit 
     Rotation_X CNOT(2);
 
-    //state.print();
-    //
-    // super efficient!!!! DO NOT LOOP H OVER QUBITS, VERY SLOW
-    // make H^xN 
-    // state.max_superpos();
-
     state.disp();
+    
+    /*
+    //delay();
+
     for(int k=0; k<1; k++)
     {
         for(int i=0; i<state.get_num_qubits(); i++)
@@ -77,5 +81,7 @@ int main(void)
 
     // for qubit i
    // std::cout << "led " << i << " (" <<  state.red(i) << ", " << state.green(i) << ", " << state.blue(i) << ")" << std::endl; 
-    return 0;
+   */ 
+   return 0;
 }
+

@@ -17,6 +17,11 @@ Led::Led(Position r, Position g, Position b)
   id = driver -> register_led(this); 
 }
 
+Led::Led(std::vector<Position> pos) 
+{
+    Led(pos[0], pos[1], pos[2]);
+}
+
 Led::~Led() {
   // De register the Led object from the driver
   driver -> deregister_led(id);
