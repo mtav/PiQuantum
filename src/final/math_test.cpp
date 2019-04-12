@@ -110,7 +110,7 @@ int main(void)
     {
         // gates 
         bool no_gate = true;
-        std::cout << " Waiting for a gate " << std::endl;
+        std::cout << "\n Waiting for a gate " << std::endl;
         while(no_gate)
         {
             if(btn_x.get_state())
