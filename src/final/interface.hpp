@@ -83,7 +83,6 @@ class Button {
 
         // Read the button state
         int get_state();
-        std::vector<double> rgb() { return rgb_values; }
 
         // Return the chip and line numbers
         Position get_position() { return position; }
