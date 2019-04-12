@@ -21,6 +21,17 @@ void make_leds_light_up(const State_vector & state,Led & led0, Led & led1, Led &
     led3.set_rgb(state.qubit_state[3].zero_amp, state.qubit_state[3].phase, state.qubit_state[3].one_amp);
 }
 
+int get_qubit_btn(Button & btn_q0, Button & btn_q1, Button & btn_q2, Button & btn_q3)
+{
+    while(1)
+    {
+    if(btn_q0.get_state()) return 0;
+    else if(btn_q1.get_state()) return 1;
+    else if(btn_q2.get_state()) return 2;
+    else if(btn_q3.get_state()) return 3;
+    }
+}
+
 int main(void)
 {
     // TIMINGS @note 2-qubit gates take half the time of singles.
@@ -78,27 +89,40 @@ int main(void)
     // gates 
     bool no_gate = true;
 
-    while(no_gate)
+    while(true)
     {
         if(btn_x.get_state())
         {
             // do x
+            int qubit = get_qubit_btn(btn_q0,btn_q1,btn_q2,btn_q3);
+            state.apply(X,qubit);
         }
         else if(btn_z.get_state())
         {
             // do z
+            int qubit = get_qubit_btn(btn_q0,btn_q1,btn_q2,btn_q3);
+            state.apply(Z,qubit);
         }
         else if(btn_h.get_state())
         {
             // do h
+            int qubit = get_qubit_btn(btn_q0,btn_q1,btn_q2,btn_q3);
+            state.apply(H,qubit);
         }
         else if(btn_cnot.get_state())
         {
             // do cnot
+            std::cout << "CNOT PRESSED" << std::endl;
+            int qubit1 = get_qubit_btn(btn_q0,btn_q1,btn_q2,btn_q3);
+            int qubit2 = get_qubit_btn(btn_q0,btn_q1,btn_q2,btn_q3);
+            // to deal with pressing time button bouncing 
+            while(qubit2 == qubit1){ qubit2 = get_qubit_btn(btn_q0,btn_q1,btn_q2,btn_q3);}
+            std::cout << " qubit 1, " << qubit1 << " qubit 2, " << qubit2 << std::endl;
+            state.apply(CNOT, qubit1, qubit2);
         }
-    }
-
-
+    
+        state.disp();
+        make_leds_light_up(state, led0, led1, led2, led3);
     }
 
 
