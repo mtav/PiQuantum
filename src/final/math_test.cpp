@@ -61,18 +61,7 @@ int main(void)
     Led led1({0,7}, {0,5}, {0,6});
     Led led2({1,4}, {1,2}, {1,3});
     Led led3({1,7}, {1,5}, {1,6});
-<<<<<<< HEAD
     
-    Button btn0({0,2});
-    Button btn1({1,7});
-    Button btn2({1,1});
-    Button btn3({1,2});
-    Button btn4({1,0});
-    Button btn5({1,3});
-    Button btn6({0,1});
-    Button btn7({0,0});
-=======
-
     Button btn_q0({0,2}); // qubit 0
     Button btn_q1({1,7}); // qubit 1 
     Button btn_q2({1,1}); // qubit 2
@@ -81,7 +70,6 @@ int main(void)
     Button btn_z({1,3}); // z
     Button btn_h({0,1}); // H 
     Button btn_cnot({0,0}); // CNOT
->>>>>>> 0bc59d5ed70aec45b0cf695b70086e01805beb1c
 
     // take args, num of qubits to act on and angle
     Rotation_X X;
@@ -93,9 +81,8 @@ int main(void)
     Rotation_X CNOT(2);
 
     state.disp();
-    return 0;     
     
-    //make_leds_light_up(state, led0, led1, led2, led3);
+   make_leds_light_up(state, led0, led1, led2, led3);
     
     delay();
 
