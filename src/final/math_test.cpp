@@ -87,7 +87,7 @@ int main(void)
     delay();
 
     std::cout << "Choose display mode \n Qubit 1 for average \n Qubit 2 for cycling: " << std::endl;
-    int display_mode = -1;
+    int display_mode = 0;
 
     while(display_mode == -1)
     {
