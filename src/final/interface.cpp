@@ -22,10 +22,12 @@ Led::Led(std::vector<Position> pos)
     Led(pos[0], pos[1], pos[2]);
 }
 
-Led::~Led() {
+
+// @todo Fix this please, don't uncomment until it is fixed
+//Led::~Led() {
   // De register the Led object from the driver
-  driver -> deregister_led(id);
-}
+  //driver -> deregister_led(id);
+//}
 
 // Read and write the RGB value
 // May as well just make this public...
@@ -54,10 +56,11 @@ Button::Button(Position position)
   id = driver -> register_button(this); 
 }
 
-Button::~Button() {
-  // De register the Button object from the driver
-  driver -> deregister_led(id);
-}
+// @todo Fix this later
+//Button::~Button() {
+//  // De register the Button object from the driver
+//  driver -> deregister_led(id);
+//}
 
 // Read the button
 int Button::get_state() {

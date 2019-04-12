@@ -235,19 +235,20 @@ class State_vector
         // to check display_avg works
         void disp()
         {
-            // loops over the state vector for eevery qubit, 
+
+	  // loops over the state vector for eevery qubit, 
             // uses num_qubits from the state vector
             // qubits states has the uptodate flag
             display_avg(qubit_state, vect);    // see private functions!!!
-            // then print out info. people love data.
+
+	    // then print out info. people love data.
             for(int i=0; i<num_qubits; i++)
             {
                 std::cout << "qubit " << i << " (|0>, |1>) ("
                     << qubit_state[i].zero_amp << ", "
                     << qubit_state[i].one_amp << ") " << "Phase " 
                     << qubit_state[i].phase << std::endl;
-            }
-            
+            }	    
             //update_leds(qubit_state, qubit_leds);
         }
 
