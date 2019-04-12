@@ -84,8 +84,6 @@ int main(void)
 
     make_leds_light_up(state.qubit_state, led0, led1, led2, led3);
 
-    delay();
-
     std::cout << "Choose display mode \n Qubit 1 for average \n Qubit 2 for cycling: " << std::endl;
     int display_mode = 0;
 
