@@ -12,12 +12,12 @@ std::string delay()
     return std::to_string(a);
 }
 
-void make_leds_light_up(const State_vector & state, Led & led0, Led & led1, Led & led2, Led & led3)
+void make_leds_light_up(const std::vector<State_vector::Qubit_states> & states, Led & led0, Led & led1, Led & led2, Led & led3)
 {
-    led0.set_rgb(state.qubit_state[0].zero_amp, state.qubit_state[0].phase, state.qubit_state[0].one_amp);
-    led1.set_rgb(state.qubit_state[1].zero_amp, state.qubit_state[1].phase, state.qubit_state[1].one_amp);
-    led2.set_rgb(state.qubit_state[2].zero_amp, state.qubit_state[2].phase, state.qubit_state[2].one_amp);
-    led3.set_rgb(state.qubit_state[3].zero_amp, state.qubit_state[3].phase, state.qubit_state[3].one_amp);
+    led0.set_rgb(states[0].zero_amp, states[0].phase, states[0].one_amp);
+    led1.set_rgb(states[1].zero_amp, states[1].phase, states[1].one_amp);
+    led2.set_rgb(states[2].zero_amp, states[2].phase, states[2].one_amp);
+    led3.set_rgb(states[3].zero_amp, states[3].phase, states[3].one_amp);
 }
 
 int get_qubit_btn(Button & btn_q0, Button & btn_q1, Button & btn_q2, Button & btn_q3)
@@ -82,9 +82,26 @@ int main(void)
 
     state.disp();
 
-    make_leds_light_up(state, led0, led1, led2, led3);
+    make_leds_light_up(state.qubit_state, led0, led1, led2, led3);
 
     delay();
+
+    std::cout << "Choose display mode \n Qubit 1 for average \n Qubit 2 for cycling: " << std::endl;
+    int display_mode = -1;
+
+    while(display_mode == -1)
+    {
+        if(btn_q0.get_state())
+        {
+            display_mode = 0;
+            std::cout << " you chose average display " << std::endl;
+        }
+        else if(btn_q1.get_state())
+        {
+            display_mode = 1;
+            std::cout << " you chose the cycling mode " << std::endl;
+        }
+    }
 
     // main loop
     // ask for a gate,
@@ -95,6 +112,7 @@ int main(void)
     {
         // gates 
         bool no_gate = true;
+        std::cout << " Waiting for a gate " << std::endl;
         while(no_gate)
         {
             if(btn_x.get_state())
@@ -131,9 +149,23 @@ int main(void)
                 no_gate=false;
             }
         }
-        // after gate update display 
-        state.disp();
-        make_leds_light_up(state, led0, led1, led2, led3);
+
+
+        if(display_mode == 0)
+        {
+            // after gate update display 
+            state.disp();
+            make_leds_light_up(state.qubit_state, led0, led1, led2, led3);
+        }
+        else if(display_mode == 1)
+        {
+            std::vector<std::vector<State_vector::Qubit_states> > cycle_states = state.disp_cycle();
+            for(int i = 0; i < (int)cycle_states.size(); i++)
+            {
+                make_leds_light_up(cycle_states[i], led0, led1, led2, led3);
+                delay();
+            }
+        }
     }
 
 

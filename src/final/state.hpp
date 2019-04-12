@@ -114,6 +114,22 @@ class State_vector
         Eigen::Vector2cd mat_mul(const Eigen::Matrix2cd & op, 
                 const std::complex<double> & i, const std::complex<double> & j);
 
+
+        // container for all qubit leds.
+       // std::vector<std::shared_ptr<Led> > qubit_led_ptrs;
+
+        //std::vector<std::vector<Position> > led_positions{ 
+        //{(Position){0,4}, (Position){0,2}, (Position){0,3}}, 
+        //    {(Position){0,7}, (Position){0,5}, (Position){0,6}},
+        //    {(Position){1,4}, (Position){1,2}, (Position){1,3}},
+        //    {(Position){1,7}, (Position){1,5}, (Position){1,6}} };
+
+        //std::vector<Led> qubit_leds;
+
+        //Led led0(led_positions[0]);
+        
+       // std::vector<std::unique_ptr<Led> > qubit_leds;
+    public:
         // holdes the qubit zero & one amplitudes and their phase info
         // the leds will read this list.
         struct Qubit_states
@@ -130,31 +146,6 @@ class State_vector
         // this must be private
         void display_avg(std::vector<Qubit_states> & qubit_state, const Eigen::VectorXcd & vect);
 
-        // container for all qubit leds.
-       // std::vector<std::shared_ptr<Led> > qubit_led_ptrs;
-
-        // led rgb positions are pushed into in the contructor for the number of qubits
-        // the led type which is pushed back into qubit_leds at constructor call
-        // led 0-3 mappings 
-       // std::vector<std::vector<Position> > led_positions{ 
-       //     {{0,4}, {0,2}, {0,3}}, 
-       //     {{0,7}, {0,5}, {0,6}},
-        //    {{1,4}, {1,2}, {1,3}},
-        //    {{1,7}, {1,5}, {1,6}} };
-
-        //std::vector<std::vector<Position> > led_positions{ 
-        //{(Position){0,4}, (Position){0,2}, (Position){0,3}}, 
-        //    {(Position){0,7}, (Position){0,5}, (Position){0,6}},
-        //    {(Position){1,4}, (Position){1,2}, (Position){1,3}},
-        //    {(Position){1,7}, (Position){1,5}, (Position){1,6}} };
-
-        //std::vector<Led> qubit_leds;
-
-        //Led led0(led_positions[0]);
-        
-       // std::vector<std::unique_ptr<Led> > qubit_leds;
-    public:
-        
         // for each qubits zero_amp, one_amp and phase info.
         std::vector<Qubit_states> qubit_state; 
         // ------------------ methods --------------------------
@@ -259,10 +250,11 @@ class State_vector
 
         // generates a random number and cycles between the qubit states.
         // the great waterfall
-        std::vector<Qubit_states> disp_cycle(int num_state_to_show = 4)
+        std::vector<std::vector<Qubit_states> > disp_cycle(int num_state_to_show = 4)
         {
             double epsilon = 1e-5;
 
+            std::vector<std::vector<Qubit_states> > result;
             std::vector<Qubit_states> cycle_states;
             cycle_states.resize(num_state_to_show);
 
@@ -284,12 +276,13 @@ class State_vector
                         // index from which ever amplitude is not this one...
                         cycle_states[j].phase = 0;
                     }
+                    result.push_back(cycle_states);
                 }
             } // find another great state to show!
 
             // now cycle through the list sending them to the leds.
             // either here or just return the Qubit_states struct.
-            return cycle_states;
+            return result;
         }
         
         /*
