@@ -116,7 +116,7 @@ class State_vector
 
 
         // container for all qubit leds.
-       // std::vector<std::shared_ptr<Led> > qubit_led_ptrs;
+        // std::vector<std::shared_ptr<Led> > qubit_led_ptrs;
 
         //std::vector<std::vector<Position> > led_positions{ 
         //{(Position){0,4}, (Position){0,2}, (Position){0,3}}, 
@@ -127,8 +127,8 @@ class State_vector
         //std::vector<Led> qubit_leds;
 
         //Led led0(led_positions[0]);
-        
-       // std::vector<std::unique_ptr<Led> > qubit_leds;
+
+        // std::vector<std::unique_ptr<Led> > qubit_leds;
     public:
         // holdes the qubit zero & one amplitudes and their phase info
         // the leds will read this list.
@@ -160,8 +160,11 @@ class State_vector
         // if one int passed take as number of qubits 
         State_vector(int num) : num_qubits(num)
     {
-        size = pow(2, num);
-        vect = Eigen::VectorXcd::Zero(size);
+        qubit_state.resize(num);
+       // set_vacuum(num_qubits, vect, qubit_state);
+
+           size = pow(2, num);
+           vect = Eigen::VectorXcd::Zero(size);
         // make the first element 1 (Vacuum state)
         vect(0)=1.0;
 
@@ -170,31 +173,42 @@ class State_vector
         //
         // the display functions will use this list, the led stuff can then 
         // read it when needed 
-        qubit_state.resize(num_qubits);
 
-        for(int i =0; i< 4; i++)
-        {
-       // std::cout << "\t\t\t led_positions[i][0 - 3] " << led_positions[i][0] 
-        //        << led_positions[i][1] << led_positions[i][2] << std::endl;
-        }
-        
         // set all to vacuum and display flag to update
         for(int i=0; i<num_qubits; i++)
         {
-            qubit_state[i].zero_amp = 1.0;
-            qubit_state[i].one_amp = 0.0;
-            qubit_state[i].phase = 0.0;
-            qubit_state[i].uptodate = true;
+        qubit_state[i].zero_amp = 1.0;
+        qubit_state[i].one_amp = 0.0;
+        qubit_state[i].phase = 0.0;
+        qubit_state[i].uptodate = true;
 
-            // make led ptrs for each qubit R G B
-            //qubit_led_ptrs.push_back(std::make_shared<Led>(led_positions[i][0], led_positions[i][1], led_positions[i][2]));
-         //   std::cout << "\t\t made led object " << i << std::endl;
+        // make led ptrs for each qubit R G B
+        //qubit_led_ptrs.push_back(std::make_shared<Led>(led_positions[i][0], led_positions[i][1], led_positions[i][2]));
+        //   std::cout << "\t\t made led object " << i << std::endl;
 
-          //  qubit_leds.push_back(std::make_unique<Led>(led_positions[i]));
-     }
- } // end of awesome constructor
+        //  qubit_leds.push_back(std::make_unique<Led>(led_positions[i]));
+        }
+    } // end of awesome constructor
 
         // pass the leds to construct the statevector
+        void set_vacuum(int num_qubits, Eigen::VectorXcd & vect_in, std::vector<Qubit_states> & q_states)
+        {
+            int size = pow(2, num_qubits);
+            vect_in = Eigen::VectorXcd::Zero(size);
+            vect_in(0) = 1.0;
+
+            // set all to vacuum and display flag to update
+            for(int i=0; i<num_qubits; i++)
+            {
+                q_states[i].zero_amp = 1.0;
+                q_states[i].one_amp = 0.0;
+                q_states[i].phase = 0.0;
+                q_states[i].uptodate = false;
+            }
+        }
+
+        void set_vacuum() { set_vacuum(num_qubits, vect, qubit_state);}
+
 
         void max_superpos()
         {
@@ -212,14 +226,14 @@ class State_vector
         // now write qubit_state to leds
         void update_leds(std::vector<Qubit_states> qubit_vals, std::vector<std::unique_ptr<Led> > led_vects)
         {   
-            std::cout << "update leds called" << std::endl;
-            
-            for( int i = 0; i < (int)led_vects.size(); i++)
-            {
-                led_vects[i] -> set_rgb(qubit_vals[i].zero_amp,
-                        qubit_vals[i].phase, 
-                        qubit_vals[i].one_amp);
-            }
+        std::cout << "update leds called" << std::endl;
+
+        for( int i = 0; i < (int)led_vects.size(); i++)
+        {
+        led_vects[i] -> set_rgb(qubit_vals[i].zero_amp,
+        qubit_vals[i].phase, 
+        qubit_vals[i].one_amp);
+        }
         }
         */
 
@@ -227,12 +241,12 @@ class State_vector
         void disp()
         {
 
-	  // loops over the state vector for eevery qubit, 
+            // loops over the state vector for eevery qubit, 
             // uses num_qubits from the state vector
             // qubits states has the uptodate flag
             display_avg(qubit_state, vect);    // see private functions!!!
 
-	    // then print out info. people love data.
+            // then print out info. people love data.
             for(int i=0; i<num_qubits; i++)
             {
                 std::cout << "qubit " << i << " (|0>, |1>) ("
@@ -284,7 +298,7 @@ class State_vector
             // either here or just return the Qubit_states struct.
             return result;
         }
-        
+
         /*
         //returns rgb led values
         double red(int qubit){ return qubit_led_ptrs[qubit] -> get_rgb()[0];}

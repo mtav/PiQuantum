@@ -54,7 +54,7 @@ int main(void)
     //  Times, for a Hadamard on each qubit with disp updating after each gate takes 
     //  20 qubits 6s - 0.3s/gate & disp for each qubit.
     //  20 qubits only gates 3s - 0.15s/gate for each qubit
-    State_vector state(20);
+    State_vector state(16);
 
     // container for leds. should probs be in state.hpp or something
     Led led0({0,4}, {0,2}, {0,3});
@@ -146,6 +146,14 @@ int main(void)
                 state.apply(CNOT, qubit1, qubit2);
                 no_gate=false;
             }
+
+
+            // reset 
+            if(btn_q0.get_state() && btn_q3.get_state()) 
+            {
+                state.set_vacuum();
+                no_gate=false;
+            }
         }
 
 
@@ -164,6 +172,7 @@ int main(void)
                 delay();
             }
         }
+
     }
 
 
