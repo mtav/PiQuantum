@@ -54,7 +54,7 @@ int main(void)
     //  Times, for a Hadamard on each qubit with disp updating after each gate takes 
     //  20 qubits 6s - 0.3s/gate & disp for each qubit.
     //  20 qubits only gates 3s - 0.15s/gate for each qubit
-    State_vector state(4);
+    State_vector state(20);
 
     // container for leds. should probs be in state.hpp or something
     Led led0({0,4}, {0,2}, {0,3});

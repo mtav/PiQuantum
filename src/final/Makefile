@@ -7,7 +7,7 @@ io-test_SRC := io-test.cpp spi.cpp io.cpp interface.cpp wpi.cpp
 
 CC       := g++
 
-CFLAGS   := -g -std=c++14 -O0 -Wall 
+CFLAGS   := -g -std=c++14 -Ofast -Wall
 CPPFLAGS := -I. 
 
 LDFLAGS  :=  
