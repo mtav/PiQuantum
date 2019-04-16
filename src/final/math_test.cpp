@@ -154,6 +154,14 @@ int main(void)
                 state.set_vacuum();
                 no_gate=false;
             }
+
+            // change display modes
+            if(btn_q0.get_state() && btn_q1.get_state())
+                {
+                    // change between 0 & 1
+                    display_mode = (display_mode + 1) %2;
+                    no_gate = false;
+                }
         }
 
 
@@ -165,11 +173,16 @@ int main(void)
         }
         else if(display_mode == 1)
         {
+            std::cout << " Display cycling mode " << std::endl;
             std::vector<std::vector<State_vector::Qubit_states> > cycle_states = state.disp_cycle();
+            // while no other button is pressed
+            while( !btn_x.get_state() && !btn_z.get_state() && !btn_h.get_state() && !btn_cnot.get_state())
+            {
             for(int i = 0; i < (int)cycle_states.size(); i++)
             {
                 make_leds_light_up(cycle_states[i], led0, led1, led2, led3);
-                delay();
+                //delay();
+            }
             }
         }
 

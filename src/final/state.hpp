@@ -115,6 +115,7 @@ class State_vector
                 const std::complex<double> & i, const std::complex<double> & j);
 
 
+
         // container for all qubit leds.
         // std::vector<std::shared_ptr<Led> > qubit_led_ptrs;
 
@@ -190,7 +191,8 @@ class State_vector
         }
     } // end of awesome constructor
 
-        // pass the leds to construct the statevector
+
+        // the reset button 
         void set_vacuum(int num_qubits, Eigen::VectorXcd & vect_in, std::vector<Qubit_states> & q_states)
         {
             int size = pow(2, num_qubits);
@@ -206,7 +208,7 @@ class State_vector
                 q_states[i].uptodate = false;
             }
         }
-
+        // pass the leds to construct the statevector
         void set_vacuum() { set_vacuum(num_qubits, vect, qubit_state);}
 
 
@@ -264,25 +266,30 @@ class State_vector
 
         // generates a random number and cycles between the qubit states.
         // the great waterfall
-        std::vector<std::vector<Qubit_states> > disp_cycle(int num_state_to_show = 4)
+        std::vector<std::vector<Qubit_states> > disp_cycle(int num_state_to_show = 1)
         {
             double epsilon = 1e-5;
 
             std::vector<std::vector<Qubit_states> > result;
             std::vector<Qubit_states> cycle_states;
-            cycle_states.resize(num_state_to_show);
+            cycle_states.resize(num_qubits);
 
             int i=0;
             while( i < num_state_to_show )
             {
-                long unsigned int pos = rand() % size;  
+                //long unsigned int pos = rand() % size;  
+                
+                for( long int pos = 0; pos < size; pos++)
+                {
                 if(std::abs(vect(pos)) >= epsilon) // show it 
                 {
+                    std::cout << "position " << pos << std::endl;
                     i++;
                     // for each qubit calc led vals and add to list
                     for(int j=0; j < num_qubits; j++)
                     {
                         // is this bit masking?
+                        std::cout << (int)(pos & (0 << j)) << std::endl;
                         cycle_states[j].zero_amp = (pos & (0 << j));
                         cycle_states[j].one_amp = (pos & (1 << j));
                         // quite complicated so I'm avoiding it.
@@ -293,7 +300,7 @@ class State_vector
                     result.push_back(cycle_states);
                 }
             } // find another great state to show!
-
+            }
             // now cycle through the list sending them to the leds.
             // either here or just return the Qubit_states struct.
             return result;
