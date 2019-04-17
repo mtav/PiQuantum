@@ -143,7 +143,7 @@ class Qubit
     void set_led(void) {led_ptr -> set_rgb(zero_amp, phase, one_amp);}
 
     // check if qubit selected
-    bool select(void) { return btn_ptr -> get_state();}
+    bool selected(void) { return btn_ptr -> get_state();}
 
     // either set all 3 
     void set_amps(double zero, double one,  double phases)
