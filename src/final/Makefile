@@ -1,13 +1,14 @@
-TARGETS := io-test main
+TARGETS := io-test main qubit
 
 DEPDIR = .d
 
+qubit_SRC := qubit.cpp state.cpp spi.cpp interface.cpp wpi.cpp io.cpp 
 main_SRC := math_test.cpp state.cpp spi.cpp interface.cpp wpi.cpp io.cpp
 io-test_SRC := io-test.cpp spi.cpp io.cpp interface.cpp wpi.cpp 
 
 CC       := g++
 
-CFLAGS   := -g -std=c++14 -Ofast -Wall
+CFLAGS   := -g3 -std=c++14 -Ofast -Wall
 CPPFLAGS := -I. 
 
 LDFLAGS  :=  

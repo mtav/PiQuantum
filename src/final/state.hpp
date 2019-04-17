@@ -125,13 +125,16 @@ class Qubit
     public:
         Qubit(std::vector<Position> led_rgb_loc, Position btn_loc, int pos = -1)
         {   
+            for(auto & i : led_rgb_loc){std::cout << i << std::endl;}
+            
             led_ptr = std::make_unique<Led>(led_rgb_loc); 
             btn_ptr = std::make_unique<Button>(btn_loc);
             
             zero_amp = 1.0;
             one_amp = 0.0;
             phase = 0.0;
-    
+
+            std::cout << "setting leds" << std::endl;
             set_led();
             uptodate = true;
         }
