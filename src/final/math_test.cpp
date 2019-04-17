@@ -3,7 +3,7 @@
 
 std::string delay()
 {
-    int a =0;
+    long int a =0;
     for(long int i=0; i<100000000; i++)
     {
         a+=i;
@@ -180,6 +180,7 @@ int main(void)
                         display_mode = 0;
                         no_gate = false;
                         std::cout << "Exiting cycling mode" << std::endl;
+                        break;
                     }
                 }
             }
@@ -195,6 +196,7 @@ int main(void)
         std::cout << "Starting average disp mode " << std::endl;
         state.disp();
         make_leds_light_up(state.qubit_state, led0, led1, led2, led3);
+        delay();
         //  }
 
     }

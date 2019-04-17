@@ -289,8 +289,7 @@ class State_vector
                     for(int j=0; j < num_qubits; j++)
                     {
                         // is this bit masking?
-                        std::cout << (int)(pos & (0 << j)) << std::endl;
-                        cycle_states[j].zero_amp = (pos & (0 << j));
+                        cycle_states[j].zero_amp = 1 - (pos & (1 << j));
                         cycle_states[j].one_amp = (pos & (1 << j));
                         // quite complicated so I'm avoiding it.
                         // @todo do phase but you'll have to find the correct
