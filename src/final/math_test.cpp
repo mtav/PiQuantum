@@ -108,6 +108,7 @@ int main(void)
     // then repeat
     while(true)
     {
+        display_mode = 0;
         // gates 
         bool no_gate = true;
         std::cout << "\n Waiting for a gate " << std::endl;
@@ -147,7 +148,6 @@ int main(void)
                 no_gate=false;
             }
 
-
             // reset 
             if(btn_q0.get_state() && btn_q3.get_state()) 
             {
@@ -157,34 +157,45 @@ int main(void)
 
             // change display modes
             if(btn_q0.get_state() && btn_q1.get_state())
+            {
+                // change between 0 & 1
+                display_mode = 1;
+                //no_gate = false;
+            }
+           
+            // if display is changed 
+            if(display_mode == 1)
+            {
+                std::cout << " Display cycling mode " << std::endl;
+                std::vector<std::vector<State_vector::Qubit_states> > cycle_states = state.disp_cycle();
+                // while no other button is pressed
+                for(int i = 0; i < (int)cycle_states.size(); i++)
                 {
-                    // change between 0 & 1
-                    display_mode = (display_mode + 1) %2;
-                    no_gate = false;
+                    make_leds_light_up(cycle_states[i], led0, led1, led2, led3);
+                    delay();
+                    // change display modes
+                    if(btn_q0.get_state() && btn_q1.get_state())
+                    {
+                        // change between 0 & 1
+                        display_mode = 0;
+                        no_gate = false;
+                        std::cout << "Exiting cycling mode" << std::endl;
+                    }
                 }
-        }
-
-
-        if(display_mode == 0)
-        {
-            // after gate update display 
-            state.disp();
-            make_leds_light_up(state.qubit_state, led0, led1, led2, led3);
-        }
-        else if(display_mode == 1)
-        {
-            std::cout << " Display cycling mode " << std::endl;
-            std::vector<std::vector<State_vector::Qubit_states> > cycle_states = state.disp_cycle();
-            // while no other button is pressed
-            while( !btn_x.get_state() && !btn_z.get_state() && !btn_h.get_state() && !btn_cnot.get_state())
-            {
-            for(int i = 0; i < (int)cycle_states.size(); i++)
-            {
-                make_leds_light_up(cycle_states[i], led0, led1, led2, led3);
-                //delay();
             }
-            }
-        }
+
+        } // end of the function loop
+
+        // after a gate is performed set leds to average state once. important that 
+        // this is NOT in the loop .
+
+        //if(display_mode == 0)
+        //{
+        // after gate update display 
+        std::cout << "Starting average disp mode " << std::endl;
+        state.disp();
+        make_leds_light_up(state.qubit_state, led0, led1, led2, led3);
+        //  }
 
     }
 
