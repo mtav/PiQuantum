@@ -162,7 +162,7 @@ int main(void)
                 display_mode = 1;
                 //no_gate = false;
             }
-           
+
             // if display is changed 
             if(display_mode == 1)
             {
@@ -200,23 +200,6 @@ int main(void)
         //  }
 
     }
-
-
-    for(int k=0; k<1; k++)
-    {
-        for(int i=0; i<state.get_num_qubits(); i++)
-        {
-            state.apply(X,i);
-            //    state.apply(H,i);
-            //    state.apply(Z,i);
-            //            state.apply(CNOT, i,(i+1)%state.get_num_qubits());
-            state.disp();
-            //      make_leds_light_up(state, led0, led1, led2, led3);
-
-        }
-    }
-    //    state.disp();
-    //make_leds_light_up(state, led0, led1, led2, led3);
 
     // Infinite while loop
     while(1)

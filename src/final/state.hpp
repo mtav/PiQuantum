@@ -99,6 +99,65 @@ class Hadamard : public Operator
 };
 
 
+// -------------------- THE GRAND QUBIT CLASS ------------
+// each qubit has a:
+// 
+// button
+// led
+//
+// position 
+// zero amplitude
+// one amplitudes
+// phase 
+class Qubit
+{
+    private:
+        std::unique_ptr<Led> led_ptr;
+        std::unique_ptr<Button> btn_ptr;
+
+        int position;
+        double zero_amp;
+        double one_amp;
+        double phase;
+
+        bool uptodate;
+
+    public:
+        Qubit(std::vector<Position> led_rgb_loc, Position btn_loc, int pos = -1)
+        {   
+            led_ptr = std::make_unique<Led>(led_rgb_loc); 
+            btn_ptr = std::make_unique<Button>(btn_loc);
+            
+            zero_amp = 1.0;
+            one_amp = 0.0;
+            phase = 0.0;
+    
+            set_led();
+            uptodate = true;
+        }
+        
+    // method for setting led
+    void set_led(void) {led_ptr -> set_rgb(zero_amp, phase, one_amp);}
+
+    // check if qubit selected
+    bool select(void) { return btn_ptr -> get_state();}
+
+    // either set all 3 
+    void set_amps(double zero, double one,  double phases)
+    {
+        zero_amp = zero;
+        one_amp = one;
+        phase = phases;
+    }
+
+    // or just 1 at a time
+    void set_zero(double amp) {zero_amp = amp;}
+    void set_one(double amp) {one_amp = amp;}
+    void set_phase(double phi) { phase = phi;}
+
+}; // end of Qubit class
+
+
 // ------------ ThE gRaNd StAtE vEcToR cLaSs ---------------
 class State_vector    
 {
@@ -113,7 +172,6 @@ class State_vector
         // takes ref to the two complex doubles from the state vect
         Eigen::Vector2cd mat_mul(const Eigen::Matrix2cd & op, 
                 const std::complex<double> & i, const std::complex<double> & j);
-
 
 
         // container for all qubit leds.
@@ -131,6 +189,9 @@ class State_vector
 
         // std::vector<std::unique_ptr<Led> > qubit_leds;
     public:
+        // the GrAnD qUbIt TyPe
+        
+        
         // holdes the qubit zero & one amplitudes and their phase info
         // the leds will read this list.
         struct Qubit_states
@@ -162,10 +223,10 @@ class State_vector
         State_vector(int num) : num_qubits(num)
     {
         qubit_state.resize(num);
-       // set_vacuum(num_qubits, vect, qubit_state);
+        // set_vacuum(num_qubits, vect, qubit_state);
 
-           size = pow(2, num);
-           vect = Eigen::VectorXcd::Zero(size);
+        size = pow(2, num);
+        vect = Eigen::VectorXcd::Zero(size);
         // make the first element 1 (Vacuum state)
         vect(0)=1.0;
 
@@ -178,16 +239,16 @@ class State_vector
         // set all to vacuum and display flag to update
         for(int i=0; i<num_qubits; i++)
         {
-        qubit_state[i].zero_amp = 1.0;
-        qubit_state[i].one_amp = 0.0;
-        qubit_state[i].phase = 0.0;
-        qubit_state[i].uptodate = true;
+            qubit_state[i].zero_amp = 1.0;
+            qubit_state[i].one_amp = 0.0;
+            qubit_state[i].phase = 0.0;
+            qubit_state[i].uptodate = true;
 
-        // make led ptrs for each qubit R G B
-        //qubit_led_ptrs.push_back(std::make_shared<Led>(led_positions[i][0], led_positions[i][1], led_positions[i][2]));
-        //   std::cout << "\t\t made led object " << i << std::endl;
+            // make led ptrs for each qubit R G B
+            //qubit_led_ptrs.push_back(std::make_shared<Led>(led_positions[i][0], led_positions[i][1], led_positions[i][2]));
+            //   std::cout << "\t\t made led object " << i << std::endl;
 
-        //  qubit_leds.push_back(std::make_unique<Led>(led_positions[i]));
+            //  qubit_leds.push_back(std::make_unique<Led>(led_positions[i]));
         }
     } // end of awesome constructor
 
@@ -278,39 +339,32 @@ class State_vector
             while( i < num_state_to_show )
             {
                 //long unsigned int pos = rand() % size;  
-                
+
                 for( long int pos = 0; pos < size; pos++)
                 {
-                if(std::abs(vect(pos)) >= epsilon) // show it 
-                {
-                    std::cout << "position " << pos << std::endl;
-                    i++;
-                    // for each qubit calc led vals and add to list
-                    for(int j=0; j < num_qubits; j++)
+                    if(std::abs(vect(pos)) >= epsilon) // show it 
                     {
-                        // is this bit masking?
-                        cycle_states[j].zero_amp = 1 - (pos & (1 << j));
-                        cycle_states[j].one_amp = (pos & (1 << j));
-                        // quite complicated so I'm avoiding it.
-                        // @todo do phase but you'll have to find the correct
-                        // index from which ever amplitude is not this one...
-                        cycle_states[j].phase = 0;
+                        std::cout << "position " << pos << std::endl;
+                        i++;
+                        // for each qubit calc led vals and add to list
+                        for(int j=0; j < num_qubits; j++)
+                        {
+                            // is this bit masking?
+                            cycle_states[j].zero_amp = 1 - (pos & (1 << j));
+                            cycle_states[j].one_amp = (pos & (1 << j));
+                            // quite complicated so I'm avoiding it.
+                            // @todo do phase but you'll have to find the correct
+                            // index from which ever amplitude is not this one...
+                            cycle_states[j].phase = 0;
+                        }
+                        result.push_back(cycle_states);
                     }
-                    result.push_back(cycle_states);
-                }
-            } // find another great state to show!
+                } // find another great state to show!
             }
             // now cycle through the list sending them to the leds.
             // either here or just return the Qubit_states struct.
             return result;
         }
-
-        /*
-        //returns rgb led values
-        double red(int qubit){ return qubit_led_ptrs[qubit] -> get_rgb()[0];}
-        double green(int qubit){ return qubit_led_ptrs[qubit] -> get_rgb()[1];}
-        double blue(int qubit){ return qubit_led_ptrs[qubit] -> get_rgb()[2];}
-        */
 
 };
 #endif
