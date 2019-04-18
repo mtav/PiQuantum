@@ -17,7 +17,7 @@ Led::Led(Position r, Position g, Position b)
   id = driver -> register_led(this); 
 }
 
-Led::Led(std::vector<Position> & pos) : driver(getInputOutput()), positions({pos[0], pos[1], pos[2]}), rgb(3,0) {
+Led::Led(std::vector<Position> pos) : driver(getInputOutput()), positions({pos[0], pos[1], pos[2]}), rgb(3,0) {
 
   // Register the Led object with the driver
   id = driver -> register_led(this); 

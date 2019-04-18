@@ -7,34 +7,56 @@
 int main(void)
 {
 
-    std::vector<Position> btn_pos{ {0,2} };
+    // vector of qubit btns
+    std::vector<Position> btn_pos{ 
+         {0,2}, {1,7}, {1,1}, {1,2},
+         {0,0}, {0,0}, {0,0}, {0,0},
+         {0,0}, {0,0}, {0,0}, {0,0},
+         {0,0}, {0,0}, {0,0}, {0,0} };
 
-
+    // qubit leds RGB positions
     std::vector<std::vector<Position> > led_pos{ 
-            {(Position){0,4}, (Position){0,2}, (Position){0,3}}, 
-            {(Position){0,7}, (Position){0,5}, (Position){0,6}},
-            {(Position){1,4}, (Position){1,2}, (Position){1,3}},
-            {(Position){1,7}, (Position){1,5}, (Position){1,6}} };
+            { {0,4}, {0,2}, {0,3} }, 
+            { {0,7}, {0,5}, {0,6} },
+            { {1,4}, {1,2}, {1,3} },
+            { {1,7}, {1,5}, {1,6} },
+            
+            { {0,0}, {0,0}, {0,0} },
+            { {0,0}, {0,0}, {0,0} },
+            { {0,0}, {0,0}, {0,0} },
+            { {0,0}, {0,0}, {0,0} },
+           
+            { {0,0}, {0,0}, {0,0} },
+            { {0,0}, {0,0}, {0,0} },
+            { {0,0}, {0,0}, {0,0} },
+            { {0,0}, {0,0}, {0,0} },
+            
+            { {0,0}, {0,0}, {0,0} },
+            { {0,0}, {0,0}, {0,0} },
+            { {0,0}, {0,0}, {0,0} },
+            { {0,0}, {0,0}, {0,0} } };
 
-
-    //Qubit q0(led_pos[0], btn_pos);
-    Qubit q1(led_pos[0], btn_pos[0]);
+    int num_qubits = 4;
+    // vector for all qubits.
+    // each qubit has an led & btn
+    std::vector<std::shared_ptr<Qubit> > qubits;   
     
-    // Led led0(led_pos);
-    // Led led0({0,4}, {0,2}, {0,3});
-    // Led led0({0,4}, {0,2}, {0,3});
-   
-    q1.set_amps(1,1,1);
-    q1.set_led();
-    // Led led0(led_pos[0]);
-    // led0.set_rgb(1,0,1);
+    for(int i = 0; i < num_qubits; i++)
+    {
+        qubits.push_back(std::make_shared<Qubit>(led_pos[i], btn_pos[i]));
+    }
 
-    
+    qubits[0] -> set_amps(1,1,1);
+
     while(true) 
     {
-        if(q0.selected())
+        for(int i = 0; i < num_qubits; i++)
         {
-            std::cout << " q0 pressed " << std::endl;
+            if(qubits[i] -> selected())
+            {
+                std::cout << "qubit " << i << " pressed" << std::endl;
+                qubits[i] -> set_amps(1,1,1);
+            }
         }
     }
 

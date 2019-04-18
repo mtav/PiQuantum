@@ -151,14 +151,36 @@ class Qubit
         zero_amp = zero;
         one_amp = one;
         phase = phases;
+        set_led();
     }
 
     // or just 1 at a time
-    void set_zero(double amp) {zero_amp = amp;}
-    void set_one(double amp) {one_amp = amp;}
-    void set_phase(double phi) { phase = phi;}
+    void set_zero(double amp) {zero_amp = amp; set_led();}
+    void set_one(double amp) {one_amp = amp; set_led();}
+    void set_phase(double phi) { phase = phi; set_led();}
 
 }; // end of Qubit class
+
+class Qubits
+{
+    private:
+        std::vector<std::vector<Position> >led_positions;
+        std::vector<Position> btn_positions;
+        int num_qubits;
+    public:
+        std::vector<std::shared_ptr<Qubit> > qubits;
+    
+        Qubits(std::vector<std::vector<Position> >vect_led_rgb_pos, std::vector<Position> vect_btn_pos) : led_positions(vect_led_rgb_pos), btn_positions(vect_btn_pos) 
+    {   
+        num_qubits = (int)led_positions.size();
+        for(int i = 0; i < num_qubits; i++)
+        {
+            qubits.push_back(std::make_shared<Qubit>(led_positions[i], btn_positions[i]));
+        }
+    } // end of constructor
+
+        
+};
 
 
 // ------------ ThE gRaNd StAtE vEcToR cLaSs ---------------
