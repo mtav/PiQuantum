@@ -65,15 +65,33 @@ int main(void)
     // make a state vector which takes number of qubits, and qubit leds, qubit btns
     State_vector state(num_qubits, led_pos, qubit_btn_pos);
 
+    int display_mode = 0;
     // MAIN PROGRAM LOOP
     std::cout << "\n Pick a gate button " << std::endl;
     while(true) 
     {
-        // if qubit 1&3 simulatenously reset.
+        // if qubit 0&3 simulatenously reset.
         if(state.qubits[0] -> selected() && state.qubits[3] -> selected())
         {
             std::cout << "reset" << std::endl;
             state.set_vacuum();
+        }
+
+        // display cycling
+        // for each non zero element in state vector write it out to set_amps leds.
+        // keep the position and the leds state, then exit and check the loop for 
+        // other options.
+        // then resume from the position find the next non-zero element.
+        // - need look up tabe of non-zero entries and rgb vals for each qubit.
+        // std::vector<std::vector<double> > { {zero, one, phase}, {zero1, one1, phase1} };
+        // state.qubits[i] -> set_amps(stored[i]);
+
+        // if 2&3 simultaneously do cycling display
+        if(state.qubits[2] -> selected() && state.qubits[3] -> selected())
+        {
+            display_mode = 1;
+            // TODO!
+            // state.display_cycle();
         }
 
         // loop all operators
@@ -97,16 +115,6 @@ int main(void)
                 std::cout << "\n Pick a gate button " << std::endl;
             }
         }
-
-        // display cycling
-        // for each non zero element in state vector write it out to set_amps leds.
-        // keep the position and the leds state, then exit and check the loop for 
-        // other options.
-        // then resume from the position find the next non-zero element.
-        // - need look up tabe of non-zero entries and rgb vals for each qubit.
-        // std::vector<std::vector<double> > { {zero, one, phase}, {zero1, one1, phase1} };
-        // state.qubits[i] -> set_amps(stored[i]);
-
 
         // extras
         if(func_btns[3] -> get_state())
