@@ -48,16 +48,13 @@ int main(void)
         func_btns.push_back(std::make_shared<Button>(func_btn_pos[i]));
     }
 
-    Rotation_X X;
-    Rotation_Y Y;
+    // make gates and give the constructor their button.
+    Rotation_X X(func_btns[0]);
+    Rotation_Y Y(func_btns[1]);
     Rotation_Z Z;
-    Hadamard H;
+    Hadamard H(func_btns[2]);
 
-    X.set_btn(func_btns[0]);
-    Y.set_btn(func_btns[1]);
-    H.set_btn(func_btns[2]);
-
-    // container for gates whichhave their respective buttons 
+    // container for gates which have their respective buttons 
     std::vector<Operator*> Operators{&X, &Y, &H};
 
     // func_btns[3] is a modifier - lets you do control gates if you hold it and press a
@@ -84,12 +81,13 @@ int main(void)
         {
             if(Operators[i] -> selected()) 
             {
+                // if 0 do single qubit gate
                 if(func_btns[3] -> get_state() == 0)
                 {
                     std::cout << " Single qubit gate " << std::endl;
                     state.apply(*Operators[i], state.get_qubit());
                 }
-                else
+                else // do control gate
                 {
                     std::cout << "Two qubit gate " << std::endl;
                     state.apply(*Operators[i], state.get_qubit(), state.get_qubit());
@@ -99,6 +97,16 @@ int main(void)
                 std::cout << "\n Pick a gate button " << std::endl;
             }
         }
+
+        // display cycling
+        // for each non zero element in state vector write it out to set_amps leds.
+        // keep the position and the leds state, then exit and check the loop for 
+        // other options.
+        // then resume from the position find the next non-zero element.
+        // - need look up tabe of non-zero entries and rgb vals for each qubit.
+        // std::vector<std::vector<double> > { {zero, one, phase}, {zero1, one1, phase1} };
+        // state.qubits[i] -> set_amps(stored[i]);
+
 
         // extras
         if(func_btns[3] -> get_state())
@@ -116,20 +124,6 @@ int main(void)
             }
         }
 
-        /*
-        // swap qubits
-        int q1 = state.get_qubit(100);
-        int q2 = state.get_qubit(100);
-
-        if(q1 != -1 && q2 != -1 && func_btns[3] -> get_state())
-        {
-        // swap q1 && q2
-        state.apply(X,q1,q2);
-        state.apply(X,q2,q1);
-        state.apply(X,q1,q2);
-        state.disp();
-        }
-        */
     }
 
     return 0;

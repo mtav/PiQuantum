@@ -61,12 +61,14 @@ class Rotation_X : public Operator
     private:
         double angle;
     public:
-        Rotation_X(int num_qubit_act_on=1, double theta=PI) : angle(theta)
+        Rotation_X(std::shared_ptr<Button> btn_ptr_in = nullptr, 
+                int num_qubit_act_on=1, double theta=PI) : angle(theta)
     {
         matrix << cos(angle/2), sin(angle/2),
                sin(angle/2), cos(angle/2);
         num_qubits = num_qubit_act_on;
         name = "X";
+        btn_ptr = btn_ptr_in;
     }
 };
 
@@ -75,12 +77,14 @@ class Rotation_Y : public Operator
     private:
         double angle;
     public:
-        Rotation_Y(int num_qubit_act_on=1, double theta=PI) : angle(theta)
+        Rotation_Y(std::shared_ptr<Button> btn_ptr_in = nullptr,
+                int num_qubit_act_on=1, double theta=PI) : angle(theta)
     {
         matrix << cos(angle/2), -I_unit*sin(angle/2),
                I_unit*sin(angle/2), cos(angle/2);
         num_qubits = num_qubit_act_on;
         name = "Y";
+        btn_ptr = btn_ptr_in;
     }
 };
 
@@ -89,12 +93,14 @@ class Rotation_Z : public Operator
     private:
         double angle;
     public:
-        Rotation_Z(int num_qubit_act_on=1, double theta=PI) : angle(theta)
+        Rotation_Z(std::shared_ptr<Button> btn_ptr_in = nullptr,
+                int num_qubit_act_on=1, double theta=PI) : angle(theta)
     {
         matrix << 1.0 , 0.0,
                0.0, exp(I_unit*angle);
         num_qubits = num_qubit_act_on;
         name = "Z";
+        btn_ptr = btn_ptr_in;
     }
 };
 
@@ -102,12 +108,13 @@ class Hadamard : public Operator
 {
     private:
     public:
-        Hadamard(int num_qubit_act_on = 1)
+        Hadamard(std::shared_ptr<Button> btn_ptr_in = nullptr, int num_qubit_act_on = 1)
         {
             matrix << 1.0, 1.0,
                    1.0, -1.0;
             matrix = (1/sqrt(2.0)) * matrix;
             name = "H";
+            btn_ptr = btn_ptr_in;
         }
 };
 
@@ -273,7 +280,9 @@ class State_vector
 
         void max_superpos()
         {
-            vect= Eigen::VectorXcd::Constant(size,1,1/std::sqrt(2));
+            vect = Eigen::VectorXcd::Constant(size,1,1/std::sqrt(2));
+            // set all to vacuum and display flag to update
+            for(int i=0; i<num_qubits; i++) { qubits[i] -> set_amps(0.5,0.5,0); }
         }
 
         // use to apply gates
