@@ -46,17 +46,27 @@ int main(void)
         qubits.push_back(std::make_shared<Qubit>(led_pos[i], btn_pos[i]));
     }
 
-    qubits[0] -> set_amps(1,1,1);
+    // make a state vector which copies the qubits vector.
+    State_vector state(qubits);
 
+    state.qubits[0] -> set_amps(1,1,1);
+
+    state.set_vacuum();
     while(true) 
     {
         for(int i = 0; i < num_qubits; i++)
         {
-            if(qubits[i] -> selected())
+            if(state.qubits[i] -> selected())
             {
-                std::cout << "qubit " << i << " pressed" << std::endl;
-                qubits[i] -> set_amps(1,1,1);
+                std::cout << "state.qubit " << i << " pressed" << std::endl;
+                state.qubits[i] -> set_amps(1,1,1);
             }
+        }
+
+        if(state.qubits[0] -> selected() && state.qubits[3] -> selected())
+        {
+            std::cout << "reset" << std::endl;
+            state.set_vacuum();
         }
     }
 

@@ -12,7 +12,7 @@ void State_vector::apply(const Operator & op, int qubit)
 {
     single_qubit_op(op.matrix, qubit);
     std::cout << " You applied " << op.name << " on qubit " << qubit << std::endl; 
-    qubit_state[qubit].uptodate = false;
+    qubits[qubit] -> set_uptodate(false);
 }
 
 // two qubit version
@@ -22,7 +22,7 @@ void State_vector::apply(const Operator & op, int ctrl, int targ)
     std::cout << "You applied " << op.name
         << " controlled on " << ctrl
         << " target " << targ << std::endl;
-    qubit_state[targ].uptodate = false;
+    qubits[targ] -> set_uptodate(false);
 }
 
 // ------------------- WeIrD iNdEx LoOpInG --------------------
@@ -112,7 +112,7 @@ void State_vector::single_qubit_op(const Eigen::Matrix2cd & op, int qubit){
         {
             // same speed up these two ifs
             // if ((std::abs(vect(i+j)) + std::abs(vect(i+j+bit))) >= epsilon)
-          //  if ((abs(vect(i+j)) >= epsilon) || (abs(vect(i+j+bit)) >= epsilon))
+            //  if ((abs(vect(i+j)) >= epsilon) || (abs(vect(i+j+bit)) >= epsilon))
             {
                 temp = mat_mul(op, vect(i+j), vect(i+j+bit));
                 vect(i+j) = temp(0); 
@@ -120,7 +120,7 @@ void State_vector::single_qubit_op(const Eigen::Matrix2cd & op, int qubit){
 
                 not_skipped++;
             }
-          // else skipped++;
+            // else skipped++;
         }
     }
     std::cout << "Qubit " << qubit << " (not_skipped, skipped) (" << not_skipped << ", " << skipped << ")" << std::endl;
@@ -259,7 +259,7 @@ Eigen::Vector2cd State_vector::mat_mul(const Eigen::Matrix2cd & op, const std::c
 // has zero and one amp vars, and phase.
 // use the std vector to write to leds this function just updates the amplitudes in 
 // the list
-void State_vector::display_avg(std::vector<Qubit_states> & qubit_state, const Eigen::VectorXcd & vect)
+void State_vector::display_avg(Qubits_type & qubits, const Eigen::VectorXcd & vect)
 {
     std::complex<double> zero=0.0, one=0.0;
     // uses qubit_state vector.
@@ -267,7 +267,7 @@ void State_vector::display_avg(std::vector<Qubit_states> & qubit_state, const Ei
     // vector for each qubit containing zero and one amplitudes
     for(int i = 0; i < num_qubits; i++)
     {
-        if(!qubit_state[i].uptodate)
+        if(!qubits[i] -> check_uptodate())
         {
             // or 1 << i
             int root_max = pow(2, i);
@@ -299,11 +299,11 @@ void State_vector::display_avg(std::vector<Qubit_states> & qubit_state, const Ei
                         // arg() of zero/one = arg(zero) - arg(one)
                         //std::cout << "arg (zero, one) " << arg(zero) << ", " << arg(one) << std::endl;
                         double zero_arg = std::abs(arg(zero)), one_arg = std::abs(arg(one));
-// @todo phase arg caching!!!!
+                        // @todo phase arg caching!!!!
                         // if same number but not zero write one out
                         // if difference is > epsilon write diff
-                            phase += std::abs(zero_arg - one_arg);
-                            num_non_zero++;
+                        phase += std::abs(zero_arg - one_arg);
+                        num_non_zero++;
 
                     }
                 }
@@ -311,16 +311,14 @@ void State_vector::display_avg(std::vector<Qubit_states> & qubit_state, const Ei
             // after looping through all elements in the state vector 
             // return zero and one amplitudes and phase info to leds.
             // e.g set_leds(zero_amp, one_amp, phase);
-            qubit_state[i].zero_amp = zero_amp;
-            qubit_state[i].one_amp = one_amp;
-            
-            // to normalise
-            if(phase >= epsilon) qubit_state[i].phase = phase/num_non_zero/PI;
-            else qubit_state[i].phase = 0.0;
+            qubits[i] -> set_zero(zero_amp);
+            qubits[i] -> set_one(one_amp);
 
-            qubit_state[i].uptodate = true;
-            //std::cout << "qubit " << i << " (|0>, |1>) (" << qubit_state[i].zero_amp << ", " << qubit_state[i].one_amp << ") " << std::endl;
+            // to normalise
+            if(phase >= epsilon) qubits[i] -> set_phase(phase/num_non_zero/PI);
+            else qubits[i] -> set_phase(0.0);
+
+            qubits[i] -> set_led();
         }
-        //else if(qubit_state[i].uptodate) std::cout << "Qubit " << i << " is up to date" << std::endl;
     }
 }
