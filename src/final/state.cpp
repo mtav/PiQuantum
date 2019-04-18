@@ -13,16 +13,20 @@ void State_vector::apply(const Operator & op, int qubit)
     single_qubit_op(op.matrix, qubit);
     std::cout << " You applied " << op.name << " on qubit " << qubit << std::endl; 
     qubits[qubit] -> set_uptodate(false);
+    last_selected_qubit = - 1; // to fix button bouncing in state.hpp
 }
 
 // two qubit version
 void State_vector::apply(const Operator & op, int ctrl, int targ)
 {
+    // for button bouncing ask again 
+    while(ctrl == targ) {targ = get_qubit();}
     two_qubit_op(op.matrix, ctrl, targ);
     std::cout << "You applied " << op.name
         << " controlled on " << ctrl
         << " target " << targ << std::endl;
     qubits[targ] -> set_uptodate(false);
+    last_selected_qubit = - 1; // to fix button bouncing in state.hpp
 }
 
 // ------------------- WeIrD iNdEx LoOpInG --------------------

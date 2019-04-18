@@ -34,10 +34,23 @@ class Operator
         std::string name;
         Eigen::Matrix2cd matrix;
 
+        // each operator should have a btn
+        std::shared_ptr<Button> btn_ptr;
         // ---------------------- methods ------------------------
         int get_num_qubits(){return num_qubits;};
         void print(){std::cout << matrix <<std::endl;};
 
+        void set_btn(std::shared_ptr<Button> btn_ptr_in) { btn_ptr = btn_ptr_in;}
+
+        bool selected() 
+        {
+            if(btn_ptr -> get_state()) 
+            {
+                std::cout << "Op " << name << " pressed " << std::endl;
+                return 1;
+            }
+            else { return 0;}
+        }
         // The trivial constructor
         Operator() {}
 };
@@ -188,6 +201,8 @@ class State_vector
         Eigen::Vector2cd mat_mul(const Eigen::Matrix2cd & op, 
                 const std::complex<double> & i, const std::complex<double> & j);
 
+        // to stop button bouncing
+        int last_selected_qubit = -1;
     public:
         // the GrAnD qUbIt TyPe
         
@@ -207,17 +222,44 @@ class State_vector
         // default case if no qubits are specified
         State_vector() {}
 
-        State_vector(Qubits_type & vect_qubits) : qubits(vect_qubits)    
+        // new improved constructor which takes qubit leds & qubit btn position.
+        State_vector(int num, std::vector<std::vector<Position> > qubit_leds, 
+                std::vector<Position> qubit_btns) : num_qubits(num)
     {
-        // number of leds is state vector of n qubits.
-        // 1 led to 1 qubit
-        num_qubits = (int)qubits.size();
-        size = pow(2, num_qubits); // 2^n elements
-
+        for( int i = 0; i < num_qubits; i++) 
+        {
+            qubits.push_back(std::make_shared<Qubit>(qubit_leds[i], qubit_btns[i]));
+        }
+        size = pow(2, num_qubits);
+        
         set_vacuum();
-
     } // end of awesome constructor
 
+
+        // get qubit button that is presse
+        int get_qubit(int time = 1) 
+        {
+            int i = 0;
+            if(time == 1){
+            std::cout << " Pick a qubit button " << std::endl;
+            }
+            while( i <= time )
+            {
+                for(int i = 0; i < num_qubits; i++)
+                {
+                    if(qubits[i] -> selected()) 
+                    {
+                        if(i != last_selected_qubit)
+                        { 
+                            last_selected_qubit = i;
+                            return i;
+                        }
+                    }
+                }
+                if(time != 1) i++; // for finite time add one to counter
+            }
+            return -1;
+        }
 
         // the reset button 
         void set_vacuum()
@@ -258,6 +300,7 @@ class State_vector
                     << qubits[i] -> get_one_amp() << ") " << "Phase " 
                     << qubits[i] -> get_phase() << std::endl;
             }	    
+            last_selected_qubit = -1;
         }
 
 
