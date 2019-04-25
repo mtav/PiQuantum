@@ -37,20 +37,14 @@ class Operator
         // each operator should have a btn
         std::shared_ptr<Button> btn_ptr;
         // ---------------------- methods ------------------------
-        int get_num_qubits(){return num_qubits;};
-        void print(){std::cout << matrix <<std::endl;};
+        int get_num_qubits(void);
+        void print();
 
-        void set_btn(std::shared_ptr<Button> btn_ptr_in) { btn_ptr = btn_ptr_in;}
+        void set_btn(std::shared_ptr<Button> btn_ptr_in); 
 
-        bool selected() 
-        {
-            if(btn_ptr -> get_state()) 
-            {
-                std::cout << "Op " << name << " pressed " << std::endl;
-                return 1;
-            }
-            else { return 0;}
-        }
+        //checks if the operators button is pressed,
+        bool selected(void); 
+
         // The trivial constructor
         Operator() {}
 };
@@ -62,14 +56,7 @@ class Rotation_X : public Operator
         double angle;
     public:
         Rotation_X(std::shared_ptr<Button> btn_ptr_in = nullptr, 
-                int num_qubit_act_on=1, double theta=PI) : angle(theta)
-    {
-        matrix << cos(angle/2), sin(angle/2),
-               sin(angle/2), cos(angle/2);
-        num_qubits = num_qubit_act_on;
-        name = "X";
-        btn_ptr = btn_ptr_in;
-    }
+                int num_qubits_act_on=1, double theta=PI);
 };
 
 class Rotation_Y : public Operator    
@@ -78,14 +65,7 @@ class Rotation_Y : public Operator
         double angle;
     public:
         Rotation_Y(std::shared_ptr<Button> btn_ptr_in = nullptr,
-                int num_qubit_act_on=1, double theta=PI) : angle(theta)
-    {
-        matrix << cos(angle/2), -I_unit*sin(angle/2),
-               I_unit*sin(angle/2), cos(angle/2);
-        num_qubits = num_qubit_act_on;
-        name = "Y";
-        btn_ptr = btn_ptr_in;
-    }
+                int num_qubits_act_on=1, double theta=PI);
 };
 
 class Rotation_Z : public Operator
@@ -94,28 +74,14 @@ class Rotation_Z : public Operator
         double angle;
     public:
         Rotation_Z(std::shared_ptr<Button> btn_ptr_in = nullptr,
-                int num_qubit_act_on=1, double theta=PI) : angle(theta)
-    {
-        matrix << 1.0 , 0.0,
-               0.0, exp(I_unit*angle);
-        num_qubits = num_qubit_act_on;
-        name = "Z";
-        btn_ptr = btn_ptr_in;
-    }
+                int num_qubits_act_on=1, double theta=PI);
 };
 
 class Hadamard : public Operator
 {
     private:
     public:
-        Hadamard(std::shared_ptr<Button> btn_ptr_in = nullptr, int num_qubit_act_on = 1)
-        {
-            matrix << 1.0, 1.0,
-                   1.0, -1.0;
-            matrix = (1/sqrt(2.0)) * matrix;
-            name = "H";
-            btn_ptr = btn_ptr_in;
-        }
+        Hadamard(std::shared_ptr<Button> btn_ptr_in = nullptr, int num_qubits_act_on = 1);
 };
 
 

@@ -7,6 +7,67 @@
  */
 
 #include "state.hpp"
+
+// ------------------------------- Operator class
+
+int Operator::get_num_qubits(void){return num_qubits;}
+
+void Operator::print(void){std::cout << matrix << std::endl;}
+
+void Operator::set_btn(std::shared_ptr<Button> btn_ptr_in) {btn_ptr = btn_ptr_in;}
+
+// Check if the operators button is selected.
+bool Operator::selected(void) 
+{
+    if(btn_ptr -> get_state())
+    {
+        std::cout << "Op " << name << " pressed" << std::endl;
+        return 1;
+    }
+    else { return 0}
+}
+
+// -------------------------- Paulis 
+//
+
+Rotation_X::Rotation_X(std::shared_ptr<Button> btn_ptr_in, int num_qubits_act_on, double theta)
+    : btn_ptr(btn_ptr_in), num_qubits(num_qubits_act_on), angle(theta)
+{
+    matrix << cos(angle/2.0), sin(angle/2.0),
+           sin(angle/2.0), cos(angle/2.0);
+    name = "X"
+}
+
+// Rotation Y
+Rotation_Y::Rotation_Y(std::shared_ptr<Button> btn_ptr_in, int num_qubits_act_on, double theta)
+    : btn_ptr(btn_ptr_in), num_qubits(num_qubits_act_on), angle(theta)
+{
+    matrix << cos(angle/2.0), -I_unit * sin(angle/2.0,
+            I_unit * sin(angle/2.0), cos(angle/2.0);
+    name = "Y";
+}
+
+// Rotation_Z
+Rotation_Z::Rotation_Z(std::shared_ptr<Button> btn_ptr_in, int num_qubits_act_on, double theta)
+    : btn_ptr(btn_ptr_in), num_qubits(angle), angle(theta)
+{
+    matrix << 1.0, 0.0,
+            0.0, exp(I_unit * angle);
+        name = "Z";
+}
+
+// Hadamard
+Hadamard::Hadamard(std::shared_ptr<Button> btn_ptr_in, num_qubits_act_on)
+    : btn_ptr(btn_ptr_in), num_qubits(num_qubits_act_on)
+{
+    matrix << 1.0, 1.0,
+            1.0, -1.0;
+    matrix = (1.0/sqrt(2.0)) * matrix;
+    name = "H";
+}
+
+// -------------------- State Vector class 
+
 // use to apply gates
 void State_vector::apply(const Operator & op, int qubit)
 {
