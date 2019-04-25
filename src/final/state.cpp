@@ -24,46 +24,53 @@ bool Operator::selected(void)
         std::cout << "Op " << name << " pressed" << std::endl;
         return 1;
     }
-    else { return 0}
+    else { return 0;}
 }
 
 // -------------------------- Paulis 
 //
 
 Rotation_X::Rotation_X(std::shared_ptr<Button> btn_ptr_in, int num_qubits_act_on, double theta)
-    : btn_ptr(btn_ptr_in), num_qubits(num_qubits_act_on), angle(theta)
+    : angle(theta)
 {
     matrix << cos(angle/2.0), sin(angle/2.0),
            sin(angle/2.0), cos(angle/2.0);
-    name = "X"
+    name = "X";
+    btn_ptr = btn_ptr_in;
+    num_qubits = num_qubits_act_on;
 }
 
 // Rotation Y
 Rotation_Y::Rotation_Y(std::shared_ptr<Button> btn_ptr_in, int num_qubits_act_on, double theta)
-    : btn_ptr(btn_ptr_in), num_qubits(num_qubits_act_on), angle(theta)
+    : angle(theta)
 {
-    matrix << cos(angle/2.0), -I_unit * sin(angle/2.0,
-            I_unit * sin(angle/2.0), cos(angle/2.0);
+    matrix << cos(angle/2.0), -I_unit * sin(angle/2.0),
+           I_unit * sin(angle/2.0), cos(angle/2.0);
     name = "Y";
+    btn_ptr = btn_ptr_in;
+    num_qubits = num_qubits_act_on;
 }
 
 // Rotation_Z
 Rotation_Z::Rotation_Z(std::shared_ptr<Button> btn_ptr_in, int num_qubits_act_on, double theta)
-    : btn_ptr(btn_ptr_in), num_qubits(angle), angle(theta)
+    : angle(theta)
 {
     matrix << 1.0, 0.0,
-            0.0, exp(I_unit * angle);
-        name = "Z";
+           0.0, exp(I_unit * angle);
+    name = "Z";
+    btn_ptr = btn_ptr_in;
+    num_qubits = num_qubits_act_on;
 }
 
 // Hadamard
-Hadamard::Hadamard(std::shared_ptr<Button> btn_ptr_in, num_qubits_act_on)
-    : btn_ptr(btn_ptr_in), num_qubits(num_qubits_act_on)
+Hadamard::Hadamard(std::shared_ptr<Button> btn_ptr_in, int num_qubits_act_on)
 {
     matrix << 1.0, 1.0,
-            1.0, -1.0;
+           1.0, -1.0;
     matrix = (1.0/sqrt(2.0)) * matrix;
     name = "H";
+    btn_ptr = btn_ptr_in;
+    num_qubits = num_qubits_act_on;
 }
 
 // -------------------- State Vector class 
