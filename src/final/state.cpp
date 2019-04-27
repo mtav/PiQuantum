@@ -84,9 +84,9 @@ Qubit::Qubit(std::vector<Position> led_rgb_loc, Position btn_loc, int pos)
     led_ptr = std::make_unique<Led>(led_rgb_loc);
     btn_ptr = std::make_unique<Button>(btn_loc);
 
-    zero_amp = 1.0;
-    one_amp = 0.0;
-    phase = 0.0;
+    qstate.zero_amp = 1.0;
+    qstate.one_amp = 0.0;
+    qstate.phase = 0.0;
 
     std::cout << "Setting leds" << std::endl;
     set_led();
@@ -94,28 +94,41 @@ Qubit::Qubit(std::vector<Position> led_rgb_loc, Position btn_loc, int pos)
 }
 
 // set leds.
-void Qubit::set_led(void) { led_ptr -> set_rgb(zero_amp, phase, one_amp); uptodate = true;}
+void Qubit::set_led(void) 
+{ 
+    led_ptr -> set_rgb(qstate.zero_amp, qstate.phase, qstate.one_amp);
+    uptodate = true;
+}
 
 // check if button is pressed
 bool Qubit::selected(void) { return btn_ptr -> get_state();}
 
 void Qubit::set_amps(double zero, double one, double phases)
 {
-    zero_amp = zero;
-    one_amp = one;
-    phase = phases;
+    qstate.zero_amp = zero;
+    qstate.one_amp = one;
+    qstate.phase = phases;
     set_led();
 }
 
-void Qubit::set_zero(double amp) { zero_amp = amp;}
-void Qubit::set_one(double amp) { one_amp = amp;}
-void Qubit::set_phase(double phi) { phase = phi;}
+void Qubit::set_amps( const Qubit_state & qubit_vals)
+{
+    // this might not work, @bug this.
+    qstate = qubit_vals;
+    set_led();
+}
+
+
+
+void Qubit::set_zero(double amp) { qstate.zero_amp = amp;}
+void Qubit::set_one(double amp) { qstate.one_amp = amp;}
+void Qubit::set_phase(double phi) { qstate.phase = phi;}
 
 void Qubit::set_uptodate(bool true_false) { uptodate = true_false;}
 
-double Qubit::get_zero_amp(void) { return zero_amp;}
-double Qubit::get_one_amp(void) { return one_amp;}
-double Qubit::get_phase(void) { return phase;}
+double Qubit::get_zero_amp(void) { return qstate.zero_amp;}
+double Qubit::get_one_amp(void) { return qstate.one_amp;}
+double Qubit::get_phase(void) { return qstate.phase;}
 
 bool Qubit::check_uptodate(void) { return uptodate;}
 
@@ -203,13 +216,48 @@ void State_vector::disp(void)
     last_selected_qubit = -1;
 }
 
+// display cycling 
+// 
+
+// outer index is for how many states to cycle through
+// inner index is for the n qubits 
+std::vector<std::vector<Qubit::Qubit_state> > qubit_disp_cycle;
+
+int State_vector::disp_cycle(int n)
+{
+    // search the state vector got the n-th state that has an amplitude
+    std::vector<Qubit::Qubit_state> single_state;  
+    single_state.resize(num_qubits);
+
+    // tolerance on non-zero amplitudes
+    double epsilon = 1e-5;
+
+    for(int i = n; i < size; i++)
+    {
+        if(std::abs(vect(i)) >= epsilon) //occupied
+        {
+            // calc all zero & one vals for every qubit
+            for(int j = 0; j < num_qubits; j++)
+            {
+                // is this bit masking?
+                single_state[j].one_amp = (i & (1 << j));
+                single_state[j].zero_amp = 1 - single_state[j].one_amp;
+                // quite complicated so I'm avoiding it.
+                // @todo do phase but you'll have to find the correct
+                // index from which ever amplitude is not this one...
+                single_state[j].phase = 0;
+            }
+            // state was found and all qubits have been given amps
+            for(int k = 0; k < num_qubits; k++){ qubits[k] -> set_amps(single_state[k]); }
+            // exit loop but save counter for next call
+            return i;
+        }
+    }
+    std::cout << "Reached the end of the state vector, try again?" << std::endl;
+    return 0;
+}
 
 /*
-// placeholder display_avg updates qubit.state 
-// led function needs to map qubit_state.zero_amp to RED
-// qubit_state.one_amp to BLUE
-// qubit_state.phase to GREEN!!!!
-
 // generates a random number and cycles between the qubit states.
 // the great waterfall
 std::vector<std::vector<Qubit_states> > disp_cycle(int num_state_to_show = 1)
@@ -221,6 +269,7 @@ std::vector<Qubit_states> cycle_states;
 cycle_states.resize(num_qubits);
 
 int i=0;
+
 while( i < num_state_to_show )
 {
 //long unsigned int pos = rand() % size;  

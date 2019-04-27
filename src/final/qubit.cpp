@@ -1,5 +1,12 @@
-
-
+/**
+ * @file new main using qubit types for led and btn control
+ * @authors O Thomas, J Scott
+ * @date April 2019
+ * @brief Main for the 4 qubit demo using the old breadboard layout
+ * @detail The code should scale to 16 qubits with no problem, just have
+ * to remap the extra leds and btns in 
+ *
+ */
 #include <iostream>
 #include "state.hpp"
 #include "interface.hpp"
@@ -7,7 +14,7 @@
 int main(void)
 {
 
-    // qubit leds RGB positions
+   /// qubit leds RGB positions
     std::vector<std::vector<Position> > led_pos{ 
         { {0,4}, {0,2}, {0,3} }, 
             { {0,7}, {0,5}, {0,6} },
@@ -29,7 +36,7 @@ int main(void)
             { {0,0}, {0,0}, {0,0} },
             { {0,0}, {0,0}, {0,0} } };
 
-    // vector of qubit btns
+   /// vector of qubit btns
     std::vector<Position> qubit_btn_pos{ 
         {0,2}, {1,7}, {1,1}, {1,2},
             {0,0}, {0,0}, {0,0}, {0,0},
@@ -66,6 +73,7 @@ int main(void)
     State_vector state(num_qubits, led_pos, qubit_btn_pos);
 
     int display_mode = 0;
+    int cycle_counter = 0;
     // MAIN PROGRAM LOOP
     std::cout << "\n Pick a gate button " << std::endl;
     while(true) 
@@ -75,6 +83,7 @@ int main(void)
         {
             std::cout << "reset" << std::endl;
             state.set_vacuum();
+            cycle_counter = 0;
         }
 
         // display cycling
@@ -83,15 +92,21 @@ int main(void)
         // other options.
         // then resume from the position find the next non-zero element.
         // - need look up tabe of non-zero entries and rgb vals for each qubit.
-        // std::vector<std::vector<double> > { {zero, one, phase}, {zero1, one1, phase1} };
+        // std::vector<std::vector<double> > {{zero, one, phase}, {zero1, one1, phase1}};
         // state.qubits[i] -> set_amps(stored[i]);
+        //
+        // Don't want display cycling to block as it is probably going to be really slow
+        // 1. either main has a vector of RGB vals for each qubit?
+        // 2. the state vector keeps track of how many times the display cycle is 
+        // called and each call increments. Would need to sort out next vals somehow
+        // 3. It blocks in state_vector class and returns to main after each full cycle 
 
         // if 2&3 simultaneously do cycling display
         if(state.qubits[2] -> selected() && state.qubits[3] -> selected())
         {
             display_mode = 1;
             // TODO!
-            // state.display_cycle();
+            cycle_counter = state.disp_cycle(cycle_counter);
         }
 
         // loop all operators

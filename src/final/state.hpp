@@ -97,41 +97,50 @@ class Hadamard : public Operator
 // phase 
 class Qubit
 {
+    public:
+        /// define a struct to hold the qubit properties 
+        struct Qubit_state
+        {
+            double zero_amp;
+            double one_amp;
+            double phase;
+        };
+
     private:
         std::unique_ptr<Led> led_ptr;
         std::unique_ptr<Button> btn_ptr;
 
         int position;
-        double zero_amp;
-        double one_amp;
-        double phase;
-
         bool uptodate;
+
+        Qubit_state qstate;
 
     public:
         Qubit(std::vector<Position> led_rgb_loc, Position btn_loc, int pos = -1);
-        
-    // method for setting led
-    void set_led(void);
 
-    // check if qubit selected
-    bool selected(void); 
+        // method for setting led
+        void set_led(void);
 
-    // either set all 3 
-    void set_amps(double zero, double one,  double phases);
+        // check if qubit selected
+        bool selected(void); 
 
-    // or just 1 at a time
-    void set_zero(double amp);
-    void set_one(double amp);
-    void set_phase(double phi);
+        // either set all 3 
+        void set_amps(double zero, double one,  double phases);
+        // overloaded to take Qubit_state
+        void set_amps(const Qubit_state & qubit_vals);
 
-    void set_uptodate(bool true_false);
+        // or just 1 at a time
+        void set_zero(double amp);
+        void set_one(double amp);
+        void set_phase(double phi);
 
-    double get_zero_amp();
-    double get_one_amp();
-    double get_phase(); 
+        void set_uptodate(bool true_false);
 
-    bool check_uptodate();
+        double get_zero_amp();
+        double get_one_amp();
+        double get_phase(); 
+
+        bool check_uptodate();
 }; // end of Qubit class
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -158,7 +167,7 @@ class State_vector
         int last_selected_qubit = -1;
     public:
         // the GrAnD qUbIt TyPe
-        
+
         //std::vector<std::shared_ptr<Qubit> > qubits;
         Qubits_type qubits;
 
@@ -197,6 +206,7 @@ class State_vector
         // calls the display average stuff
         void disp(void);
 
+        int disp_cycle(int n = 0);
 
 };
 #endif

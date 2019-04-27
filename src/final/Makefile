@@ -12,7 +12,7 @@ CFLAGS   := -g3 -std=c++14 -Ofast -Wall
 CPPFLAGS := -I. 
 
 LDFLAGS  :=  
-LDLIBS   := -lm -lwiringPi
+LDLIBS   := -lwiringPi
 
 # ----- Nothing below here needs to be changed
 
