@@ -72,17 +72,21 @@ int main(void)
     // make a state vector which takes number of qubits, and qubit leds, qubit btns
     State_vector state(num_qubits, led_pos, qubit_btn_pos);
 
+    // fix this so that main doesn't need to have the display mode var
+    // state should have it so that calling disp auto fixes the cycling off
     int display_mode = 0;
     int cycle_counter = 0;
     // MAIN PROGRAM LOOP
     std::cout << "\n Pick a gate button " << std::endl;
     while(true) 
     {
+
         // if qubit 0&3 simulatenously reset.
         if(state.qubits[0] -> selected() && state.qubits[3] -> selected())
         {
             std::cout << "reset" << std::endl;
             state.set_vacuum();
+            display_mode = 0;
             cycle_counter = 0;
         }
 
@@ -106,7 +110,13 @@ int main(void)
         {
             display_mode = 1;
             // TODO!
+        }
+
+        // if in cycle mode check for all other 
+        if(display_mode == 1)
+        {
             cycle_counter = state.disp_cycle(cycle_counter);
+            std::cout << "Showing state " << cycle_counter << std::endl;
         }
 
         // loop all operators
@@ -126,6 +136,7 @@ int main(void)
                     state.apply(*Operators[i], state.get_qubit(), state.get_qubit());
                 }
 
+                display_mode = 0;
                 state.disp();
                 std::cout << "\n Pick a gate button " << std::endl;
             }
@@ -142,6 +153,8 @@ int main(void)
                 state.apply(H,0,1);
                 state.apply(H,1,2);
                 state.apply(H,2,3);
+
+                display_mode = 0;
                 state.disp();
                 std::cout << "\n Pick a gate button " << std::endl;
             }
