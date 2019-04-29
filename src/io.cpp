@@ -34,7 +34,7 @@ Alarm::Alarm(int delay_us) {
 // Constructor
 InputOutput::InputOutput(std::shared_ptr<SpiChannel> spi) 
     : Alarm(500), spi(spi), chips(2), period(10),
-      counter(0) {
+      counter(0), dc_counter(0), dc_max(1000), dc_trigger(false) {
 
         // Set up pins for LEDs
         // Need to set initial state
@@ -151,8 +151,16 @@ void InputOutput::print() {
     }
 }
 
-void InputOutput::interrupt() {    
+void InputOutput::interrupt() {   
 
+  // Check display cycling variables
+  if(dc_counter < dc_max) {
+    dc_counter++;
+  } else {
+    dc_counter = 0;
+    dc_trigger = true;
+  }
+  
   // Initiliase data to write to chips
   write = std::vector<byte>(chips, 0);    
 
