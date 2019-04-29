@@ -210,6 +210,9 @@ class State_vector
 
         int disp_cycle(int n = 0);
 
+        // collapse the state
+        void measure(void);
+
 };
 #endif
 

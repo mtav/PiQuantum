@@ -89,18 +89,25 @@ int main(void)
     // state should have it so that calling disp auto fixes the cycling off
     int display_mode = 0;
     int cycle_counter = 0;
-    long int count = 0;
     // MAIN PROGRAM LOOP
     std::cout << "\n Pick a gate button " << std::endl;
+
+    state.set_superpos();
     while(true) 
     {
-        count++;
-
         // if qubit 0&3 simulatenously reset.
         if(state.qubits[0] -> selected() && state.qubits[3] -> selected())
         {
             std::cout << "reset" << std::endl;
             state.set_vacuum();
+            display_mode = 0;
+            cycle_counter = 0;
+        }
+
+        if(state.qubits[0] -> selected() && state.qubits[1] -> selected())
+        {
+            std::cout << "MEASURE THE STATE!!!" << std::endl;
+            state.measure();
             display_mode = 0;
             cycle_counter = 0;
         }

@@ -219,6 +219,32 @@ void State_vector::disp(void)
     last_selected_qubit = -1;
 }
 
+void State_vector::measure(void)
+{
+    while(1)
+    {
+        int r_num = rand() % size;
+        if(std::abs(vect(r_num)) >= (int)1e-5)
+        {
+            for(int j = 0; j < num_qubits; j++)
+            {
+                Qubit::Qubit_state q_state;
+                // is this bit masking?
+                q_state.one_amp = (r_num & (1 << j));
+                q_state.zero_amp = 1 - q_state.one_amp;
+                // quite complicated so I'm avoiding it.
+                // @todo do phase but you'll have to find the correct
+                // index from which ever amplitude is not this one...
+                q_state.phase = 0;
+
+                qubits[j] -> set_amps(q_state);
+            }
+            return;
+        }
+    }
+}
+
+
 // display cycling 
 // 
 
@@ -230,47 +256,45 @@ int State_vector::disp_cycle(int n)
 {
     // search the state vector got the n-th state that has an amplitude
     std::vector<Qubit::Qubit_state> single_state;  
-    // single_state.resize(num_qubits);
-
 
     // tolerance on non-zero amplitudes
     double epsilon = 1e-5;
 
     while(1)
     {
-    std::cout << "counter =" << n << std::endl;
-    for(int i = n; i < size; i++)
-    {
-        std::cout << "vect( " << i << " ) = " << vect(i) << std::endl;
-        if(std::abs(vect(i)) >= epsilon) //occupied
+        std::cout << "counter =" << n << std::endl;
+        for(int i = n; i < size; i++)
         {
-            std::cout << "epsilon check true" << std::endl;
-            // calc all zero & one vals for every qubit
-            for(int j = 0; j < num_qubits; j++)
+            std::cout << "vect( " << i << " ) = " << vect(i) << std::endl;
+            if(std::abs(vect(i)) >= epsilon) //occupied
             {
-                Qubit::Qubit_state q_state;
-                // is this bit masking?
-                q_state.one_amp = (i & (1 << j));
-                q_state.zero_amp = 1 - q_state.one_amp;
-                // quite complicated so I'm avoiding it.
-                // @todo do phase but you'll have to find the correct
-                // index from which ever amplitude is not this one...
-                q_state.phase = 0;
-            
-                single_state.push_back(q_state);
-            }
+                std::cout << "epsilon check true" << std::endl;
+                // calc all zero & one vals for every qubit
+                for(int j = 0; j < num_qubits; j++)
+                {
+                    Qubit::Qubit_state q_state;
+                    // is this bit masking?
+                    q_state.one_amp = (i & (1 << j));
+                    q_state.zero_amp = 1 - q_state.one_amp;
+                    // quite complicated so I'm avoiding it.
+                    // @todo do phase but you'll have to find the correct
+                    // index from which ever amplitude is not this one...
+                    q_state.phase = 0;
 
-            // state was found and all qubits have been given amps
-            for(int k = 0; k < num_qubits; k++){ qubits[k] -> set_led(single_state[k]); }
-            // exit loop but save counter for next call
-            std::cout <<"Exit early i =" << i << std::endl;
-            return ++i;
+                    single_state.push_back(q_state);
+                }
+
+                // state was found and all qubits have been given amps
+                for(int k = 0; k < num_qubits; k++){ qubits[k] -> set_led(single_state[k]); }
+                // exit loop but save counter for next call
+                std::cout <<"Exit early i =" << i << std::endl;
+                return ++i;
+            }
         }
+        std::cout << "Reached the end of the state vector, try again?" << std::endl;
+        n = 0;
     }
-    std::cout << "Reached the end of the state vector, try again?" << std::endl;
-    n = 0;
-    }
-    }
+}
 
 /*
 // generates a random number and cycles between the qubit states.
