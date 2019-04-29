@@ -172,6 +172,17 @@ class InputOutput : public Alarm {
     }
   }  
 
+  /**
+   * Reset display cycle timer
+   *
+   * Call this before display cycling to reset the dc_counter 
+   *
+   */
+  void reset_dc_timer() {
+    dc_counter = 0;
+    dc_trigger = false;
+  }  
+
 }; // end of InputOutput
 
 /** 
