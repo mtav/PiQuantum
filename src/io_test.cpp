@@ -9,9 +9,12 @@
 
 int main(void) {
 
-  std::unique_ptr<Led> p_led = std::make_unique<Led>({0,4}, {0,2}, {0,3});
+  //Position pos = {0,3};
+  std::unique_ptr<Led> p_led = std::make_unique<Led>( Position{0,4}, Position{0,2}, Position{0,3} );
 
-
-
+  p_led -> set_rgb(0.2, 0, 0);
+  
+  while(1);
+  
   return 0;
 }
