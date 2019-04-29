@@ -232,8 +232,11 @@ int State_vector::disp_cycle(int n)
     // tolerance on non-zero amplitudes
     double epsilon = 1e-5;
 
+    std::cout << "counter =" << n << std::endl;
+    if(n == size) return 0;
     for(int i = n; i < size; i++)
     {
+        std::cout << "vect( " << i << " ) = " << vect(i) << std::endl;
         if(std::abs(vect(i)) >= epsilon) //occupied
         {
             // calc all zero & one vals for every qubit
@@ -250,7 +253,8 @@ int State_vector::disp_cycle(int n)
             // state was found and all qubits have been given amps
             for(int k = 0; k < num_qubits; k++){ qubits[k] -> set_amps(single_state[k]); }
             // exit loop but save counter for next call
-            return i;
+            std::cout <<"Exit early i =" << i << std::endl;
+            return ++i;
         }
     }
     std::cout << "Reached the end of the state vector, try again?" << std::endl;

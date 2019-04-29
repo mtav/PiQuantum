@@ -76,10 +76,12 @@ int main(void)
     // state should have it so that calling disp auto fixes the cycling off
     int display_mode = 0;
     int cycle_counter = 0;
+    long int count = 0;
     // MAIN PROGRAM LOOP
     std::cout << "\n Pick a gate button " << std::endl;
     while(true) 
     {
+        count++;
 
         // if qubit 0&3 simulatenously reset.
         if(state.qubits[0] -> selected() && state.qubits[3] -> selected())
@@ -110,6 +112,7 @@ int main(void)
         {
             display_mode = 1;
             // TODO!
+            // set bool to change cycle to true
         }
 
         // if in cycle mode check for all other 
@@ -117,10 +120,11 @@ int main(void)
         {
             cycle_counter = state.disp_cycle(cycle_counter);
             std::cout << "Showing state " << cycle_counter << std::endl;
+           // set bool off 
         }
 
         // loop all operators
-        for(int i = 0; i < (int)Operators.size(); i++)
+        for(int i = 0; i < (long int)Operators.size(); i++)
         {
             if(Operators[i] -> selected()) 
             {
