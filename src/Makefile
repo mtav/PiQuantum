@@ -1,31 +1,50 @@
-## General compilation options
-CPPFLAGS = -Wall -g -O2 -march=native -flto -std=c++11
-LDLIBS = -I../eigen3 -Ifinal
-DEPDIR := .d
-$(shell mkdir -p $(DEPDIR) > /dev/null)
-LIBS = 
+TARGETS := io-test main qubit
 
-## Target 1
-## List the required object files after the target
-##
-TEST_BIN = test
-$(TEST_BIN): main.o state.o
-	g++ $(CPPFLAGS) $(LDLIBS)  $^ -o $(TEST_BIN) $(LIBS)
+DEPDIR = .d
 
-## Target 2
-## Put new targets here...
-##
+qubit_SRC := qubit.cpp state.cpp spi.cpp interface.cpp wpi.cpp io.cpp 
+main_SRC := main.cpp state.cpp spi.cpp interface.cpp wpi.cpp io.cpp
+io-test_SRC := io-test.cpp spi.cpp io.cpp interface.cpp wpi.cpp 
 
-## Read and include dependency files
-#-include $(patsubst %.o, $(DEPDIR)/%.d, $(OBJS))
--include $(wildcard $(DEPDIR)/*.d)
+CC       := g++
 
-## Pattern matching for compiling object files
-%.o: %.cpp
-	g++ $(CPPFLAGS) $(LDLIBS) -c $< -o $*.o
-	g++ -MM $< > $(DEPDIR)/$*.d
+CFLAGS   := -g3 -std=c++14 -Ofast -Wall
+CPPFLAGS := -I. 
 
-# Clean target
+LDFLAGS  :=  
+LDLIBS   := -lwiringPi
+
+# ----- Nothing below here needs to be changed
+
+.PHONY: all
+all : $(TARGETS)
+
+.SECONDEXPANSION:
+# For each target, depend on the .o files for its sources
+$(TARGETS): $$(patsubst %.cpp,%.o,$$($$@_SRC))
+	$(LINK.c) $^ $(LDLIBS) -o $@
+
+ALLSRC := $(foreach T,$(TARGETS),$($T_SRC))
+
 .PHONY: clean
 clean:
-	-rm -rf $(TEST_BIN) *.o .d
+	rm -f $(TARGETS) *.o $(DEPDIR)/*.d *~ 
+
+# Advanced auto-dependency, from:
+# http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/
+
+$(shell mkdir -p $(DEPDIR) >/dev/null)
+DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
+
+COMPILE.c = $(CC) $(DEPFLAGS) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d
+
+%.o : %.cpp
+%.o : %.cpp $(DEPDIR)/%.d
+		$(COMPILE.c) $(OUTPUT_OPTION) $<
+		$(POSTCOMPILE)
+
+$(DEPDIR)/%.d: ;
+.PRECIOUS: $(DEPDIR)/%.d
+
+-include $(patsubst %,$(DEPDIR)/%.d,$(basename $(ALLSRC)))
