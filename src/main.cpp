@@ -13,19 +13,8 @@
 
 int main(void)
 {
-  // THE BEST TIMER KNOWN TO MAN
-   
   // Driver for checking display cycling timer
   std::shared_ptr<InputOutput> driver = getInputOutput();
-  // bool trigger = false;
-
-  // while(1) {
-  //  trigger = driver -> check_dc_timer();
-  //    if(trigger == true) {
-  //    std::cout << "Trigger!" << std::endl;
-  //  }
- // }
-  
   
    /// qubit leds RGB positions
     std::vector<std::vector<Position> > led_pos{ 
