@@ -1,36 +1,31 @@
-# Run `make all', `make spi', etc.
+## General compilation options
+CPPFLAGS = -Wall -g -O2 -march=native -flto -std=c++11
+LDLIBS = -I../eigen3 -Ifinal
+DEPDIR := .d
+$(shell mkdir -p $(DEPDIR) > /dev/null)
+LIBS = 
 
-CFLAGS = -I/usr/include/eigen3/ -pthread
-CLIBS = -lmenu -lncurses
+## Target 1
+## List the required object files after the target
+##
+TEST_BIN = test
+$(TEST_BIN): main.o state.o
+	g++ $(CPPFLAGS) $(LDLIBS)  $^ -o $(TEST_BIN) $(LIBS)
 
-# old 
-#all: math_test.o main.cpp
-#	g++ -std=c++11 -I/usr/include/eigen3/ main.cpp math_test.o -o prog -lmenu -lncurses
-spi-test: spi.o leds.o spi-test.cpp
-	g++ spi-test.cpp spi.o leds.o -o spi-test -lwiringPi
+## Target 2
+## Put new targets here...
+##
 
-spi.o: spi.cpp spi.hpp
-	g++ -c spi.cpp -o spi.o
+## Read and include dependency files
+#-include $(patsubst %.o, $(DEPDIR)/%.d, $(OBJS))
+-include $(wildcard $(DEPDIR)/*.d)
 
-leds.o: leds.cpp leds.hpp
-	g++ -c leds.cpp -o leds.o
+## Pattern matching for compiling object files
+%.o: %.cpp
+	g++ $(CPPFLAGS) $(LDLIBS) -c $< -o $*.o
+	g++ -MM $< > $(DEPDIR)/$*.d
 
-
-menu-test: menu-test.cpp menu.o
-	g++ -std=c++11 -pthread menu-test.cpp menu.o -o menu-test -lncurses
-	-lmenu
-	#consts.o: consts.cpp consts.hpp
-	#	g++ -std=c++11 -I/usr/include/eigen3/ -c consts.cpp -o consts.o
-
-math_test.o: math_test.cpp consts.hpp # consts.o
-	g++ -std=c++11 -I/usr/include/eigen3/ -c  math_test.cpp -o
-	math_test.o
-
-menu.o: menu.cpp menu.hpp 
-	g++ -std=c++11 -pthread -c menu.cpp -o menu.o
-
-make all: menu.o main.cpp
-	g++ -std=c++11 $(CFLAGS) main.cpp menu.o -o prog $(CLIBS)
-
+# Clean target
+.PHONY: clean
 clean:
-	rm -rf prog spi-test menu-test *.o
+	-rm -rf $(TEST_BIN) *.o .d

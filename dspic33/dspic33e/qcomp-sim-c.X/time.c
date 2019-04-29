@@ -21,7 +21,7 @@
 //
 // It is important to set of the configuration bits correctly to allow clock
 // switching.
-//
+/// \bug this is causing the 2 minute crash
 void setup_clock() {
     // Use Primary Oscillator with PLL --------------------------------
     // Prepare PLL settings for clock switch.  New clock F_CY = 50MHz
@@ -31,10 +31,8 @@ void setup_clock() {
     __builtin_write_OSCCONH(0x3); // (refer to 'Oscillator Module' FRM)     
     // Set OSWEN bit to request clock switch
     __builtin_write_OSCCONL(OSCCON | 0x1); // (refer to 'Oscillator Module' FRM)   
-    while(OSCCONbits.OSWEN != 0)
-        ; // Wait for OSWEN to be cleared
-    while(OSCCONbits.LOCK != 1)
-        ; // Wait for PLL to lock
+    while(OSCCONbits.OSWEN != 0); // Wait for OSWEN to be cleared
+    while(OSCCONbits.LOCK != 1); // Wait for PLL to lock
 }
 
 // Run this before using the timer functions

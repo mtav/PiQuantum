@@ -9,9 +9,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "final/spi.hpp"
+
 int main() 
 {
 
+    
 
 
 }
