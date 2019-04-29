@@ -100,6 +100,11 @@ void Qubit::set_led(void)
     uptodate = true;
 }
 
+void Qubit::set_led(const Qubit_state & qubit_vals)
+{
+    led_ptr -> set_rgb(qubit_vals.zero_amp, qubit_vals.phase, qubit_vals.one_amp);
+}
+
 // check if button is pressed
 bool Qubit::selected(void) { return btn_ptr -> get_state();}
 
@@ -117,8 +122,6 @@ void Qubit::set_amps( const Qubit_state & qubit_vals)
     qstate = qubit_vals;
     set_led();
 }
-
-
 
 void Qubit::set_zero(double amp) { qstate.zero_amp = amp;}
 void Qubit::set_one(double amp) { qstate.one_amp = amp;}
@@ -227,39 +230,47 @@ int State_vector::disp_cycle(int n)
 {
     // search the state vector got the n-th state that has an amplitude
     std::vector<Qubit::Qubit_state> single_state;  
-    single_state.resize(num_qubits);
+    // single_state.resize(num_qubits);
+
 
     // tolerance on non-zero amplitudes
     double epsilon = 1e-5;
 
+    while(1)
+    {
     std::cout << "counter =" << n << std::endl;
-    if(n == size) return 0;
     for(int i = n; i < size; i++)
     {
         std::cout << "vect( " << i << " ) = " << vect(i) << std::endl;
         if(std::abs(vect(i)) >= epsilon) //occupied
         {
+            std::cout << "epsilon check true" << std::endl;
             // calc all zero & one vals for every qubit
             for(int j = 0; j < num_qubits; j++)
             {
+                Qubit::Qubit_state q_state;
                 // is this bit masking?
-                single_state[j].one_amp = (i & (1 << j));
-                single_state[j].zero_amp = 1 - single_state[j].one_amp;
+                q_state.one_amp = (i & (1 << j));
+                q_state.zero_amp = 1 - q_state.one_amp;
                 // quite complicated so I'm avoiding it.
                 // @todo do phase but you'll have to find the correct
                 // index from which ever amplitude is not this one...
-                single_state[j].phase = 0;
+                q_state.phase = 0;
+            
+                single_state.push_back(q_state);
             }
+
             // state was found and all qubits have been given amps
-            for(int k = 0; k < num_qubits; k++){ qubits[k] -> set_amps(single_state[k]); }
+            for(int k = 0; k < num_qubits; k++){ qubits[k] -> set_led(single_state[k]); }
             // exit loop but save counter for next call
             std::cout <<"Exit early i =" << i << std::endl;
             return ++i;
         }
     }
     std::cout << "Reached the end of the state vector, try again?" << std::endl;
-    return 0;
-}
+    n = 0;
+    }
+    }
 
 /*
 // generates a random number and cycles between the qubit states.
@@ -622,5 +633,7 @@ void State_vector::display_avg(Qubits_type & qubits, const Eigen::VectorXcd & ve
 
             qubits[i] -> set_led();
         }
+        // write qubit_state to leds to force fix the cycling stuff
+        qubits[i] -> set_led();
     }
 }

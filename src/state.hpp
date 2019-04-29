@@ -121,7 +121,9 @@ class Qubit
         // method for setting led
         void set_led(void);
 
-        // check if qubit selected
+        void set_led(const Qubit_state & qubit_vals);
+        
+            // check if qubit selected
         bool selected(void); 
 
         // either set all 3 

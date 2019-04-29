@@ -13,19 +13,19 @@
 
 int main(void)
 {
-  /** THE BEST TIMER KNOWN TO MAN
-   *
+  // THE BEST TIMER KNOWN TO MAN
+   
   // Driver for checking display cycling timer
   std::shared_ptr<InputOutput> driver = getInputOutput();
-  bool trigger = false;
+  // bool trigger = false;
 
-  while(1) {
-    trigger = driver -> check_dc_timer();
-    if(trigger == true) {
-      std::cout << "Trigger!" << std::endl;
-    }
-  }
-  */
+  // while(1) {
+  //  trigger = driver -> check_dc_timer();
+  //    if(trigger == true) {
+  //    std::cout << "Trigger!" << std::endl;
+  //  }
+ // }
+  
   
    /// qubit leds RGB positions
     std::vector<std::vector<Position> > led_pos{ 
@@ -124,16 +124,16 @@ int main(void)
         if(state.qubits[2] -> selected() && state.qubits[3] -> selected())
         {
             display_mode = 1;
+            driver -> reset_dc_timer();
+            // if(display_mode == 0) state.disp();
             // TODO!
-            // set bool to change cycle to true
         }
 
         // if in cycle mode check for all other 
-        if(display_mode == 1)
+        if(display_mode == 1 && driver -> check_dc_timer())
         {
             cycle_counter = state.disp_cycle(cycle_counter);
             std::cout << "Showing state " << cycle_counter << std::endl;
-           // set bool off 
         }
 
         // loop all operators
@@ -141,6 +141,7 @@ int main(void)
         {
             if(Operators[i] -> selected()) 
             {
+                state.disp();
                 // if 0 do single qubit gate
                 if(func_btns[3] -> get_state() == 0)
                 {
