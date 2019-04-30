@@ -12,6 +12,18 @@ sections. The first are a quantum version of the operations that a regular digit
 computer can do,we call these _coherent_. The second set of operations are only available
 on a quantum computer.
 
+## Implemented 
+
+- 1 & 2 Measure the state
+- 1 & 4 Reset to vacuum state
+- 3 & 4 Switch to cycling through the state display
+
+- X
+- Y
+- H 
+- Control modifier (Hold this and select another gate to do a Controlled version of it)
+  e.g Control + X to do CNOT
+
 ## Coherent Digital operations
 
 This is a list of the existing operations available:

@@ -195,7 +195,7 @@ void State_vector::set_superpos(void)
     // plus state everywhere
     vect = Eigen::VectorXcd::Constant(size, 1, 1/std::sqrt(num_qubits));
     // This might not be the correct values 
-    for(int i = 0; i < num_qubits; i++) { qubits[i] -> set_amps(0.5, 0, 0.5); }
+    for(int i = 0; i < num_qubits; i++) { qubits[i] -> set_amps(0.5, 0.5, 0); }
 }
 
 //---------------------------------- Display stuff 
@@ -226,12 +226,24 @@ void State_vector::measure(void)
         int r_num = rand() % size;
         if(std::abs(vect(r_num)) >= (int)1e-5)
         {
+            std::cout << " rand pos = " << r_num  << std::endl;
             for(int j = 0; j < num_qubits; j++)
             {
                 Qubit::Qubit_state q_state;
                 // is this bit masking?
-                q_state.one_amp = (r_num & (1 << j));
-                q_state.zero_amp = 1 - q_state.one_amp;
+                if( (r_num & (1 << j)) > 0 )
+                {
+                    q_state.one_amp = 1;
+                    q_state.zero_amp = 0;
+                }
+                else
+                {
+                    q_state.one_amp = 0;
+                    q_state.zero_amp = 1;
+                }
+
+                // q_state.one_amp = (r_num & (1 << j));
+                // q_state.zero_amp = 1 - q_state.one_amp;
                 // quite complicated so I'm avoiding it.
                 // @todo do phase but you'll have to find the correct
                 // index from which ever amplitude is not this one...
@@ -239,6 +251,9 @@ void State_vector::measure(void)
 
                 qubits[j] -> set_amps(q_state);
             }
+            // reset state vector to correct state
+            vect = Eigen::VectorXcd::Zero(size);
+            vect(r_num) = 1.0;
             return;
         }
     }
