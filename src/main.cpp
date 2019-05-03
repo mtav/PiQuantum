@@ -82,10 +82,7 @@ int main(void)
     // MAIN PROGRAM LOOP
     std::cout << "\n Pick a gate button " << std::endl;
 
-<<<<<<< HEAD
     // state.set_superpos();
-=======
->>>>>>> 9a45fec1711c2f0d90e6e49d4a743754d4f4a9d6
     while(true) 
     {
         // if qubit 0&3 simulatenously reset.
