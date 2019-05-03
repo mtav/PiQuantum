@@ -118,12 +118,17 @@ class Qubit
     public:
         Qubit(std::vector<Position> led_rgb_loc, Position btn_loc, int pos = -1);
 
+        int flash = 0;
+        bool led_on = true;
         // method for setting led
         void set_led(void);
 
+        // used in flashing, set qubit WITHOUT changing state amplitudes.
+        void set_led(double R, double G, double B);
+
         void set_led(const Qubit_state & qubit_vals);
-        
-            // check if qubit selected
+
+        // check if qubit selected
         bool selected(void); 
 
         // either set all 3 
@@ -213,6 +218,43 @@ class State_vector
         // collapse the state
         void measure(void);
 
+        // make the qubit flash
+        void flash()
+        {
+            for(int i = 0; i < num_qubits; i++)
+            {
+                // if flashing check if led is on or off
+                if(qubits[i] -> flash == 1)
+                {
+                    if(qubits[i] -> led_on == true)
+                    {
+                        qubits[i] -> set_led(0,0,0); 
+                        qubits[i] -> led_on = false;
+                    }
+                    else 
+                    {
+                        qubits[i] -> set_led(); 
+                        qubits[i] -> led_on = true;
+                    }
+                }
+                // else if not flashing check led is on
+                else if(qubits[i] -> led_on == false) 
+                {
+                    qubits[i] -> set_led(); 
+                    qubits[i] -> led_on = true;
+                }
+            }
+        }
+
+        void stop_flash(void)
+        {
+            for(int i = 0; i < num_qubits; i++)
+            {
+                qubits[i] -> flash = 0;
+            }
+            // make sure all qubits are on 
+            flash();
+        }
 };
 #endif
 

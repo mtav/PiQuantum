@@ -105,6 +105,12 @@ void Qubit::set_led(const Qubit_state & qubit_vals)
     led_ptr -> set_rgb(qubit_vals.zero_amp, qubit_vals.phase, qubit_vals.one_amp);
 }
 
+// used for flashing set leds without changing qubit_state.
+void Qubit::set_led(double R, double G, double B)
+{
+    led_ptr -> set_rgb(R,G,B);
+}
+
 // check if button is pressed
 bool Qubit::selected(void) { return btn_ptr -> get_state();}
 
@@ -224,7 +230,7 @@ void State_vector::measure(void)
     while(1)
     {
         int r_num = rand() % size;
-        if(std::abs(vect(r_num)) >= (int)1e-5)
+        if(std::abs(vect(r_num)) >= 1e-5)
         {
             std::cout << " rand pos = " << r_num  << std::endl;
             for(int j = 0; j < num_qubits; j++)
@@ -280,7 +286,7 @@ int State_vector::disp_cycle(int n)
         std::cout << "counter =" << n << std::endl;
         for(int i = n; i < size; i++)
         {
-            std::cout << "vect( " << i << " ) = " << vect(i) << std::endl;
+            // std::cout << "vect( " << i << " ) = " << vect(i) << std::endl;
             if(std::abs(vect(i)) >= epsilon) //occupied
             {
                 std::cout << "epsilon check true" << std::endl;

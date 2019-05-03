@@ -92,13 +92,13 @@ class InputOutput : public Alarm {
         std::vector<unsigned char> write; // Data to write to chips
         std::vector<unsigned char> mask; // Enable or disable LED lines 
 
-  
-  // This section is for timing the display cycling. The counter is used to
-  // get a slower clock rate from the regular interrup.
-  long int dc_counter;
-  long int dc_max;
-  bool dc_trigger;
-  
+
+        // This section is for timing the display cycling. The counter is used to
+        // get a slower clock rate from the regular interrup.
+        std::vector<long int> dc_counter;
+        std::vector<long int> dc_max;
+        std::vector<bool> dc_trigger;
+
         /**
          * @brief Function for simulating dimmable LEDs and reading buttons
          *
@@ -155,33 +155,39 @@ class InputOutput : public Alarm {
         int register_button(Button * btn);
         void deregister_button(int id);
 
-  /**
-   * Test display cycle
-   *
-   * Repeatedly calling the routine returns false until the display cycling timer
-   * times out, when it returns true. When true is returned, the next call will
-   * return false unless the timer as expired again.
-   *
-   */
-  bool check_dc_timer() {
-    if(dc_trigger == true) {
-      dc_trigger = false; // Reset the trigger
-      return true;
-    } else {
-      return false;
-    }
-  }  
+        /**
+         * Test display cycle
+         *
+         * Repeatedly calling the routine returns false until the display cycling timer
+         * times out, when it returns true. When true is returned, the next call will
+         * return false unless the timer as expired again.
+         *
+         */
+        bool check_dc_timer(int i = 0) 
+        {
+            if(dc_trigger[i] == true) 
+            {
+                dc_trigger[i] = false; // Reset the trigger
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }  
 
-  /**
-   * Reset display cycle timer
-   *
-   * Call this before display cycling to reset the dc_counter 
-   *
-   */
-  void reset_dc_timer() {
-    dc_counter = 0;
-    dc_trigger = false;
-  }  
+
+        /**
+         * Reset display cycle timer
+         *
+         * Call this before display cycling to reset the dc_counter 
+         *
+         */
+        void reset_dc_timer(int i = 0)
+        {
+            dc_counter[i] = 0;
+            dc_trigger[i] = false;
+        }  
 
 }; // end of InputOutput
 
