@@ -19,12 +19,12 @@ void Operator::set_btn(std::shared_ptr<Button> btn_ptr_in) {btn_ptr = btn_ptr_in
 // Check if the operators button is selected.
 bool Operator::selected(void) 
 {
-    if(btn_ptr -> get_state())
-    {
-        std::cout << "Op " << name << " pressed" << std::endl;
-        return 1;
-    }
-    else { return 0;}
+    bool result = false;
+
+    while(btn_ptr -> get_state()) { result = true; }
+
+    if(result == true) { std::cout << "Op " << name << " pressed" << std::endl;}
+    return result;
 }
 
 // -------------------------- Paulis 
@@ -112,7 +112,20 @@ void Qubit::set_led(double R, double G, double B)
 }
 
 // check if button is pressed
-bool Qubit::selected(void) { return btn_ptr -> get_state();}
+bool Qubit::selected(void) 
+{
+    // 1 -> 0
+    //for(int i = 0; i < 100; i++)
+    //{}
+
+    bool result = false;
+    while(btn_ptr -> get_state())
+    {
+        result = true;
+    }
+
+    return result;
+}
 
 void Qubit::set_amps(double zero, double one, double phases)
 {
@@ -159,6 +172,9 @@ State_vector::State_vector(int num, std::vector<std::vector<Position> > qubit_le
     }
     size = pow(2, num_qubits);
     set_vacuum();
+
+    cursor_pos = 0;
+    move_cursor(cursor_pos);
 }
 
 // check all qubit btns and return the int of the qubit pressed

@@ -178,6 +178,30 @@ class State_vector
         //std::vector<std::shared_ptr<Qubit> > qubits;
         Qubits_type qubits;
 
+        // cursor object
+        // upon position change stop old qubit flashing and 
+        // make new qubit flash
+        /*   struct Cursor
+             {
+             friend class State_vector;
+             int position = 0;
+
+             Cursor(void) {}
+        // Methods
+
+        void move(int new_pos)
+        {
+        // turn off previous qubit
+        flash_off(position);
+        flash_on(new_pos);
+
+        position = new_pos;
+        }
+        };
+
+        Cursor cursor;
+        */
+        int cursor_pos = 0;
         // see cpp for imp, should ONLY every use qubit_state so the default is public
         // this must be private
         void display_avg(Qubits_type & qubits, const Eigen::VectorXcd & vect);
@@ -189,7 +213,7 @@ class State_vector
 
         // -------------- constructors --------------------------
         // default case if no qubits are specified
-        State_vector() {}
+        State_vector(void) {}
 
         // new improved constructor which takes qubit leds & qubit btn position.
         State_vector(int num, std::vector<std::vector<Position> > qubit_leds, 
@@ -205,6 +229,26 @@ class State_vector
         void set_superpos();
 
         // use to apply gates
+        void apply(const Operator & op, std::string count = "single")
+        {
+            if(count == "single"){ apply(op, cursor_pos);}
+            else if(count == "controlled")
+            {
+                int ctrl = cursor_pos;
+                int targ = ctrl; // for the loop
+
+                // update the target cursor pos
+                while(targ == ctrl){
+                    update_pos();
+                    targ = cursor_pos;
+                }
+                std::cout << "Ctrl " << ctrl << ", Targ " << targ << std::endl;
+                apply(op, ctrl, targ);
+            }
+            // default is single qubit gate
+            else { apply(op, cursor_pos); }
+        }
+
         void apply(const Operator & op, int qubit);
         // two qubit version
         void apply(const Operator & op, int ctrl, int targ);
@@ -217,6 +261,67 @@ class State_vector
 
         // collapse the state
         void measure(void);
+
+        // function to listen for cursour position update
+        void update_pos(int i = 0)
+        {
+            if(qubits[1] -> selected())
+            {
+                // mov left
+                move_cursor("left");
+                std::cout << "Moved left" << std::endl;
+            }
+            if(qubits[3] -> selected())
+            {
+                move_cursor("right");
+                std::cout << "Moved right" << std::endl;
+            }
+        }
+
+
+        void move_cursor(std::string direction)
+        {
+            std::cout << "current pos = " << cursor_pos << ", direction " << direction << std::endl;
+            int new_pos = cursor_pos;
+
+            if(direction == "left")
+            { 
+                // wrap 0 to num_qubits not -1
+                if(cursor_pos == 0) {new_pos = num_qubits - 1;}
+                else {new_pos = ((cursor_pos - 1) % num_qubits);}
+            }
+            else if(direction == "right") { new_pos = ((cursor_pos + 1)%num_qubits);}
+
+            move_cursor(new_pos);
+        }
+
+
+        void move_cursor(int new_pos)
+        {
+            // turn off previous qubit
+            flash_off(cursor_pos);
+            flash_on(new_pos);
+
+            cursor_pos = new_pos;
+        }
+        // flash on
+        void flash_on(int qubit)
+        {
+            qubits[qubit] -> flash = 1;
+            flash();
+        }
+
+        void flash_off(int qubit)
+        {
+            qubits[qubit] -> flash = 0;
+            flash();
+        }
+        // overloading 
+        void flash(int qubit_pos)
+        {
+            qubits[qubit_pos] -> flash = (qubits[qubit_pos] -> flash + 1)%2;
+            flash();
+        }
 
         // make the qubit flash
         void flash()
