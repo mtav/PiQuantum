@@ -1,4 +1,4 @@
-TARGETS := io-test main qubit
+TARGETS := io-test main qubit async
 
 DEPDIR = .d
 
@@ -6,9 +6,11 @@ qubit_SRC := qubit.cpp state.cpp spi.cpp interface.cpp wpi.cpp io.cpp
 main_SRC := main.cpp state.cpp spi.cpp interface.cpp wpi.cpp io.cpp
 io-test_SRC := io-test.cpp spi.cpp io.cpp interface.cpp wpi.cpp 
 
+async_SRC := async.cpp
+
 CC       := g++
 
-CFLAGS   := -g3 -std=c++14 -O2 -Wall
+CFLAGS   := -g3 -std=c++14 -O2 -Wall -pthread
 CPPFLAGS := -I. 
 
 LDFLAGS  :=  
