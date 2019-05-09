@@ -100,10 +100,12 @@ int main(void)
         if(driver -> check_dc_timer(1))
         {
             // std::cout << " FLASH 1" << std::endl;
-            state.flash();
-
+            if(display_mode == 0) 
+            {
+                state.flash();
+            }
             // if in cycle mode check for all other 
-            if(display_mode == 1 && driver -> check_dc_timer(0))
+            else if(display_mode == 1 && driver -> check_dc_timer(0))
             {
                 cycle_counter = state.disp_cycle(cycle_counter);
                 std::cout << "Showing state " << cycle_counter << std::endl;
