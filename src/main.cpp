@@ -13,11 +13,11 @@
 
 int main(void)
 {
-  // THE BEST TIMER KNOWN TO MAN
-  // Driver for checking display cycling timer
-  std::shared_ptr<InputOutput> driver = getInputOutput();
-  
-   /// qubit leds RGB positions
+    // THE BEST TIMER KNOWN TO MAN
+    // Driver for checking display cycling timer
+    std::shared_ptr<InputOutput> driver = getInputOutput();
+
+    /// qubit leds RGB positions
     std::vector<std::vector<Position> > led_pos{ 
         { {0,4}, {0,2}, {0,3} }, 
             { {0,7}, {0,5}, {0,6} },
@@ -39,7 +39,7 @@ int main(void)
             { {0,0}, {0,0}, {0,0} },
             { {0,0}, {0,0}, {0,0} } };
 
-   /// vector of qubit btns
+    /// vector of qubit btns
     std::vector<Position> qubit_btn_pos{ 
         {0,2}, {1,7}, {1,1}, {1,2},
             {0,0}, {0,0}, {0,0}, {0,0},
@@ -92,6 +92,7 @@ int main(void)
             state.set_vacuum();
             display_mode = 0;
             cycle_counter = 0;
+            state.stop_flash();
         }
 
         if(state.qubits[0] -> selected() && state.qubits[1] -> selected())
@@ -101,23 +102,7 @@ int main(void)
             display_mode = 0;
             cycle_counter = 0;
             state.disp();
-            state.print();
         }
-
-        // display cycling
-        // for each non zero element in state vector write it out to set_amps leds.
-        // keep the position and the leds state, then exit and check the loop for 
-        // other options.
-        // then resume from the position find the next non-zero element.
-        // - need look up tabe of non-zero entries and rgb vals for each qubit.
-        // std::vector<std::vector<double> > {{zero, one, phase}, {zero1, one1, phase1}};
-        // state.qubits[i] -> set_amps(stored[i]);
-        //
-        // Don't want display cycling to block as it is probably going to be really slow
-        // 1. either main has a vector of RGB vals for each qubit?
-        // 2. the state vector keeps track of how many times the display cycle is 
-        // called and each call increments. Would need to sort out next vals somehow
-        // 3. It blocks in state_vector class and returns to main after each full cycle 
 
         // if 2&3 simultaneously do cycling display
         if(state.qubits[2] -> selected() && state.qubits[3] -> selected())
@@ -128,11 +113,25 @@ int main(void)
             // TODO!
         }
 
-        // if in cycle mode check for all other 
-        if(display_mode == 1 && driver -> check_dc_timer())
+        for(int i = 0; i < state.get_num_qubits(); i++)
         {
-            cycle_counter = state.disp_cycle(cycle_counter);
-            std::cout << "Showing state " << cycle_counter << std::endl;
+            if(state.qubits[i] -> selected() && func_btns[3] -> get_state())
+            {
+                state.qubits[i] -> flash = (state.qubits[i] -> flash + 1)%2;
+                break;
+            }
+        }
+
+        if(driver -> check_dc_timer(1))
+        {
+            state.flash();
+
+            // if in cycle mode check for all other 
+            if(display_mode == 1 && driver -> check_dc_timer(0))
+            {
+                cycle_counter = state.disp_cycle(cycle_counter);
+                std::cout << "Showing state " << cycle_counter << std::endl;
+            }
         }
 
         // loop all operators
