@@ -87,23 +87,11 @@ int main(void)
     while(true) 
     {
         // new joystick mode!
-
-        // use qubit 0 to go left
-        // use qubit 3 to go right 
-        // state needs a cursor.  -> qubit to flash 
-        // 
-
-        // if(driver -> check_dc_timer()) { std::cout << "FLASH void" << std::endl;}
-
-        // if(driver -> check_dc_timer(0)) { std::cout << "FLASH 0" << std::endl;}
+        state.update_pos();
 
         if(driver -> check_dc_timer(1))
         {
-            // std::cout << " FLASH 1" << std::endl;
-            if(display_mode == 0) 
-            {
-                state.flash();
-            }
+            if(display_mode == 0) { state.flash(); }
             // if in cycle mode check for all other 
             else if(display_mode == 1 && driver -> check_dc_timer(0))
             {
@@ -112,11 +100,9 @@ int main(void)
             }
         }
 
-        state.update_pos();
         // quantum game, split into two two-qubit states.
         // do random unitaries on the goal half
         // let the user perform gates on the interactive half to get the goal state.
-
 
         // if qubit 0&3 simulatenously reset.
         if(state.qubits[0] -> selected() && state.qubits[3] -> selected())
