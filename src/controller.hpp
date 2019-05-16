@@ -14,6 +14,7 @@
 #include <cstring>
 #include <vector>
 
+#include <future> // std::async and std::future
 class Controller
 {
     private:
@@ -86,6 +87,11 @@ class Controller
             return answer;
         }
 
+        std::future<std::string> dir_future;
+        std::future<std::string> btn_future;
+
+        std::string direction;
+        std::string button;
     public:
 
         Controller(std::string path) : loc(path)
@@ -104,6 +110,20 @@ class Controller
 
     }
        
+        /*
+        std::string last_direction(void)
+        {
+            direction = dir_future.get();
+
+            return direction;
+        }
+
+        std::string last_btn(void)
+        {
+            return button;
+        }
+        */
+
         // wait specifically for a direction.
         std::string get_direction(void)
         {   
@@ -116,7 +136,7 @@ class Controller
         }
 
         // return anything but a direction
-        std::string get_func_btn(void)
+        std::string get_btn(void)
         {
             std::string result = get_input();
             while(result == "Right" || result == "Left" || result == "Up" || result == "Down")

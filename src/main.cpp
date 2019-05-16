@@ -8,8 +8,11 @@
  *
  */
 #include <iostream>
+#include <future>   // for std::async, std::future
+
 #include "state.hpp"
 #include "interface.hpp"
+#include "controller.hpp"
 
 int main(void)
 {
@@ -46,6 +49,16 @@ int main(void)
     // function buttons 
     // e.g gates 
     std::vector<Position> func_btn_pos{ {1,0}, {1,3}, {0,1}, {0,0} };
+
+    // controller path
+    std::string controller_path = "/dev/input/js0";
+    // make a controller object 
+    Controller controller(controller_path);
+
+    // HOW TO USE THE CONTROLLER  
+    // use get_input() to get any input or
+    // get_btn() to get a function button 
+    // get_direction() to get a direction 
 
     // make function buttons 
     std::vector<std::shared_ptr<Button> > func_btns;
@@ -86,6 +99,16 @@ int main(void)
     // state.set_superpos();
     while(true) 
     {
+        // start async for controller input in different thread.
+        //  std::vector<std::future<std::string> > controller_input;
+
+        // first element is direction
+        //  controller_input.push_back(std::async(std::launch::async, controller.get_direction()));
+        // second element is function button 
+        //   controller_input.push_back(std::async(std::launch::async, controller.get_btn()));
+
+
+
         // new joystick mode!
         state.update_pos();
 
@@ -161,80 +184,7 @@ int main(void)
            state.disp();
            }
 
-        // if 2&3 simultaneously do cycling display
-        if(state.qubits[2] -> selected() && state.qubits[3] -> selected())
-        {
-        display_mode = 1;
-        driver -> reset_dc_timer();
-        // if(display_mode == 0) state.disp();
-        // TODO!
-        }
-
-        for(int i = 0; i < state.get_num_qubits(); i++)
-        {
-        if(state.qubits[i] -> selected() && func_btns[3] -> get_state())
-        {
-        state.qubits[i] -> flash = (state.qubits[i] -> flash + 1)%2;
-        break;
-        }
-        }
-
-        if(driver -> check_dc_timer(1))
-        {
-        state.flash();
-
-        // if in cycle mode check for all other 
-        if(display_mode == 1 && driver -> check_dc_timer(0))
-        {
-        cycle_counter = state.disp_cycle(cycle_counter);
-        std::cout << "Showing state " << cycle_counter << std::endl;
-        }
-        }
-
-        // loop all operators
-        for(int i = 0; i < (long int)Operators.size(); i++)
-        {
-        if(Operators[i] -> selected()) 
-        {
-        state.disp();
-        // if 0 do single qubit gate
-        if(func_btns[3] -> get_state() == 0)
-        {
-        std::cout << " Single qubit gate " << std::endl;
-        state.apply(*Operators[i], state.get_qubit());
-        }
-        else // do control gate
-        {
-        std::cout << "Two qubit gate " << std::endl;
-        state.apply(*Operators[i], state.get_qubit(), state.get_qubit());
-        }
-
-        display_mode = 0;
-        state.disp();
-        std::cout << "\n Pick a gate button " << std::endl;
-        }
-        }
-
-        // extras
-        if(func_btns[3] -> get_state())
-        {   
-        if(state.qubits[0] -> selected() && state.qubits[1] -> selected())
-        {
-        std::cout << "Entangling " << std::endl;
-        //make nice pattern
-        state.apply(H, 0);
-        state.apply(H,0,1);
-        state.apply(H,1,2);
-        state.apply(H,2,3);
-
-        display_mode = 0;
-        state.disp();
-        std::cout << "\n Pick a gate button " << std::endl;
+*/
     }
-    }
-
-    }
-    */
-}
-return 0;
+    return 0;
 }
