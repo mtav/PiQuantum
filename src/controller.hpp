@@ -4,6 +4,9 @@
  * @brief header for all usb gamepad controller things
  */
 
+#ifndef CONTROLLER_HPP
+#define CONTROLLER_HPP
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -44,24 +47,15 @@ class Controller
                 // NOT a direction
                 switch(values[2])
                 {
-                    case 0 : answer = "A";
-                             break;
-                    case 1 : answer = "B";
-                             break;
-                    case 2 : answer = "X";
-                             break;
-                    case 3 : answer = "Y";
-                             break;
-                    case 4 : answer = "L_trigger";
-                             break;
-                    case 5 : answer = "R_trigger";
-                             break;
-                    case 6 : answer = "Select";
-                             break;
-                    case 7 : answer = "Start";
-                             break; 
-                    default : answer = "NULL";
-                              break;
+                    case 0 : answer = "A"; break;
+                    case 1 : answer = "B"; break;
+                    case 2 : answer = "X"; break;
+                    case 3 : answer = "Y"; break;
+                    case 4 : answer = "L_trigger"; break;
+                    case 5 : answer = "R_trigger"; break;
+                    case 6 : answer = "Select"; break;
+                    case 7 : answer = "Start"; break; 
+                    default : answer = "NULL"; break;
                 }
             }
             // direction
@@ -72,12 +66,9 @@ class Controller
                 {
                     switch(values[2])
                     {
-                        case 0 : answer = "Right";
-                                 break;
-                        case 1 : answer = "Down";
-                                 break;
-                        default : answer = "NULL direction";
-                                  break;
+                        case 0 : answer = "Right"; break;
+                        case 1 : answer = "Down"; break;
+                        default : answer = "NULL direction"; break;
                     }
                 }
                 // if -ve left or up
@@ -85,12 +76,9 @@ class Controller
                 {
                     switch(values[2])
                     {
-                        case 0 : answer = "Left";
-                                 break;
-                        case 1 : answer = "Up";
-                                 break;
-                        default : answer = "NULL direction";
-                                  break;
+                        case 0 : answer = "Left"; break;
+                        case 1 : answer = "Up"; break;
+                        default : answer = "NULL direction"; break;
                     }
                 }
             } // end of directions
@@ -115,8 +103,30 @@ class Controller
         else { std::cout << "read " << loc << std::endl; }
 
     }
+       
+        // wait specifically for a direction.
+        std::string get_direction(void)
+        {   
+            std::string result = get_input();
+            while(result != "Right" && result != "Left" && result != "Up" && result != "Down")
+            {
+                result = get_input();
+            }
+            return result;
+        }
 
-        std::string get_btn(void)
+        // return anything but a direction
+        std::string get_func_btn(void)
+        {
+            std::string result = get_input();
+            while(result == "Right" || result == "Left" || result == "Up" || result == "Down")
+            {
+                result = get_input();
+            }
+            return result;
+        }
+
+        std::string get_input(void)
         {
             // vector of zeros size "size"
             std::vector<char> line(size, 0);
@@ -147,4 +157,6 @@ class Controller
             return decode_bytes(vals);
         }
 
+
 };
+#endif 

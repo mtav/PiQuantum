@@ -21,6 +21,8 @@
 // leds
 #include "interface.hpp"
 
+#include "controller.hpp"
+
 const double PI=4.0*atan(1.0);
 const std::complex<double> I_unit(0.0, 1.0);
 
@@ -268,12 +270,12 @@ class State_vector
             if(qubits[1] -> selected())
             {
                 // mov left
-                move_cursor("left");
+                move_cursor("Left");
                 std::cout << "Moved left" << std::endl;
             }
             if(qubits[3] -> selected())
             {
-                move_cursor("right");
+                move_cursor("Right");
                 std::cout << "Moved right" << std::endl;
             }
         }
@@ -284,13 +286,13 @@ class State_vector
             std::cout << "current pos = " << cursor_pos << ", direction " << direction << std::endl;
             int new_pos = cursor_pos;
 
-            if(direction == "left")
+            if(direction == "Left")
             { 
                 // wrap 0 to num_qubits not -1
                 if(cursor_pos == 0) {new_pos = num_qubits - 1;}
                 else {new_pos = ((cursor_pos - 1) % num_qubits);}
             }
-            else if(direction == "right") { new_pos = ((cursor_pos + 1)%num_qubits);}
+            else if(direction == "Right") { new_pos = ((cursor_pos + 1)%num_qubits);}
 
             move_cursor(new_pos);
         }

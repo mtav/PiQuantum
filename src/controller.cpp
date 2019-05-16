@@ -7,6 +7,7 @@
 
 #include "controller.hpp"
 
+/*
 int main(void)
 {
     std::string path = "/dev/input/js0";
@@ -17,8 +18,9 @@ int main(void)
     while(1)
     {
         // read it 
-        std::cout << controller.get_btn() << std::endl;
+        std::cout << controller.get_input() << std::endl;
     }
 
     return 0;
 }
+*/
