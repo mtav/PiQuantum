@@ -15,7 +15,7 @@ CFLAGS   := -g3 -std=c++14 -O2 -Wall -pthread
 CPPFLAGS := -I. 
 
 LDFLAGS  :=  
-LDLIBS   := -lwiringPi
+LDLIBS   := #-lwiringPi
 
 # ----- Nothing below here needs to be changed
 
