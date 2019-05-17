@@ -88,11 +88,6 @@ class Controller
             return answer;
         }
 
-        std::future<std::string> dir_future;
-        std::future<std::string> btn_future;
-
-        std::string direction;
-        std::string button;
     public:
 
         Controller(std::string path) : loc(path)
@@ -110,21 +105,6 @@ class Controller
         else { std::cout << "read " << loc << std::endl; }
 
     }
-       
-        /*
-        std::string last_direction(void)
-        {
-            direction = dir_future.get();
-
-            return direction;
-        }
-
-        std::string last_btn(void)
-        {
-            return button;
-        }
-        */
-
         // wait specifically for a direction.
         std::string get_direction(void)
         {   
@@ -170,12 +150,13 @@ class Controller
             // for debugging can be commented out 
             for(int i = 0; i < (int)vals.size(); i++)
             {
-                std::cout << vals[i] << " ";
+                // std::cout << vals[i] << " ";
             }
-            std::cout << std::endl;
+            // std::cout << std::endl;
 
             // now use lookup table on the vals vector 
-            return decode_bytes(vals);
+            std::string out = decode_bytes(vals);
+            return out;
         }
 
 

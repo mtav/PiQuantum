@@ -95,28 +95,63 @@ int main(void)
     // Driver for checking display cycling timer
     std::shared_ptr<InputOutput> driver = getInputOutput();
 
-    
-    // controler input in separate thread
-    std::future<std::string> move_curs = std::async(std::launch::async, 
-            &Controller::get_direction, &controller);
-    
+     // controller function button input 
+    std::future<std::string> input = std::async(std::launch::async, 
+            &Controller::get_input, &controller);
     
     // state.set_superpos();
     while(true) 
     {
         // input status
         std::future_status status;
-        status = move_curs.wait_for(std::chrono::nanoseconds(10));
+        status = input.wait_for(std::chrono::nanoseconds(1));
         if (status == std::future_status::ready)
         { 
-            std::string move = move_curs.get();
-            std::cout << move << std::endl;
-            state.move_cursor(move);
-            
+            std::string input_str = input.get();
+            std::cout << "input string is " << input_str << std::endl;
+
+            // check if direction 
+            if(input_str == "Right" 
+                    || input_str == "Left" 
+                    || input_str == "Up" 
+                    || input_str == "Down")
+            {
+                state.move_cursor(input_str);
+            }
+            else // functions 
+            {
+                state.disp();
+
+                std::cout << " function " << input_str << std::endl; 
+                if(input_str == "X")
+                {
+                    state.apply(X);
+                }
+                else if(input_str == "A")
+                {
+                    state.apply(H);
+                }
+                else if(input_str == "Y")
+                {
+                    state.apply(Y);
+                }
+                else if(input_str == "B")
+                {
+                    state.apply(Z);
+                }
+                
+                
+                
+                
+                // end of gates 
+                display_mode = 0;
+                state.disp();
+                std::cout << "\n Pick a gate button " << std::endl;
+            }
             // start async again?
-            move_curs = std::async(std::launch::async, &Controller::get_direction, &controller);
+            input = std::async(std::launch::async, &Controller::get_input, &controller);
         }
-       
+
         state.update_pos();
 
         if(driver -> check_dc_timer(1))
