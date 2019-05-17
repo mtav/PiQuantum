@@ -7,7 +7,7 @@
 
 #include "controller.hpp"
 
-/*
+
 int main(void)
 {
     std::string path = "/dev/input/js0";
@@ -23,4 +23,4 @@ int main(void)
 
     return 0;
 }
-*/
+

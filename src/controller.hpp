@@ -72,7 +72,7 @@ class Controller
                     }
                 }
                 // if -ve left or up
-                else if(values[0] == -128)
+                else if(values[0] == -128 || values[0] == 128)
                 {
                     switch(values[2])
                     {
@@ -149,7 +149,7 @@ class Controller
             // for debugging can be commented out 
             for(int i = 0; i < (int)vals.size(); i++)
             {
-                std::cout << vals[i] << " ";
+               // std::cout << vals[i] << " ";
             }
             std::cout << std::endl;
 
