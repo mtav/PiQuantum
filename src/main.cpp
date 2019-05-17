@@ -52,7 +52,7 @@ int main(void)
     // controller path
     std::string controller_path = "/dev/input/js0";
     // make a controller object 
-     Controller controller(controller_path);
+    Controller controller(controller_path);
 
     // HOW TO USE THE CONTROLLER  
     // use get_input() to get any input or
@@ -95,10 +95,10 @@ int main(void)
     // Driver for checking display cycling timer
     std::shared_ptr<InputOutput> driver = getInputOutput();
 
-     // controller function button input 
+    // controller function button input 
     std::future<std::string> input = std::async(std::launch::async, 
             &Controller::get_input, &controller);
-    
+
     // state.set_superpos();
     while(true) 
     {
@@ -120,8 +120,6 @@ int main(void)
             }
             else // functions 
             {
-                state.disp();
-
                 std::cout << " function " << input_str << std::endl; 
                 if(input_str == "X")
                 {
@@ -139,14 +137,48 @@ int main(void)
                 {
                     state.apply(Z);
                 }
-                
-                
-                
-                
-                // end of gates 
-                display_mode = 0;
-                state.disp();
-                std::cout << "\n Pick a gate button " << std::endl;
+                // two qubit gates
+                else if(input_str == "L_trigger")
+                {
+                    // do CPHASE
+                    int ctrl = state.cursor_pos;
+
+                    state.move_cursor(controller.get_direction());
+                    state.apply(Z, ctrl, state.cursor_pos);
+                }
+                else if(input_str == "R_trigger")
+                {
+                    // do CNOT
+                    int ctrl = state.cursor_pos;
+                    state.move_cursor(controller.get_direction());
+                    state.apply(X, ctrl, state.cursor_pos);
+                }
+
+
+                if(input_str == "Select")
+                {
+                    std::cout << "reset" << std::endl;
+                    state.set_vacuum();
+                    display_mode = 0;
+                    cycle_counter = 0;
+                    state.stop_flash();
+                }
+
+
+                if(input_str == "Start")
+                {
+                    display_mode = (display_mode + 1) % 2;
+                    driver -> reset_dc_timer();
+                    if(display_mode == 0) state.disp();
+                    // TODO!
+                }
+                else if(input_str != "Start")
+                {  // end of gates 
+                    display_mode = 0;
+                    state.disp();
+                    std::cout << "\n Pick a gate button " << std::endl;
+                }
+
             }
             // start async again?
             input = std::async(std::launch::async, &Controller::get_input, &controller);
