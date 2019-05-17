@@ -11,11 +11,11 @@ async_SRC := async.cpp
 
 CC       := g++
 
-CFLAGS   := -g3 -std=c++14 -O2 -Wall -pthread
+CFLAGS   := -g3 -std=c++14 -O2 -Wall -pthread #-flto
 CPPFLAGS := -I. 
 
 LDFLAGS  :=  
-LDLIBS   := #-lwiringPi
+LDLIBS   := -lwiringPi
 
 # ----- Nothing below here needs to be changed
 

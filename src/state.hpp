@@ -283,6 +283,8 @@ class State_vector
 
         void move_cursor(std::string direction)
         {
+            if(direction == "Left" || direction == "Right" || direction == "Up" || direction == "Down")
+            {
             std::cout << "current pos = " << cursor_pos << ", direction " << direction << std::endl;
             int new_pos = cursor_pos;
 
@@ -295,6 +297,8 @@ class State_vector
             else if(direction == "Right") { new_pos = ((cursor_pos + 1)%num_qubits);}
 
             move_cursor(new_pos);
+            }
+            
         }
 
 

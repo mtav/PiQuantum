@@ -16,7 +16,6 @@
 
 int main(void)
 {
-
     /// qubit leds RGB positions
     std::vector<std::vector<Position> > led_pos{ 
         { {0,4}, {0,2}, {0,3} }, 
@@ -53,7 +52,7 @@ int main(void)
     // controller path
     std::string controller_path = "/dev/input/js0";
     // make a controller object 
-    Controller controller(controller_path);
+     Controller controller(controller_path);
 
     // HOW TO USE THE CONTROLLER  
     // use get_input() to get any input or
@@ -96,20 +95,28 @@ int main(void)
     // Driver for checking display cycling timer
     std::shared_ptr<InputOutput> driver = getInputOutput();
 
+    
+    // controler input in separate thread
+    std::future<std::string> move_curs = std::async(std::launch::async, 
+            &Controller::get_direction, &controller);
+    
+    
     // state.set_superpos();
     while(true) 
     {
-        // start async for controller input in different thread.
-        //  std::vector<std::future<std::string> > controller_input;
-
-        // first element is direction
-        //  controller_input.push_back(std::async(std::launch::async, controller.get_direction()));
-        // second element is function button 
-        //   controller_input.push_back(std::async(std::launch::async, controller.get_btn()));
-
-
-
-        // new joystick mode!
+        // input status
+        std::future_status status;
+        status = move_curs.wait_for(std::chrono::nanoseconds(10));
+        if (status == std::future_status::ready)
+        { 
+            std::string move = move_curs.get();
+            std::cout << move << std::endl;
+            state.move_cursor(move);
+            
+            // start async again?
+            move_curs = std::async(std::launch::async, &Controller::get_direction, &controller);
+        }
+       
         state.update_pos();
 
         if(driver -> check_dc_timer(1))

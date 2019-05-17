@@ -25,7 +25,7 @@ class Controller
 
         std::string decode_bytes(const std::vector<int> & values)
         {
-            std::string answer;
+            std::string answer = "NULL";
             // A    0 1 0
             // B    0 1 1
             // X    0 1 2 
@@ -73,7 +73,8 @@ class Controller
                     }
                 }
                 // if -ve left or up
-                else if(values[0] == -128)
+                // the pi has +128 while laptop is -128
+                else if(values[0] == -128 || values[0] == 128)
                 {
                     switch(values[2])
                     {
