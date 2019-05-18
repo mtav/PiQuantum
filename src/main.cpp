@@ -14,6 +14,11 @@
 #include "interface.hpp"
 #include "controller.hpp"
 
+// necessary for 2 state_vectors 
+// OR 2 COntrollers
+void main_loop();
+
+
 int main(void)
 {
     /// qubit leds RGB positions
@@ -99,9 +104,20 @@ int main(void)
     std::future<std::string> input = std::async(std::launch::async, 
             &Controller::get_input, &controller);
 
+    // --------------------------------------------------------------------
+    // for two controllers can have two state vectors and 2 controllers
+
+
     // state.set_superpos();
     while(true) 
     {
+        main_loop();
+    }
+    return 0;
+}
+
+void main_loop()
+{
         // input status
         std::future_status status;
         status = input.wait_for(std::chrono::nanoseconds(1));
@@ -257,8 +273,5 @@ int main(void)
            cycle_counter = 0;
            state.disp();
            }
-
 */
-    }
-    return 0;
 }
