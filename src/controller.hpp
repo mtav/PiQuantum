@@ -14,6 +14,7 @@
 #include <cstring>
 #include <vector>
 
+#include <future> // std::async and std::future
 class Controller
 {
     private:
@@ -24,7 +25,7 @@ class Controller
 
         std::string decode_bytes(const std::vector<int> & values)
         {
-            std::string answer;
+            std::string answer = "NULL";
             // A    0 1 0
             // B    0 1 1
             // X    0 1 2 
@@ -71,7 +72,7 @@ class Controller
                         default : answer = "NULL direction"; break;
                     }
                 }
-                // if -ve left or up
+                // the pi has +128 while laptop is -128
                 else if(values[0] == -128 || values[0] == 128)
                 {
                     switch(values[2])
@@ -103,7 +104,6 @@ class Controller
         else { std::cout << "read " << loc << std::endl; }
 
     }
-       
         // wait specifically for a direction.
         std::string get_direction(void)
         {   
@@ -116,7 +116,7 @@ class Controller
         }
 
         // return anything but a direction
-        std::string get_func_btn(void)
+        std::string get_btn(void)
         {
             std::string result = get_input();
             while(result == "Right" || result == "Left" || result == "Up" || result == "Down")
@@ -149,12 +149,13 @@ class Controller
             // for debugging can be commented out 
             for(int i = 0; i < (int)vals.size(); i++)
             {
-               // std::cout << vals[i] << " ";
+                // std::cout << vals[i] << " ";
             }
-            std::cout << std::endl;
+            // std::cout << std::endl;
 
             // now use lookup table on the vals vector 
-            return decode_bytes(vals);
+            std::string out = decode_bytes(vals);
+            return out;
         }
 
 
