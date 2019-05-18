@@ -93,6 +93,8 @@ int main(void)
     // state should have it so that calling disp auto fixes the cycling off
     int display_mode = 0;
     int cycle_counter = 0;
+    
+
     // MAIN PROGRAM LOOP
     std::cout << "\n Pick a gate button " << std::endl;
 
@@ -111,12 +113,18 @@ int main(void)
     // state.set_superpos();
     while(true) 
     {
-        main_loop();
+        // part one should run in separate thread to part 2
+        // thread 1
+        main_loop(state1, controller1, input1);
+
+        // @TODO
+        // thread 2
+        // main_loop(state2, controller2, input2);
     }
     return 0;
 }
 
-void main_loop()
+void main_loop(std::future<std::string> & input, State_vector & state, Controller & controller)
 {
         // input status
         std::future_status status;
