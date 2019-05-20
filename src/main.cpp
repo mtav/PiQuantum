@@ -16,8 +16,10 @@
 
 // necessary for 2 state_vectors 
 // OR 2 COntrollers
-void main_loop();
-
+void main_loop(std::future<std::string> & input, State_vector & state, 
+        Controller & controller, int display_mode, int cycle_counter,  
+        std::vector<Operator*> & Operators, std::vector<std::shared_ptr<Button> > & func_btns,
+        std::shared_ptr<InputOutput> & driver);
 
 int main(void)
 {
@@ -57,7 +59,7 @@ int main(void)
     // controller path
     std::string controller_path = "/dev/input/js0";
     // make a controller object 
-    Controller controller(controller_path);
+    Controller controller1(controller_path);
 
     // HOW TO USE THE CONTROLLER  
     // use get_input() to get any input or
@@ -87,7 +89,7 @@ int main(void)
     int num_qubits = 4;
 
     // make a state vector which takes number of qubits, and qubit leds, qubit btns
-    State_vector state(num_qubits, led_pos, qubit_btn_pos);
+    State_vector state1(num_qubits, led_pos, qubit_btn_pos);
 
     // fix this so that main doesn't need to have the display mode var
     // state should have it so that calling disp auto fixes the cycling off
@@ -103,8 +105,8 @@ int main(void)
     std::shared_ptr<InputOutput> driver = getInputOutput();
 
     // controller function button input 
-    std::future<std::string> input = std::async(std::launch::async, 
-            &Controller::get_input, &controller);
+    std::future<std::string> input1 = std::async(std::launch::async, 
+            &Controller::get_input, &controller1);
 
     // --------------------------------------------------------------------
     // for two controllers can have two state vectors and 2 controllers
@@ -115,7 +117,8 @@ int main(void)
     {
         // part one should run in separate thread to part 2
         // thread 1
-        main_loop(state1, controller1, input1);
+        main_loop(input1, state1, controller1, display_mode, cycle_counter, Operators,
+                func_btns, driver);
 
         // @TODO
         // thread 2
@@ -124,7 +127,10 @@ int main(void)
     return 0;
 }
 
-void main_loop(std::future<std::string> & input, State_vector & state, Controller & controller)
+void main_loop(std::future<std::string> & input, State_vector & state, 
+        Controller & controller, int display_mode, int cycle_counter,  
+        std::vector<Operator*> & Operators, std::vector<std::shared_ptr<Button> > & func_btns,
+        std::shared_ptr<InputOutput> & driver) 
 {
         // input status
         std::future_status status;
@@ -147,19 +153,19 @@ void main_loop(std::future<std::string> & input, State_vector & state, Controlle
                 std::cout << " function " << input_str << std::endl; 
                 if(input_str == "X")
                 {
-                    state.apply(X);
+                    state.apply(*Operators[0]);
                 }
                 else if(input_str == "A")
                 {
-                    state.apply(H);
+                    state.apply(*Operators[1]);
                 }
                 else if(input_str == "Y")
                 {
-                    state.apply(Y);
+                    state.apply(*Operators[2]);
                 }
                 else if(input_str == "B")
                 {
-                    state.apply(Z);
+                    state.apply(*Operators[3]);
                 }
                 // two qubit gates
                 else if(input_str == "L_trigger")
@@ -168,14 +174,14 @@ void main_loop(std::future<std::string> & input, State_vector & state, Controlle
                     int ctrl = state.cursor_pos;
 
                     state.move_cursor(controller.get_direction());
-                    state.apply(Z, ctrl, state.cursor_pos);
+                    state.apply(*Operators[3], ctrl, state.cursor_pos);
                 }
                 else if(input_str == "R_trigger")
                 {
                     // do CNOT
                     int ctrl = state.cursor_pos;
                     state.move_cursor(controller.get_direction());
-                    state.apply(X, ctrl, state.cursor_pos);
+                    state.apply(*Operators[0], ctrl, state.cursor_pos);
                 }
 
 
