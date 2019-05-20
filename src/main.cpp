@@ -9,8 +9,6 @@
  */
 #include <iostream>
 #include <future>   // for std::async, std::future
-#include <thread>
-#include <functional> // for std::ref for async
 
 #include "state.hpp"
 #include "interface.hpp"
@@ -20,6 +18,7 @@
 
 // necessary for 2 state_vectors 
 // OR 2 COntrollers
+// sorry 
 int main_loop(std::string controller_path, int num_qubits,
         std::vector<std::vector<Position> > led_pos,
         std::vector<Position> qubit_btn_pos,
@@ -58,13 +57,11 @@ int main(void)
             {0,0}, {0,0}, {0,0}, {0,0},
             {0,0}, {0,0}, {0,0}, {0,0} };
 
-    // function buttons 
-    // e.g gates 
+    // function buttons // e.g gates 
     std::vector<Position> func_btn_pos{ {1,0}, {1,3}, {0,1}, {0,0} };
 
     // make function buttons 
     std::vector<std::shared_ptr<Button> > func_btns;
-
     for(int i = 0; i < (int)func_btn_pos.size(); i++)
     {
         func_btns.push_back(std::make_shared<Button>(func_btn_pos[i]));
@@ -82,30 +79,27 @@ int main(void)
     // func_btns[3] is a modifier - lets you do control gates if you hold it and press a
     // gate button at the same time.
 
-    // THE BEST TIMER KNOWN TO MAN
+    // THE BEST TIMER KNOWN TO MAN -- Possibly causing memory bad allocs. @TODO check 
     // Driver for checking display cycling timer
     std::shared_ptr<InputOutput> driver = getInputOutput();
-
-
-    // HOW TO USE THE CONTROLLER  
-    // use get_input() to get any input or
-    // get_btn() to get a function button 
-    // get_direction() to get a direction 
 
     // ------------------------------- Player 1 ----------------------------------
     int num_qubits_p1 = 2; // change me 
 
-    // Player 1
-    std::string controller1_path = "/dev/input/js0";
+    // Player 1  
+    std::string controller1_path = "/dev/input/js0"; // might not always be this 
 
-    // led pos 
+    // led pos, take the first num_qubits_p1 of the led vector ^^ 
     std::vector<std::vector<Position> > led_pos1 = 
         std::vector<std::vector<Position> >(led_pos.begin() , led_pos.begin() + num_qubits_p1);
-    // btns 
+
+    // btns, take the first num_qubits_p2 of the qubit btn vector ^^ 
     std::vector<Position> qubit_btn_pos1 = std::vector<Position>(qubit_btn_pos.begin(),
             qubit_btn_pos.begin() + num_qubits_p1);
 
-    // start them in their threads 
+    // start Player 1 in their own thread. This function should never return.
+    // Thread runs until the end of the universe
+    // If it returns there is a major problem.
     std::future<int> player1 = std::async(std::launch::async, main_loop,
             controller1_path, num_qubits_p1, led_pos1, qubit_btn_pos1,
             Operators, func_btns, driver);
@@ -114,32 +108,44 @@ int main(void)
     int num_qubits_p2 = 2;  // change me
 
     // Player 2
-    std::string controller2_path = "/dev/input/js1";
+    std::string controller2_path = "/dev/input/js1"; // might not always be this location
 
-    // led pos 
-    // offset is player 1's qubits to player 1 + player 2 qubits
+    // led pos, offset is player 1's qubits to player 1 + player 2 qubits ^^
     std::vector<std::vector<Position> > led_pos2 = 
         std::vector<std::vector<Position> >(led_pos.begin() + num_qubits_p1, 
                 led_pos.begin() + num_qubits_p1 + num_qubits_p2);
-    // btns 
+
+    // btns, offset is player 1's qubits to player 1 + player 2's qubits ^^ 
     std::vector<Position> qubit_btn_pos2 = 
         std::vector<Position>(qubit_btn_pos.begin() + num_qubits_p1,
                 qubit_btn_pos.begin() + num_qubits_p1 + num_qubits_p2);
 
-    // fix this so that main doesn't need to have the display mode var
-    // state should have it so that calling disp auto fixes the cycling off
-
+    // start Player 2 in their own thread. This function should never return.
+    // Thread runs until the end of the universe
+    // If it returns there is a major problem.
     std::future<int> player2 = std::async(std::launch::async, main_loop,
             controller2_path, num_qubits_p2, led_pos2, qubit_btn_pos2,
             Operators, func_btns, driver);
 
+    // fix this so that main doesn't need to have the display mode var
+    // state should have it so that calling disp auto fixes the cycling off
     for(ever)  // better than while(1)
     {
     }
+    
+    // could also do 
+    // player1.get();
+    // player2.get();
+    // ... but that is not as fun
 
     return 0;
-} // end of main 
+} // end of main ----------------- Wooo!  
 
+
+// masterful -do everything function- 
+// should be run from main in a separate thread. 
+// @TODO fix passing the driver used for the common timer. might be causing memory
+// crashes
 int main_loop(std::string controller_path, int num_qubits,
         std::vector<std::vector<Position> > led_pos,
         std::vector<Position> qubit_btn_pos,
@@ -147,29 +153,33 @@ int main_loop(std::string controller_path, int num_qubits,
         std::vector<std::shared_ptr<Button> > func_btns,
         std::shared_ptr<InputOutput> driver) 
 {
-    //
     // make a controller object 
     Controller controller(controller_path);
 
+    // make a state vector for all display and qubit stuff
     State_vector state(num_qubits, led_pos, qubit_btn_pos);
+
     std::cout << " made state vector" << std::endl;
 
+    // start thread for polling the controller for input
     std::future<std::string> input = std::async(std::launch::async, 
             &Controller::get_input, &controller);
 
-    std::cout << " Started input thread" << std::endl;
+    static int thread_count = 0;
+    std::cout << " Started input thread " << ++thread_count <<  std::endl;
 
+    // display modes 
     int display_mode = 0;
     int cycle_counter = 0;
 
+    // input status, out of loop to avoid reallocating mem
+    std::future_status controller_status;
+
     for(ever)
     {
-
-        // input status
-        std::future_status status;
-        status = input.wait_for(std::chrono::nanoseconds(1));
-        // std::cout << "waiting for input " << std::endl;
-        if (status == std::future_status::ready)
+        // check if the controller input has changed 
+        controller_status = input.wait_for(std::chrono::nanoseconds(1));
+        if (controller_status == std::future_status::ready)
         { 
             std::string input_str = input.get();
             std::cout << "input string is " << input_str << std::endl;
@@ -182,7 +192,7 @@ int main_loop(std::string controller_path, int num_qubits,
             {
                 state.move_cursor(input_str);
             }
-            else // functions 
+            else // functions e.g. gates 
             {
                 std::cout << " function " << input_str << std::endl; 
                 if(input_str == "X")
@@ -202,6 +212,8 @@ int main_loop(std::string controller_path, int num_qubits,
                     state.apply(*Operators[3]);
                 }
                 // two qubit gates
+                // @TODO these block atm, but hopefully only their respective 
+                // players threads, maybe ok.
                 else if(input_str == "L_trigger")
                 {
                     // do CPHASE
@@ -231,29 +243,33 @@ int main_loop(std::string controller_path, int num_qubits,
                 {
                     std::cout << "display mode " << std::endl;
                     display_mode = (display_mode + 1) % 2;
+                    // @TODO this, not sure about it 
                     // driver -> reset_dc_timer();
                     if(display_mode == 0) state.disp();
-                    // TODO!
                 }
                 else if(input_str != "Start")
                 {  // end of gates 
+                    // @TODO // currently NULL input will reset the display mode
                     std::cout << "null input here?" << std::endl;
                     display_mode = 0;
                     state.disp();
                     std::cout << "\n Pick a gate button " << std::endl;
                 }
-
             }
-            // start async again?
+            // start async again for controller input
             input = std::async(std::launch::async, &Controller::get_input, &controller);
         }
-        else if(status == std::future_status::timeout)
+        else if(controller_status == std::future_status::timeout)
         {
             // std::cout << "input timedout" << std::endl;
         }
 
+        // outdated, only used for physical buttons on pcb
         state.update_pos();
 
+        // for display cycling, check if the flash timer is triggered 
+        // probably a memory problem with threading. Should investigate 
+        // @TODO Fix this 
         if(driver -> check_dc_timer(1))
         {
             if(display_mode == 0) { state.flash(); }
