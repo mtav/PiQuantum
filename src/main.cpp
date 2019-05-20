@@ -17,9 +17,9 @@
 // necessary for 2 state_vectors 
 // OR 2 COntrollers
 void main_loop(std::future<std::string> & input, State_vector & state, 
-        Controller & controller, int display_mode, int cycle_counter,  
-        std::vector<Operator*> & Operators, std::vector<std::shared_ptr<Button> > & func_btns,
-        std::shared_ptr<InputOutput> & driver);
+        Controller & controller, std::vector<Operator*> & Operators, 
+        std::vector<std::shared_ptr<Button> > & func_btns,
+        std::shared_ptr<InputOutput> & driver, int & display_mode, int & cycle_counter);
 
 int main(void)
 {
@@ -92,35 +92,41 @@ int main(void)
     // func_btns[3] is a modifier - lets you do control gates if you hold it and press a
     // gate button at the same time.
 
-    int num_qubits = 2;
+    int num_qubits_p1 = 2;
 
     // led pos 
     std::vector<std::vector<Position> > led_pos1 = 
-        std::vector<std::vector<Position> >(led_pos.begin() , led_pos.begin() + 2);
+        std::vector<std::vector<Position> >(led_pos.begin() , led_pos.begin() + num_qubits_p1);
     // btns 
     std::vector<Position> qubit_btn_pos1 = std::vector<Position>(qubit_btn_pos.begin(),
-            qubit_btn_pos.begin() + 2);
+            qubit_btn_pos.begin() + num_qubits_p1);
 
      // make a state vector which takes number of qubits, and qubit leds, qubit btns
-    State_vector state1(num_qubits, led_pos1, qubit_btn_pos1);
+    State_vector state1(num_qubits_p1, led_pos1, qubit_btn_pos1);
 
     std::cout << " Made state_vector for player 1 " << std::endl;
+
     // player 2 
+    int num_qubits_p2 = 2;
     // led pos 
+    // offset is player 1's qubits to player 1 + player 2 qubits
     std::vector<std::vector<Position> > led_pos2 = 
-        std::vector<std::vector<Position> >(led_pos.begin() + 2, led_pos.begin() + 4);
+        std::vector<std::vector<Position> >(led_pos.begin() + num_qubits_p1, 
+                led_pos.begin() + num_qubits_p1 + num_qubits_p2);
     // btns 
-    std::vector<Position> qubit_btn_pos2 = std::vector<Position>(qubit_btn_pos.begin() + 2,
-            qubit_btn_pos.begin() + 4);
+    std::vector<Position> qubit_btn_pos2 = 
+        std::vector<Position>(qubit_btn_pos.begin() + num_qubits_p1,
+            qubit_btn_pos.begin() + num_qubits_p1 + num_qubits_p2);
     
-     State_vector state2(num_qubits, led_pos2, qubit_btn_pos2);
+     State_vector state2(num_qubits_p2, led_pos2, qubit_btn_pos2);
+
+    std::cout << " Made state_vector for player 2 " << std::endl;
 
     // fix this so that main doesn't need to have the display mode var
     // state should have it so that calling disp auto fixes the cycling off
-    int display_mode = 0;
-    int cycle_counter = 0;
+    int display_mode_p1, display_mode_p2 = 0;
+    int cycle_counter_p1, cycle_counter_p2 = 0;
     
-
     // THE BEST TIMER KNOWN TO MAN
     // Driver for checking display cycling timer
     std::shared_ptr<InputOutput> driver = getInputOutput();
@@ -128,7 +134,7 @@ int main(void)
     // controller function button input 
     std::future<std::string> input1 = std::async(std::launch::async, 
             &Controller::get_input, &controller1);
-    //
+
     // controller function button input 
      std::future<std::string> input2 = std::async(std::launch::async, 
             &Controller::get_input, &controller2);
@@ -143,11 +149,11 @@ int main(void)
     {
         // part one should run in separate thread to part 2
         // thread 1
-        main_loop(input1, state1, controller1, display_mode, cycle_counter, Operators,
-                func_btns, driver);
+        main_loop(input1, state1, controller1, Operators, func_btns, driver,
+                display_mode_p1, cycle_counter_p1);
 
-        main_loop(input2, state2, controller2, display_mode, cycle_counter, Operators,
-                func_btns, driver);
+        main_loop(input2, state2, controller2, Operators, func_btns, driver,
+                display_mode_p2, cycle_counter_p2);
 
         // std::cout << "exit main loop" << std::endl;
         // @TODO
@@ -158,9 +164,9 @@ int main(void)
 }
 
 void main_loop(std::future<std::string> & input, State_vector & state, 
-        Controller & controller, int display_mode, int cycle_counter,  
-        std::vector<Operator*> & Operators, std::vector<std::shared_ptr<Button> > & func_btns,
-        std::shared_ptr<InputOutput> & driver) 
+        Controller & controller, std::vector<Operator*> & Operators, 
+        std::vector<std::shared_ptr<Button> > & func_btns,
+        std::shared_ptr<InputOutput> & driver, int & display_mode, int & cycle_counter) 
 {
         // input status
         std::future_status status;
@@ -227,8 +233,9 @@ void main_loop(std::future<std::string> & input, State_vector & state,
 
                 if(input_str == "Start")
                 {
+                    std::cout << "display mode " << std::endl;
                     display_mode = (display_mode + 1) % 2;
-                    driver -> reset_dc_timer();
+                    // driver -> reset_dc_timer();
                     if(display_mode == 0) state.disp();
                     // TODO!
                 }
