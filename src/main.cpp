@@ -10,6 +10,7 @@
 #include <iostream>
 #include <future>   // for std::async, std::future
 #include <thread>
+#include <functional> // for std::ref for async
 
 #include "state.hpp"
 #include "interface.hpp"
@@ -19,10 +20,12 @@
 
 // necessary for 2 state_vectors 
 // OR 2 COntrollers
-int main_loop(std::future<std::string> & input, State_vector & state, 
-        Controller & controller, std::vector<Operator*> & Operators, 
-        std::vector<std::shared_ptr<Button> > & func_btns,
-        std::shared_ptr<InputOutput> & driver, int & display_mode, int & cycle_counter);
+int main_loop(std::string controller_path, int num_qubits,
+        std::vector<std::vector<Position> > led_pos,
+        std::vector<Position> qubit_btn_pos,
+        std::vector<Operator*> Operators, 
+        std::vector<std::shared_ptr<Button> > func_btns,
+        std::shared_ptr<InputOutput> driver);
 
 int main(void)
 {
@@ -79,15 +82,9 @@ int main(void)
     // func_btns[3] is a modifier - lets you do control gates if you hold it and press a
     // gate button at the same time.
 
-    // Player 1
-    // controller path
-    std::string controller1_path = "/dev/input/js0";
-    // make a controller object 
-    Controller controller1(controller1_path);
-
-    // Player 2
-    std::string controller2_path = "/dev/input/js1";
-    Controller controller2(controller2_path);
+    // THE BEST TIMER KNOWN TO MAN
+    // Driver for checking display cycling timer
+    std::shared_ptr<InputOutput> driver = getInputOutput();
 
 
     // HOW TO USE THE CONTROLLER  
@@ -97,8 +94,9 @@ int main(void)
 
     // ------------------------------- Player 1 ----------------------------------
     int num_qubits_p1 = 2; // change me 
-    int display_mode_p1 = 0;
-    int cycle_counter_p1 = 0;
+
+    // Player 1
+    std::string controller1_path = "/dev/input/js0";
 
     // led pos 
     std::vector<std::vector<Position> > led_pos1 = 
@@ -107,20 +105,17 @@ int main(void)
     std::vector<Position> qubit_btn_pos1 = std::vector<Position>(qubit_btn_pos.begin(),
             qubit_btn_pos.begin() + num_qubits_p1);
 
-    // make a state vector which takes number of qubits, and qubit leds, qubit btns
-    State_vector state1(num_qubits_p1, led_pos1, qubit_btn_pos1);
-
-    
-    // controller function button input 
-    std::future<std::string> input1 = std::async(std::launch::async, 
-            &Controller::get_input, &controller1);
-
-    std::cout << " Made state_vector for player 1 " << std::endl;
+    // start them in their threads 
+    std::future<int> player1 = std::async(std::launch::async, main_loop,
+            controller1_path, num_qubits_p1, led_pos1, qubit_btn_pos1,
+            Operators, func_btns, driver);
 
     // --------------------------- player 2 -------------------------------------
     int num_qubits_p2 = 2;  // change me
-    int display_mode_p2 = 0;
-    int cycle_counter_p2 = 0;
+
+    // Player 2
+    std::string controller2_path = "/dev/input/js1";
+
     // led pos 
     // offset is player 1's qubits to player 1 + player 2 qubits
     std::vector<std::vector<Position> > led_pos2 = 
@@ -131,229 +126,208 @@ int main(void)
         std::vector<Position>(qubit_btn_pos.begin() + num_qubits_p1,
                 qubit_btn_pos.begin() + num_qubits_p1 + num_qubits_p2);
 
-    State_vector state2(num_qubits_p2, led_pos2, qubit_btn_pos2);
-
-    // controller function button input 
-    std::future<std::string> input2 = std::async(std::launch::async, 
-            &Controller::get_input, &controller2);
-
-    std::cout << " Made state_vector for player 2 " << std::endl;
-
     // fix this so that main doesn't need to have the display mode var
     // state should have it so that calling disp auto fixes the cycling off
 
-    // THE BEST TIMER KNOWN TO MAN
-    // Driver for checking display cycling timer
-    std::shared_ptr<InputOutput> driver = getInputOutput();
+    std::future<int> player2 = std::async(std::launch::async, main_loop,
+            controller2_path, num_qubits_p2, led_pos2, qubit_btn_pos2,
+            Operators, func_btns, driver);
 
-  // start them in their threads 
-
-    
-  
-//    std::future<int> player1 = std::async(std::launch::async, main_loop,
- //           state1, controller1, Operators, func_btns,
-  //          driver, display_mode_p1, cycle_counter_p1);
-
-  /* 
-    std::thread player1(main_loop, state1, controller1, Operators, func_btns,
-            driver, display_mode_p1, cycle_counter_p1);
-
-    std::thread player2(main_loop, state2, controller2, Operators, func_btns,
-            driver, display_mode_p2, cycle_counter_p2);
-
-    player1.join();
-    player2.join();
-*/
-    
     for(ever)  // better than while(1)
     {
-        // part one should run in separate thread to part 2
-        // thread 1
-        main_loop(input1, state1, controller1, Operators, func_btns, driver,
-                display_mode_p1, cycle_counter_p1);
-
-        // @TODO
-        // thread 2
-        main_loop(input2, state2, controller2, Operators, func_btns, driver,
-                display_mode_p2, cycle_counter_p2);
-
-        // std::cout << "exit main loop" << std::endl;
     }
-
 
     return 0;
-}
+} // end of main 
 
-int main_loop(std::future<std::string> & input, State_vector & state, 
-        Controller & controller, std::vector<Operator*> & Operators, 
-        std::vector<std::shared_ptr<Button> > & func_btns,
-        std::shared_ptr<InputOutput> & driver, int & display_mode, int & cycle_counter) 
+int main_loop(std::string controller_path, int num_qubits,
+        std::vector<std::vector<Position> > led_pos,
+        std::vector<Position> qubit_btn_pos,
+        std::vector<Operator*> Operators, 
+        std::vector<std::shared_ptr<Button> > func_btns,
+        std::shared_ptr<InputOutput> driver) 
 {
+    //
+    // make a controller object 
+    Controller controller(controller_path);
 
-  //  for(ever)
-  //  {
+    State_vector state(num_qubits, led_pos, qubit_btn_pos);
+    std::cout << " made state vector" << std::endl;
 
-    // input status
-    std::future_status status;
-    status = input.wait_for(std::chrono::nanoseconds(1));
-    if (status == std::future_status::ready)
-    { 
-        std::string input_str = input.get();
-        std::cout << "input string is " << input_str << std::endl;
+    std::future<std::string> input = std::async(std::launch::async, 
+            &Controller::get_input, &controller);
 
-        // check if direction 
-        if(input_str == "Right" 
-                || input_str == "Left" 
-                || input_str == "Up" 
-                || input_str == "Down")
-        {
-            state.move_cursor(input_str);
-        }
-        else // functions 
-        {
-            std::cout << " function " << input_str << std::endl; 
-            if(input_str == "X")
-            {
-                state.apply(*Operators[0]);
-            }
-            else if(input_str == "A")
-            {
-                state.apply(*Operators[1]);
-            }
-            else if(input_str == "Y")
-            {
-                state.apply(*Operators[2]);
-            }
-            else if(input_str == "B")
-            {
-                state.apply(*Operators[3]);
-            }
-            // two qubit gates
-            else if(input_str == "L_trigger")
-            {
-                // do CPHASE
-                int ctrl = state.cursor_pos;
+    std::cout << " Started input thread" << std::endl;
 
-                state.move_cursor(controller.get_direction());
-                state.apply(*Operators[3], ctrl, state.cursor_pos);
-            }
-            else if(input_str == "R_trigger")
-            {
-                // do CNOT
-                int ctrl = state.cursor_pos;
-                state.move_cursor(controller.get_direction());
-                state.apply(*Operators[0], ctrl, state.cursor_pos);
-            }
+    int display_mode = 0;
+    int cycle_counter = 0;
 
-
-            if(input_str == "Select")
-            {
-                std::cout << "reset" << std::endl;
-                state.set_vacuum();
-                display_mode = 0;
-                cycle_counter = 0;
-                state.stop_flash();
-            }
-
-
-            if(input_str == "Start")
-            {
-                std::cout << "display mode " << std::endl;
-                display_mode = (display_mode + 1) % 2;
-                // driver -> reset_dc_timer();
-                if(display_mode == 0) state.disp();
-                // TODO!
-            }
-            else if(input_str != "Start")
-            {  // end of gates 
-                std::cout << "null input here?" << std::endl;
-                display_mode = 0;
-                state.disp();
-                std::cout << "\n Pick a gate button " << std::endl;
-            }
-
-        }
-        // start async again?
-        input = std::async(std::launch::async, &Controller::get_input, &controller);
-    }
-
-
-    state.update_pos();
-
-    if(driver -> check_dc_timer(1))
+    for(ever)
     {
-        if(display_mode == 0) { state.flash(); }
-        // if in cycle mode check for all other 
-        else if(display_mode == 1 && driver -> check_dc_timer(0))
+
+        // input status
+        std::future_status status;
+        status = input.wait_for(std::chrono::nanoseconds(1));
+        // std::cout << "waiting for input " << std::endl;
+        if (status == std::future_status::ready)
+        { 
+            std::string input_str = input.get();
+            std::cout << "input string is " << input_str << std::endl;
+
+            // check if direction 
+            if(input_str == "Right" 
+                    || input_str == "Left" 
+                    || input_str == "Up" 
+                    || input_str == "Down")
+            {
+                state.move_cursor(input_str);
+            }
+            else // functions 
+            {
+                std::cout << " function " << input_str << std::endl; 
+                if(input_str == "X")
+                {
+                    state.apply(*Operators[0]);
+                }
+                else if(input_str == "A")
+                {
+                    state.apply(*Operators[1]);
+                }
+                else if(input_str == "Y")
+                {
+                    state.apply(*Operators[2]);
+                }
+                else if(input_str == "B")
+                {
+                    state.apply(*Operators[3]);
+                }
+                // two qubit gates
+                else if(input_str == "L_trigger")
+                {
+                    // do CPHASE
+                    int ctrl = state.cursor_pos;
+
+                    state.move_cursor(controller.get_direction());
+                    state.apply(*Operators[3], ctrl, state.cursor_pos);
+                }
+                else if(input_str == "R_trigger")
+                {
+                    // do CNOT
+                    int ctrl = state.cursor_pos;
+                    state.move_cursor(controller.get_direction());
+                    state.apply(*Operators[0], ctrl, state.cursor_pos);
+                }
+
+                if(input_str == "Select")
+                {
+                    std::cout << "reset" << std::endl;
+                    state.set_vacuum();
+                    display_mode = 0;
+                    cycle_counter = 0;
+                    state.stop_flash();
+                }
+
+                if(input_str == "Start")
+                {
+                    std::cout << "display mode " << std::endl;
+                    display_mode = (display_mode + 1) % 2;
+                    // driver -> reset_dc_timer();
+                    if(display_mode == 0) state.disp();
+                    // TODO!
+                }
+                else if(input_str != "Start")
+                {  // end of gates 
+                    std::cout << "null input here?" << std::endl;
+                    display_mode = 0;
+                    state.disp();
+                    std::cout << "\n Pick a gate button " << std::endl;
+                }
+
+            }
+            // start async again?
+            input = std::async(std::launch::async, &Controller::get_input, &controller);
+        }
+        else if(status == std::future_status::timeout)
         {
-            cycle_counter = state.disp_cycle(cycle_counter);
-            std::cout << "Showing state " << cycle_counter << std::endl;
+            // std::cout << "input timedout" << std::endl;
+        }
+
+        state.update_pos();
+
+        if(driver -> check_dc_timer(1))
+        {
+            if(display_mode == 0) { state.flash(); }
+            // if in cycle mode check for all other 
+            else if(display_mode == 1 && driver -> check_dc_timer(0))
+            {
+                cycle_counter = state.disp_cycle(cycle_counter);
+                std::cout << "Showing state " << cycle_counter << std::endl;
+            }
         }
     }
-
 
     //} // end of forever
-    /*
-    // quantum game, split into two two-qubit states.
-    // do random unitaries on the goal half
-    // let the user perform gates on the interactive half to get the goal state.
+/*
+// quantum game, split into two two-qubit states.
+// do random unitaries on the goal half
+// let the user perform gates on the interactive half to get the goal state.
 
-    // if qubit 0&3 simulatenously reset.
-    if(state.qubits[0] -> selected() && state.qubits[3] -> selected())
-    {
-    std::cout << "reset" << std::endl;
-    state.set_vacuum();
-    display_mode = 0;
-    cycle_counter = 0;
-    state.stop_flash();
-    }
+// if qubit 0&3 simulatenously reset.
+if(state.qubits[0] -> selected() && state.qubits[3] -> selected())
+{
+std::cout << "reset" << std::endl;
+state.set_vacuum();
+display_mode = 0;
+cycle_counter = 0;
+state.stop_flash();
+}
 
-    // loop all operators
-    for(int i = 0; i < (long int)Operators.size(); i++)
-    {
-    if(Operators[i] -> selected()) 
-    {
-    state.disp();
-    // if 0 do single qubit gate
-    if(func_btns[3] -> get_state() == 0)
-    {
-    std::cout << " Single qubit gate " << std::endl;
-    state.apply(*Operators[i]);
-    }
-    else // do control gate
-    {
-    std::cout << "Two qubit gate " << std::endl;
-    state.apply(*Operators[i], "controlled");
-    }
+// loop all operators
+for(int i = 0; i < (long int)Operators.size(); i++)
+{
+if(Operators[i] -> selected()) 
+{
+state.disp();
+// if 0 do single qubit gate
+if(func_btns[3] -> get_state() == 0)
+{
+std::cout << " Single qubit gate " << std::endl;
+state.apply(*Operators[i]);
+}
+else // do control gate
+{
+std::cout << "Two qubit gate " << std::endl;
+state.apply(*Operators[i], "controlled");
+}
 
-    display_mode = 0;
-    state.disp();
-    std::cout << "\n Pick a gate button " << std::endl;
-    }
-    }
-    // if 2&3 simultaneously do cycling display
-    //        if(state.qubits[2] -> selected() && state.qubits[3] -> selected())
-    if(func_btns[3] -> get_state())
-    {
-    if(state.qubits[2] -> selected())
-    {
-    display_mode = (display_mode + 1) % 2;
-    driver -> reset_dc_timer();
-    if(display_mode == 0) state.disp();
-    // TODO!
-    }
-    }
+display_mode = 0;
+state.disp();
+std::cout << "\n Pick a gate button " << std::endl;
+}
+}
+// if 2&3 simultaneously do cycling display
+//        if(state.qubits[2] -> selected() && state.qubits[3] -> selected())
+if(func_btns[3] -> get_state())
+{
+if(state.qubits[2] -> selected())
+{
+display_mode = (display_mode + 1) % 2;
+driver -> reset_dc_timer();
+if(display_mode == 0) state.disp();
+// TODO!
+}
+}
 
 */
-    /*
-       if(state.qubits[0] -> selected() && state.qubits[1] -> selected())
-       {
-       std::cout << "MEASURE THE STATE!!!" << std::endl;
-       state.measure();
-       display_mode = 0;
-       cycle_counter = 0;
-       state.disp();
-       }
-       */
-    return 0;
+/*
+   if(state.qubits[0] -> selected() && state.qubits[1] -> selected())
+   {
+   std::cout << "MEASURE THE STATE!!!" << std::endl;
+   state.measure();
+   display_mode = 0;
+   cycle_counter = 0;
+   state.disp();
+   }
+   */
+return 0;
 }
