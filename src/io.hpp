@@ -34,7 +34,7 @@ class Alarm
         WiringPi wpi; // Constructor ensures that wiringPi is setup
         static Alarm * alrm; // A pointer to an alarm class
         static void handler(int sig);  
-        virtual void interrupt() = 0;   // Set the function called by the alarm 
+        virtual void interrupt(void) = 0;   // Set the function called by the alarm 
         void set_pointer(Alarm * ptr) { alrm = ptr; } // Set up pointer to alarm object
 
     public:
@@ -79,7 +79,8 @@ std::shared_ptr<class InputOutput> getInputOutput();
  * when Led and Button objects are instantiated.
  *
  */
-class InputOutput : public Alarm {
+class InputOutput : public Alarm 
+{
     private:
 
         WiringPi wpi; // Constructing this object ensures wiringPi is setup
@@ -91,7 +92,6 @@ class InputOutput : public Alarm {
         double counter; // To avoid integer division in func()
         std::vector<unsigned char> write; // Data to write to chips
         std::vector<unsigned char> mask; // Enable or disable LED lines 
-
 
         // This section is for timing the display cycling. The counter is used to
         // get a slower clock rate from the regular interrup.
@@ -111,7 +111,7 @@ class InputOutput : public Alarm {
          * LEDs are switches back on.
          *
          */
-        void interrupt();
+        void interrupt(void);
 
     public:
 
@@ -119,7 +119,7 @@ class InputOutput : public Alarm {
         InputOutput(std::shared_ptr<SpiChannel> spi);
 
         // Print the registered LEDs
-        void print();
+        void print(void);
 
         /** 
          * @brief Send data to the LEDs 
@@ -198,7 +198,8 @@ class InputOutput : public Alarm {
  * a particular LED or button.
  *
  */
-typedef struct {
+typedef struct 
+{
     int chip;
     int line;
 } Position;

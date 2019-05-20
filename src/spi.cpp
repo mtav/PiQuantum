@@ -19,7 +19,7 @@
  * retain their value between function calls.   
  *
  */
-std::shared_ptr<SpiChannel> getSpiChannel()
+std::shared_ptr<SpiChannel> getSpiChannel(void)
 {
     // Variables to store the SpiChannels for channel
     // zero and 1. Initialisation takes place the first time
@@ -36,11 +36,11 @@ std::shared_ptr<SpiChannel> getSpiChannel()
 }
 
 // @todo check max/good freq for spi
-SpiChannel::SpiChannel() : channel(0), frequency(500000)
+SpiChannel::SpiChannel(void) : channel(0), frequency(500000)
 {
     // Set up SPI channel
     int result = wiringPiSPISetup(channel, frequency);
-    if(result == -1) std::cerr << strerror(errno) << std::endl;
+    if(result == -1) { std::cerr << strerror(errno) << std::endl; }
 }
 
 // Change frequency in Hz
@@ -51,8 +51,7 @@ void SpiChannel::change_frequency(int freq_hz)
 
     // Reset the SPI channel
     int result = wiringPiSPISetup(channel, frequency);
-    if(result == -1) std::cerr << strerror(errno) << std::endl;
-
+    if(result == -1) { std::cerr << strerror(errno) << std::endl; }
 }
 
 /** 
@@ -72,7 +71,7 @@ std::vector<byte> SpiChannel::read_write(const std::vector<byte> & write)
 
     // Send the data
     int result = wiringPiSPIDataRW(channel, &buffer[0], len);
-    if(result != len) std::cerr << "SPI Error: wrong amount of data sent" << std::endl;
+    if(result != len) { std::cerr << "SPI Error: wrong amount of data sent" << std::endl; }
 
     // Buffer now contains data read from SPI
     return buffer;
@@ -99,7 +98,4 @@ std::vector<byte> SpiChannel::read(int num_bytes)
  * spi device. Data is returned as a standard vector.
  *
  */
-void SpiChannel::write(const std::vector<byte> & write) 
-{
-    read_write(write);
-}
+void SpiChannel::write(const std::vector<byte> & write) { read_write(write); }

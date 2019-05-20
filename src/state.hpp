@@ -9,19 +9,13 @@
 #ifndef STATE_HPP
 #define STATE_HPP
 
-#include <Eigen/Core>
-#include <Eigen/SparseCore>
+#include <Eigen/Core> // matrices
 #include <iostream>
-#include <vector>
-// for float std::abs()
+#include <vector> 
 #include <memory> // unique_ptr
-#include <cmath>
-// for rand
-#include <cstdlib>
-// leds
-#include "interface.hpp"
+#include <cstdlib>      // @TODO should use the random numbers header 
 
-#include "controller.hpp"
+#include "interface.hpp"  // leds and buttons 
 
 const double PI=4.0*atan(1.0);
 const std::complex<double> I_unit(0.0, 1.0);
@@ -221,7 +215,6 @@ class State_vector
         State_vector(int num, std::vector<std::vector<Position> > qubit_leds, 
                 std::vector<Position> qubit_btns);
 
-
         // get qubit button that is pressed
         int get_qubit(int time = 1);
 
@@ -231,26 +224,9 @@ class State_vector
         void set_superpos();
 
         // use to apply gates
-        void apply(const Operator & op, std::string count = "single")
-        {
-            if(count == "single"){ apply(op, cursor_pos);}
-            else if(count == "controlled")
-            {
-                int ctrl = cursor_pos;
-                int targ = ctrl; // for the loop
+        void apply(const Operator & op, std::string count = "single");
 
-                // update the target cursor pos
-                while(targ == ctrl){
-                    update_pos();
-                    targ = cursor_pos;
-                }
-                std::cout << "Ctrl " << ctrl << ", Targ " << targ << std::endl;
-                apply(op, ctrl, targ);
-            }
-            // default is single qubit gate
-            else { apply(op, cursor_pos); }
-        }
-
+        // not sure why there are so many apply functions...
         void apply(const Operator & op, int qubit);
         // two qubit version
         void apply(const Operator & op, int ctrl, int targ);
@@ -264,110 +240,26 @@ class State_vector
         // collapse the state
         void measure(void);
 
-        // function to listen for cursour position update
-        void update_pos(int i = 0)
-        {
-            /*
-            if(qubits[1] -> selected())
-            {
-                // mov left
-                move_cursor("Left");
-                std::cout << "Moved left" << std::endl;
-            }
-            if(qubits[3] -> selected())
-            {
-                move_cursor("Right");
-                std::cout << "Moved right" << std::endl;
-            }
-        */
-        }
+        // function to listen for cursor position update
+        // does nothing?
+        void update_pos(int i = 0);
 
+        void move_cursor(std::string direction);
 
-        void move_cursor(std::string direction)
-        {
-            if(direction == "Left" || direction == "Right" || direction == "Up" || direction == "Down")
-            {
-            std::cout << "current pos = " << cursor_pos << ", direction " << direction << std::endl;
-            int new_pos = cursor_pos;
+        void move_cursor(int new_pos);
 
-            if(direction == "Left")
-            { 
-                // wrap 0 to num_qubits not -1
-                if(cursor_pos == 0) {new_pos = num_qubits - 1;}
-                else {new_pos = ((cursor_pos - 1) % num_qubits);}
-            }
-            else if(direction == "Right") { new_pos = ((cursor_pos + 1)%num_qubits);}
-
-            move_cursor(new_pos);
-            }
-            
-        }
-
-
-        void move_cursor(int new_pos)
-        {
-            // turn off previous qubit
-            flash_off(cursor_pos);
-            flash_on(new_pos);
-
-            cursor_pos = new_pos;
-        }
         // flash on
-        void flash_on(int qubit)
-        {
-            qubits[qubit] -> flash = 1;
-            flash();
-        }
+        void flash_on(int qubit);
 
-        void flash_off(int qubit)
-        {
-            qubits[qubit] -> flash = 0;
-            flash();
-        }
+        void flash_off(int qubit);
+
         // overloading 
-        void flash(int qubit_pos)
-        {
-            qubits[qubit_pos] -> flash = (qubits[qubit_pos] -> flash + 1)%2;
-            flash();
-        }
+        void flash(int qubit_pos);
 
         // make the qubit flash
-        void flash()
-        {
-            for(int i = 0; i < num_qubits; i++)
-            {
-                // if flashing check if led is on or off
-                if(qubits[i] -> flash == 1)
-                {
-                    if(qubits[i] -> led_on == true)
-                    {
-                        qubits[i] -> set_led(0,0,0); 
-                        qubits[i] -> led_on = false;
-                    }
-                    else 
-                    {
-                        qubits[i] -> set_led(); 
-                        qubits[i] -> led_on = true;
-                    }
-                }
-                // else if not flashing check led is on
-                else if(qubits[i] -> led_on == false) 
-                {
-                    qubits[i] -> set_led(); 
-                    qubits[i] -> led_on = true;
-                }
-            }
-        }
+        void flash(void);
 
-        void stop_flash(void)
-        {
-            for(int i = 0; i < num_qubits; i++)
-            {
-                qubits[i] -> flash = 0;
-            }
-            // make sure all qubits are on 
-            flash();
-        }
+        void stop_flash(void);
 };
 #endif
 
