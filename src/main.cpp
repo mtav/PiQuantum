@@ -56,10 +56,16 @@ int main(void)
     // e.g gates 
     std::vector<Position> func_btn_pos{ {1,0}, {1,3}, {0,1}, {0,0} };
 
+    // Player 1
     // controller path
-    std::string controller_path = "/dev/input/js0";
+    std::string controller1_path = "/dev/input/js0";
     // make a controller object 
-    Controller controller1(controller_path);
+    Controller controller1(controller1_path);
+
+// Player 2
+    std::string controller2_path = "/dev/input/js1";
+    Controller controller2(controller2_path);
+    
 
     // HOW TO USE THE CONTROLLER  
     // use get_input() to get any input or
@@ -86,10 +92,35 @@ int main(void)
     // func_btns[3] is a modifier - lets you do control gates if you hold it and press a
     // gate button at the same time.
 
-    int num_qubits = 4;
+    int num_qubits = 2;
 
-    // make a state vector which takes number of qubits, and qubit leds, qubit btns
-    State_vector state1(num_qubits, led_pos, qubit_btn_pos);
+    // led pos 
+    std::vector<std::vector<Position> > led_pos1 = 
+        std::vector<std::vector<Position> >(led_pos.begin() , led_pos.begin() + 2);
+    // btns 
+    std::vector<Position> qubit_btn_pos1 = std::vector<Position>(qubit_btn_pos.begin(),
+            qubit_btn_pos.begin() + 2);
+
+    for(auto i : led_pos1)
+    {
+        for(auto j : i)
+        {
+        std::cout << "leds " << j << std::endl;
+        }
+    }
+     // make a state vector which takes number of qubits, and qubit leds, qubit btns
+    State_vector state1(num_qubits, led_pos1, qubit_btn_pos1);
+
+    std::cout << " Made state_vector for player 1 " << std::endl;
+    // player 2 
+    // led pos 
+    std::vector<std::vector<Position> > led_pos2 = 
+        std::vector<std::vector<Position> >(led_pos.begin() + 2, led_pos.begin() + 4);
+    // btns 
+    std::vector<Position> qubit_btn_pos2 = std::vector<Position>(qubit_btn_pos.begin() + 2,
+            qubit_btn_pos.begin() + 4);
+    
+    // State_vector state2(num_qubits, led_pos2, qubit_btn_pos2);
 
     // fix this so that main doesn't need to have the display mode var
     // state should have it so that calling disp auto fixes the cycling off
@@ -107,6 +138,11 @@ int main(void)
     // controller function button input 
     std::future<std::string> input1 = std::async(std::launch::async, 
             &Controller::get_input, &controller1);
+    //
+    // controller function button input 
+    // std::future<std::string> input2 = std::async(std::launch::async, 
+    //        &Controller::get_input, &controller2);
+
 
     // --------------------------------------------------------------------
     // for two controllers can have two state vectors and 2 controllers
@@ -115,6 +151,7 @@ int main(void)
     // state.set_superpos();
     while(true) 
     {
+        std::cout << "loop" << std::endl;
         // part one should run in separate thread to part 2
         // thread 1
         main_loop(input1, state1, controller1, display_mode, cycle_counter, Operators,
@@ -204,6 +241,7 @@ void main_loop(std::future<std::string> & input, State_vector & state,
                 }
                 else if(input_str != "Start")
                 {  // end of gates 
+                    std::cout << "null input here?" << std::endl;
                     display_mode = 0;
                     state.disp();
                     std::cout << "\n Pick a gate button " << std::endl;
