@@ -87,7 +87,7 @@ int main(void)
     Hadamard H(func_btns[2]);
 
     // container for gates which have their respective buttons 
-    std::vector<Operator*> Operators{&X, &Y, &H};
+    std::vector<Operator*> Operators{&X, &Y, &H, &Z};
 
     // func_btns[3] is a modifier - lets you do control gates if you hold it and press a
     // gate button at the same time.
@@ -101,13 +101,6 @@ int main(void)
     std::vector<Position> qubit_btn_pos1 = std::vector<Position>(qubit_btn_pos.begin(),
             qubit_btn_pos.begin() + 2);
 
-    for(auto i : led_pos1)
-    {
-        for(auto j : i)
-        {
-        std::cout << "leds " << j << std::endl;
-        }
-    }
      // make a state vector which takes number of qubits, and qubit leds, qubit btns
     State_vector state1(num_qubits, led_pos1, qubit_btn_pos1);
 
@@ -120,16 +113,13 @@ int main(void)
     std::vector<Position> qubit_btn_pos2 = std::vector<Position>(qubit_btn_pos.begin() + 2,
             qubit_btn_pos.begin() + 4);
     
-    // State_vector state2(num_qubits, led_pos2, qubit_btn_pos2);
+     State_vector state2(num_qubits, led_pos2, qubit_btn_pos2);
 
     // fix this so that main doesn't need to have the display mode var
     // state should have it so that calling disp auto fixes the cycling off
     int display_mode = 0;
     int cycle_counter = 0;
     
-
-    // MAIN PROGRAM LOOP
-    std::cout << "\n Pick a gate button " << std::endl;
 
     // THE BEST TIMER KNOWN TO MAN
     // Driver for checking display cycling timer
@@ -140,8 +130,8 @@ int main(void)
             &Controller::get_input, &controller1);
     //
     // controller function button input 
-    // std::future<std::string> input2 = std::async(std::launch::async, 
-    //        &Controller::get_input, &controller2);
+     std::future<std::string> input2 = std::async(std::launch::async, 
+            &Controller::get_input, &controller2);
 
 
     // --------------------------------------------------------------------
@@ -151,12 +141,15 @@ int main(void)
     // state.set_superpos();
     while(true) 
     {
-        std::cout << "loop" << std::endl;
         // part one should run in separate thread to part 2
         // thread 1
         main_loop(input1, state1, controller1, display_mode, cycle_counter, Operators,
                 func_btns, driver);
 
+        main_loop(input2, state2, controller2, display_mode, cycle_counter, Operators,
+                func_btns, driver);
+
+        // std::cout << "exit main loop" << std::endl;
         // @TODO
         // thread 2
         // main_loop(state2, controller2, input2);
@@ -252,6 +245,7 @@ void main_loop(std::future<std::string> & input, State_vector & state,
             input = std::async(std::launch::async, &Controller::get_input, &controller);
         }
 
+
         state.update_pos();
 
         if(driver -> check_dc_timer(1))
@@ -265,6 +259,8 @@ void main_loop(std::future<std::string> & input, State_vector & state,
             }
         }
 
+
+        /*
         // quantum game, split into two two-qubit states.
         // do random unitaries on the goal half
         // let the user perform gates on the interactive half to get the goal state.
@@ -315,7 +311,7 @@ void main_loop(std::future<std::string> & input, State_vector & state,
             }
         }
 
-
+*/
         /*
            if(state.qubits[0] -> selected() && state.qubits[1] -> selected())
            {

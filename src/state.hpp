@@ -267,6 +267,7 @@ class State_vector
         // function to listen for cursour position update
         void update_pos(int i = 0)
         {
+            /*
             if(qubits[1] -> selected())
             {
                 // mov left
@@ -278,6 +279,7 @@ class State_vector
                 move_cursor("Right");
                 std::cout << "Moved right" << std::endl;
             }
+        */
         }
 
 
