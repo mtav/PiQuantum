@@ -2,6 +2,8 @@
 
 ## `Where quantum information processing meets best coding practice`
 
+![My image](https://github.com/johnrscott/PiQuantum/blob/master/hardware/prototype.png)
+
 Our quantum computer currently has 4 qubits with corresponding Leds used to display
 their state and 4 quantum gates (operations) available.
 
