@@ -23,8 +23,8 @@ int main_loop(std::string controller_path, int num_qubits,
         std::vector<std::vector<Position> > led_pos,
         std::vector<Position> qubit_btn_pos,
         std::vector<Operator*> Operators, 
-        std::vector<std::shared_ptr<Button> > func_btns,
-        std::shared_ptr<InputOutput> driver);
+        std::vector<std::shared_ptr<Button> > func_btns);
+//        std::shared_ptr<InputOutput> driver);
 
 int main(void)
 {
@@ -81,7 +81,7 @@ int main(void)
 
     // THE BEST TIMER KNOWN TO MAN -- Possibly causing memory bad allocs. @TODO check 
     // Driver for checking display cycling timer
-    std::shared_ptr<InputOutput> driver = getInputOutput();
+    // std::shared_ptr<InputOutput> driver = getInputOutput();
 
     // ------------------------------- Player 1 ----------------------------------
     int num_qubits_p1 = 2; // change me 
@@ -102,7 +102,7 @@ int main(void)
     // If it returns there is a major problem.
     std::future<int> player1 = std::async(std::launch::async, main_loop,
             controller1_path, num_qubits_p1, led_pos1, qubit_btn_pos1,
-            Operators, func_btns, driver);
+            Operators, func_btns); //, driver);
 
     // --------------------------- player 2 -------------------------------------
     int num_qubits_p2 = 2;  // change me
@@ -125,7 +125,7 @@ int main(void)
     // If it returns there is a major problem.
     std::future<int> player2 = std::async(std::launch::async, main_loop,
             controller2_path, num_qubits_p2, led_pos2, qubit_btn_pos2,
-            Operators, func_btns, driver);
+            Operators, func_btns); //, driver);
 
     // fix this so that main doesn't need to have the display mode var
     // state should have it so that calling disp auto fixes the cycling off
@@ -142,6 +142,14 @@ int main(void)
 } // end of main ----------------- Wooo!  
 
 
+// Temp timer stuff
+
+int time_milli()
+{
+    std::this_thread::sleep_for(std::chrono::milliseconds(350));
+    return 1;
+}
+
 // masterful -do everything function- 
 // should be run from main in a separate thread. 
 // @TODO fix passing the driver used for the common timer. might be causing memory
@@ -150,9 +158,10 @@ int main_loop(std::string controller_path, int num_qubits,
         std::vector<std::vector<Position> > led_pos,
         std::vector<Position> qubit_btn_pos,
         std::vector<Operator*> Operators, 
-        std::vector<std::shared_ptr<Button> > func_btns,
-        std::shared_ptr<InputOutput> driver) 
+        std::vector<std::shared_ptr<Button> > func_btns)
+        //std::shared_ptr<InputOutput> driver) 
 {
+    // std::shared_ptr<InputOutput> driver = getInputOutput();
     // make a controller object 
     Controller controller(controller_path);
 
@@ -165,8 +174,8 @@ int main_loop(std::string controller_path, int num_qubits,
     std::future<std::string> input = std::async(std::launch::async, 
             &Controller::get_input, &controller);
 
-    static int thread_count = 0;
-    std::cout << " Started input thread " << ++thread_count <<  std::endl;
+    static int thread_count = -2;
+    std::cout << " Started input thread " << ++++thread_count <<  std::endl;
 
     // display modes 
     int display_mode = 0;
@@ -175,8 +184,16 @@ int main_loop(std::string controller_path, int num_qubits,
     // input status, out of loop to avoid reallocating mem
     std::future_status controller_status;
 
+    std::future_status flash_timer_status;
+    std::future<int> flash_timer;
+
+    int flash_trigger = 0;
+    // start thread for flashing 
+        flash_timer = std::async(std::launch::async, time_milli);
+
     for(ever)
     {
+
         // check if the controller input has changed 
         controller_status = input.wait_for(std::chrono::nanoseconds(1));
         if (controller_status == std::future_status::ready)
@@ -201,11 +218,11 @@ int main_loop(std::string controller_path, int num_qubits,
                 }
                 else if(input_str == "A")
                 {
-                    state.apply(*Operators[1]);
+                    state.apply(*Operators[2]);
                 }
                 else if(input_str == "Y")
                 {
-                    state.apply(*Operators[2]);
+                    state.apply(*Operators[1]);
                 }
                 else if(input_str == "B")
                 {
@@ -267,14 +284,27 @@ int main_loop(std::string controller_path, int num_qubits,
         // outdated, only used for physical buttons on pcb
         state.update_pos();
 
-        // for display cycling, check if the flash timer is triggered 
+       flash_timer_status = flash_timer.wait_for(std::chrono::nanoseconds(1));
+        if (flash_timer_status == std::future_status::ready)
+        { 
+            flash_trigger = flash_timer.get();
+            flash_timer = std::async(std::launch::async, time_milli);
+        }
+        else 
+        {
+            flash_trigger = 0;
+        }
+ // for display cycling, check if the flash timer is triggered 
         // probably a memory problem with threading. Should investigate 
         // @TODO Fix this 
-        if(driver -> check_dc_timer(1))
+        // should be timer 1 then timer 0, 
+      //  if(driver -> check_dc_timer(thread_count + 1) || flash_trigger)
+        if(flash_trigger)
         {
             if(display_mode == 0) { state.flash(); }
             // if in cycle mode check for all other 
-            else if(display_mode == 1 && driver -> check_dc_timer(0))
+            // else if(display_mode == 1 && driver -> check_dc_timer(thread_count))
+            else if(display_mode == 1)
             {
                 cycle_counter = state.disp_cycle(cycle_counter);
                 std::cout << "Showing state " << cycle_counter << std::endl;

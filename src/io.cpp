@@ -47,6 +47,17 @@ InputOutput::InputOutput(std::shared_ptr<SpiChannel> spi)
         dc_max.push_back(250);
         dc_trigger.push_back(false);
 
+        // player 2
+// Timers, want 2 of them
+        dc_counter.push_back(0);
+        dc_max.push_back(1000);
+        dc_trigger.push_back(false);
+
+        dc_counter.push_back(0);
+        dc_max.push_back(250);
+        dc_trigger.push_back(false);
+
+
         // Set up pins for LEDs
         // Need to set initial state
         pinMode(PIN::LE, OUTPUT); // Set LE to output
