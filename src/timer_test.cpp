@@ -7,6 +7,10 @@
  *
  */
 
+#include "interrupts.hpp"
+
 int main() {
+  Alarm alrm(1000);
+  while(1);
   return 0;
 }
