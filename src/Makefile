@@ -1,13 +1,13 @@
-TARGETS := io-test main qubit async read_controller
+TARGETS := io-test main qubit read_controller
 
 DEPDIR = .d
 
+main_SRC := main.cpp state.cpp spi.cpp interface.cpp wpi.cpp io.cpp controller.cpp
+
 qubit_SRC := qubit.cpp state.cpp spi.cpp interface.cpp wpi.cpp io.cpp 
-main_SRC := main.cpp state.cpp spi.cpp interface.cpp wpi.cpp io.cpp
 io-test_SRC := io-test.cpp spi.cpp io.cpp interface.cpp wpi.cpp 
 
 read_controller_SRC := controller.cpp
-async_SRC := async.cpp
 
 CC       := g++
 

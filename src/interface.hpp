@@ -43,11 +43,11 @@ class Led {
 
         Led(Position r, Position g, Position b); // Constructor
         Led(std::vector<Position> pos); // takes vector for RGB vals
-        
-  //~Led(); // Destructor
+
+        //~Led(); // Destructor
         void set_rgb(double red, double green, double blue); // Write RGB values
-        std::vector<double> get_rgb(); // Read RGB values
-        std::vector<Position> get_positions();  // Return the chip and line numbers
+        std::vector<double> get_rgb(void); // Read RGB values
+        std::vector<Position> get_positions(void);  // Return the chip and line numbers
 };
 
 class Button {
@@ -79,14 +79,13 @@ class Button {
 
         // Constructor and destructor
         Button(Position position);
-  //~Button();
+        //~Button();
 
         // Read the button state
-        int get_state();
+        int get_state(void);
 
         // Return the chip and line numbers
-        Position get_position() { return position; }
-
+        Position get_position(void);
 };
 
 #endif
