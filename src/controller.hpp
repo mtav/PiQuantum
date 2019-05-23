@@ -84,9 +84,22 @@ class Controller_interface
 
     public:
 
+        // each controller is added to the vector of controllers 
         std::vector<Controller> controllers;
+
+        // vector of futures for polling each of the controllers in 
+        // separate threads
+        // each player has a future 
+        std::vector<std::future<bool> > player_inputs;
+
+        // 
+        std::vector<bool> player_present;
+
         // default is 1 controller 
         Controller_interface(int num_controls = 1);
+
+        // function to check if controllers are plugged/unplugged
+        int check_controllers_present(void);
 
         // assign controller "i" button "btn" to a function 
         // should probs be templates or something for the function, 
@@ -94,6 +107,10 @@ class Controller_interface
         // template <class T, class U>
         bool map(int player, std::string btn, std::function<void(void)> func);
 };
+
+
+// Temp junk 
+// might need //
 
 class Test_fn{
 

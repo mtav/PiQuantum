@@ -45,6 +45,26 @@ Controller_interface::Controller_interface(int num_controls)
 
 } // End of the controller interface constructor
 
+// check which inputs can be read, make sure no controllers are read that are no longer
+// there!
+int Controller_interface::check_controllers_present(void)
+{
+    int count = 0;
+    for(int i = 0; i < (int)controllers.size(); i++)
+    {
+        if(controllers[i].get_input() == "UNPLUGGED")
+        {
+            // erase the controller 
+            // @TODO Check this doesn't cause a memory leak // check threads etc.
+            // ///// THIS IS DEFINITELY WRONG
+            // controllers.erase(controllers.begin() + i);
+        }
+        else { count++; }
+    }        
+    return count; // number of controllers connected
+}
+
+
 //template <class T, class U>
 bool Controller_interface::map(int player, std::string btn, std::function<void(void)> func)
 {
@@ -176,7 +196,14 @@ std::string Controller::get_input(void)
     // vector of zeros size "size"
     std::vector<char> line(size, 0);
     // give the first element of the vector as read needs a ptr to a char
-    controller_file.read(&line[0], size);
+
+    if(!controller_file) // controller is no longer there, This is a problem I think.
+    {
+        std::cerr << std::strerror(errno) << std::endl;
+        std::cout << "controller is unplugged or missing" << std::endl;
+        return "UNPLUGGED";
+    }
+    else { controller_file.read(&line[0], size); } // all good 
 
     // store outputs which map to buttons 
     std::vector<int> vals;
