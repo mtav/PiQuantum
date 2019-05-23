@@ -33,6 +33,8 @@ Controller_interface::Controller_interface(int num_controls)
         {
             // controller in /dev/input/jsi
             controllers.push_back(Controller(loc));
+            // add its button mappings 
+
         }
     }
     std::cout << "There are " << num_controllers() << " controllers connected " << std::endl;
@@ -40,16 +42,18 @@ Controller_interface::Controller_interface(int num_controls)
     {
         std::cout << " Located at " << controllers[i].get_loc() << std::endl;
     }
-}
 
-    template <class T, class U>
-bool Controller_interface::map(int player, std::string btn, std::function<T(U)> func)
+} // End of the controller interface constructor
+
+//template <class T, class U>
+bool Controller_interface::map(int player, std::string btn, std::function<void(void)> func)
 {
     if(player >= num_controllers()) { std::cout << "There is no player " << player << std::endl;}
     else
     {
         // player btn do function 
         // controllers[player] 
+        controllers[player].map(btn, func);        
 
     }
     return true;
@@ -87,14 +91,14 @@ std::string Controller::decode_bytes(const std::vector<int> & values)
         // NOT a direction
         switch(values[2])
         {
-            case 0 : answer = "A"; break;
-            case 1 : answer = "B"; break;
-            case 2 : answer = "X"; break;
-            case 3 : answer = "Y"; break;
-            case 4 : answer = "L_trigger"; break;
-            case 5 : answer = "R_trigger"; break;
-            case 6 : answer = "Select"; break;
-            case 7 : answer = "Start"; break; 
+            case 0 : answer = buttons[0]; break;   // A
+            case 1 : answer = buttons[1]; break;   // B
+            case 2 : answer = buttons[2]; break;   // X
+            case 3 : answer = buttons[3]; break;   // Y
+            case 4 : answer = buttons[4]; break;   // L_trigger
+            case 5 : answer = buttons[5]; break;   // R_trigger
+            case 6 : answer = buttons[6]; break;   // Select
+            case 7 : answer = buttons[7]; break;   // Start
             default : answer = "NULL"; break;
         }
     }
@@ -106,8 +110,8 @@ std::string Controller::decode_bytes(const std::vector<int> & values)
         {
             switch(values[2])
             {
-                case 0 : answer = "Right"; break;
-                case 1 : answer = "Down"; break;
+                case 0 : answer = buttons[8]; break;   // Right
+                case 1 : answer = buttons[9]; break;   // Down 
                 default : answer = "NULL direction"; break;
             }
         }
@@ -117,8 +121,8 @@ std::string Controller::decode_bytes(const std::vector<int> & values)
         {
             switch(values[2])
             {
-                case 0 : answer = "Left"; break;
-                case 1 : answer = "Up"; break;
+                case 0 : answer = buttons[10]; break;   // Left
+                case 1 : answer = buttons[11]; break;   // UP
                 default : answer = "NULL direction"; break;
             }
         }
@@ -143,6 +147,28 @@ Controller::Controller(std::string path) : loc(path)
     // start thread for polling controller inputs
     // @TODO This might break stuff
     // input = std::async(std::launch::async, &Controller::get_input, this);
+
+    // populate the button mapping list with output string and nullptrs for functions 
+    for(int i = 0; i < (int)buttons.size(); i++)
+    {
+        button_maps.insert(std::pair<std::string, std::function<void(void)> >(buttons[i], nullptr));
+    }
+}
+
+// for assigning buttons functions to execute
+// template <class T, class U>
+bool Controller::map(std::string btn, std::function<void(void)> func)
+{
+    button_maps[btn] = func;
+    return true;
+}
+
+
+void Controller::run_function(void)
+{
+    std::string in = get_input();
+    if(button_maps[in]) { button_maps[in](); }
+    else { std::cout << "nullptr function" << std::endl;}
 }
 
 std::string Controller::get_input(void)

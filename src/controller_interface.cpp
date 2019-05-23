@@ -12,17 +12,43 @@
 #include <functional> // for passing functions 
 #include <future> 
 
+void print_a(void)
+{
+    std::cout << "Printing a" << std::endl;
+}
 
+int print_letter(std::string str_in)
+{
+    std::cout << "Printing " << str_in << std::endl;
+    return 0;
+}
 int main(void)
 {
 
 
+    // USE BIND TO PASS FUNCTION WITH NO ARGS
+    std::function<void(void)> func = std::bind(print_letter, "A");
+
+    // looks for all the controllers connected at /dev/input/js*
     Controller_interface controller_manager;
 
-    btn_mappings btn1;
-    btn1.name = "button 1";
+    for(int i = 0; i < (int)controller_manager.controllers[0].buttons.size(); i++)
+    {
+        // get the label for each button on the controller 
+        std::string btn_label = controller_manager.controllers[0].buttons[i]; 
+        // for controller 0 map each btn to print the letter of the btn
+        controller_manager.map(0, btn_label, std::bind(print_letter, btn_label));
+    }
 
-    std::cout << btn1.name << std::endl;
+    for(ever)
+    {
+        controller_manager.controllers[0].run_function();
+    }
+    /*
+       btn_mappings btn1;
+       btn1.name = "button 1";
+
+       std::cout << btn1.name << std::endl;
 
     // make a test_fn object
     Test_fn test1;
@@ -38,7 +64,7 @@ int main(void)
     // method 2 with no args 
     btn1.func_no_options = std::bind( &Test_fn::test_func2, &test1);
     btn1.func_no_options();
-
+    */
 
     return 0;
 }
