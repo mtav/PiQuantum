@@ -34,7 +34,7 @@ class Controller
     public:
 
         // contructor taks the path to controller e.g. /dev/input/js0
-        Controller(std::string path);
+        Controller(std::string path = "/dev/input/js0");
 
         // return the next input from the controller 
         std::string get_input(void);
@@ -46,4 +46,21 @@ class Controller
         std::string get_btn(void);
 
 };
+
+// controller interface
+class Controller_interface
+{
+
+    private:
+        std::vector<Controller> controllers;
+        int num_controllers;
+        
+    public:
+        
+        Controller_interface(int num_controllers = 1);
+
+
+};
+
+
 #endif 

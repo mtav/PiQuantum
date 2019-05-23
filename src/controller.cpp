@@ -146,21 +146,3 @@ std::string Controller::get_btn(void)
 }
 
 
-
-/*
-   int main(void)
-   {
-   std::string path = "/dev/input/js0";
-
-// make the controller object 
-Controller controller(path); 
-
-while(1)
-{
-// read it 
-std::cout << controller.get_input() << std::endl;
-}
-
-return 0;
-}
-*/
