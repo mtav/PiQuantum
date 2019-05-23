@@ -12,45 +12,12 @@
 #include <functional> // for passing functions 
 #include <future> 
 
-#define ever ;;
-
-class Test_fn{
-
-    public:
-        int test_func1(double arg)
-        {
-            std::cout << "test_func1 with arg " << arg << std::endl;
-            return 0;
-        }
-
-        int test_func2(void)
-        {
-            std::cout << "test_func2" << std::endl;
-            return 2;
-        }
-};
-
-// class for managing controller input 
-
-struct btn_mappings{
-    private:
-    public:
-        std::string name;
-        // set to a member function reference and the function takes 
-        // a object as an argument 
-        std::function<int(Test_fn &, double)> func_obj;
-
-        // second way stores the function and the reference to the object to act on
-        std::function<int(double)> func;
-
-        // same but stores member function and reference to object 
-        std::function<int(void)> func_no_options;
-};
-
 
 int main(void)
 {
 
+
+    Controller_interface controller_manager;
 
     btn_mappings btn1;
     btn1.name = "button 1";

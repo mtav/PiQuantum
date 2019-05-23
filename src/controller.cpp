@@ -9,11 +9,55 @@
 
 // -------------------------------- Controller interface ---------------------
 
+Controller_interface::Controller_interface(int num_controls)
+{
+    // read /dev/input/jsX to see if controller is plugged in 
+    // then read, if Start is pressed add the controllers 
+
+    for(int i = 0; i < max_num_controllers; i++)
+    {
+        // try and read file -> see if plugged in 
+
+        std::string loc = "/dev/input/js" + std::to_string(i);
+
+        std::ifstream controller_file(loc);
+        // open the file
+        if(!controller_file)
+        {
+            // if false there is an error
+            // std::cerr << std::strerror(errno) << std::endl;
+            // exit the program
+            // std::exit(errno);
+        }
+        else if(controller_file)
+        {
+            // controller in /dev/input/jsi
+            controllers.push_back(Controller(loc));
+        }
+    }
+    std::cout << "There are " << num_controllers() << " controllers connected " << std::endl;
+    for(int i = 0; i < num_controllers(); i++)
+    {
+        std::cout << " Located at " << controllers[i].get_loc() << std::endl;
+    }
+}
+
+    template <class T, class U>
+bool Controller_interface::map(int player, std::string btn, std::function<T(U)> func)
+{
+    if(player >= num_controllers()) { std::cout << "There is no player " << player << std::endl;}
+    else
+    {
+        // player btn do function 
+        // controllers[player] 
+
+    }
+    return true;
+}
 
 
 
-
-
+int Controller_interface::num_controllers(void) { return (int)controllers.size();}
 
 // ----------------------------------- Controller ---------------------------
 
@@ -94,7 +138,7 @@ Controller::Controller(std::string path) : loc(path)
         // exit the program
         std::exit(errno);
     }
-    else { std::cout << "read " << loc << std::endl; }
+    // else { std::cout << "read " << loc << std::endl; }
 
     // start thread for polling controller inputs
     // @TODO This might break stuff
@@ -154,4 +198,4 @@ std::string Controller::get_btn(void)
     return result;
 }
 
-
+std::string Controller::get_loc(void) { return loc; }

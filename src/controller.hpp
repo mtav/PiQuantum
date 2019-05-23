@@ -16,6 +16,8 @@
 
 #include <future> // std::async and std::future
 
+#define ever ;;
+
 class Controller
 {
     private:
@@ -33,15 +35,16 @@ class Controller
         std::future<std::string> input;
     public:
 
+        // return controller path
+        std::string get_loc(void);
+
         // contructor taks the path to controller e.g. /dev/input/js0
         Controller(std::string path = "/dev/input/js0");
 
         // return the next input from the controller 
         std::string get_input(void);
-
         // wait specifically for a direction.
         std::string get_direction(void);
-
         // return anything but a direction
         std::string get_btn(void);
 
@@ -51,20 +54,54 @@ class Controller
 class Controller_interface
 {
     private:
+        const int max_num_controllers = 4;
+
         std::vector<Controller> controllers;
-        int num_controllers;
-        
+        int num_controllers(void);
+
     public:
-        
+
         // default is 1 controller 
-        Controller_interface(int num_controllers = 1);
+        Controller_interface(int num_controls = 1);
 
         // assign controller "i" button "btn" to a function 
         // should probs be templates or something for the function, 
         // currently this requires bind to be used.
-        template <class T>
-        bool map(int player, std::string btn, std::function<T(T)>);
+        template <class T, class U>
+            bool map(int player, std::string btn, std::function<T(U)> func);
 };
 
+class Test_fn{
+
+    public:
+        int test_func1(double arg)
+        {
+            std::cout << "test_func1 with arg " << arg << std::endl;
+            return 0;
+        }
+
+        int test_func2(void)
+        {
+            std::cout << "test_func2" << std::endl;
+            return 2;
+        }
+};
+
+// class for managing controller input 
+
+struct btn_mappings{
+    private:
+    public:
+        std::string name;
+        // set to a member function reference and the function takes 
+        // a object as an argument 
+        std::function<int(Test_fn &, double)> func_obj;
+
+        // second way stores the function and the reference to the object to act on
+        std::function<int(double)> func;
+
+        // same but stores member function and reference to object 
+        std::function<int(void)> func_no_options;
+};
 
 #endif 
