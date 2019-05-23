@@ -1,9 +1,9 @@
-TARGETS := main controller_interface 
+TARGETS := main controller_interface timer
 
 DEPDIR = .d
 
 main_SRC := main.cpp state.cpp spi.cpp interface.cpp wpi.cpp io.cpp controller.cpp
-
+timer_SRC := timer_test.cpp interrupts.cpp
 controller_interface_SRC := controller_interface.cpp controller.cpp
 
 CC       := g++

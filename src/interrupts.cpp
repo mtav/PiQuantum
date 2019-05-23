@@ -7,6 +7,11 @@
  *
  */
 
+#include "interrupts.hpp"
+
+// Definition of static member variable
+Alarm * Alarm::alrm = nullptr; // Redefined in the constructor of Alarm
+
 void Alarm::handler(int sig) {
     if(sig != SIGALRM) {
       std::cerr << "Error: unexpected signal " << sig << ", expected SIGALRM"

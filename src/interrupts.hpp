@@ -7,6 +7,10 @@
  *
  */
 
+#include <iostream>
+#include <signal.h>
+#include <unistd.h>
+
 /**
  * @brief Interrupts in Linux
  *
