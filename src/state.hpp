@@ -9,17 +9,13 @@
 #ifndef STATE_HPP
 #define STATE_HPP
 
-#include <Eigen/Core>
-#include <Eigen/SparseCore>
+#include <Eigen/Core> // matrices
 #include <iostream>
-#include <vector>
-// for float std::abs()
+#include <vector> 
 #include <memory> // unique_ptr
-#include <cmath>
-// for rand
-#include <cstdlib>
-// leds
-#include "interface.hpp"
+#include <cstdlib>      // @TODO should use the random numbers header 
+
+#include "interface.hpp"  // leds and buttons 
 
 const double PI=4.0*atan(1.0);
 const std::complex<double> I_unit(0.0, 1.0);
@@ -178,6 +174,30 @@ class State_vector
         //std::vector<std::shared_ptr<Qubit> > qubits;
         Qubits_type qubits;
 
+        // cursor object
+        // upon position change stop old qubit flashing and 
+        // make new qubit flash
+        /*   struct Cursor
+             {
+             friend class State_vector;
+             int position = 0;
+
+             Cursor(void) {}
+        // Methods
+
+        void move(int new_pos)
+        {
+        // turn off previous qubit
+        flash_off(position);
+        flash_on(new_pos);
+
+        position = new_pos;
+        }
+        };
+
+        Cursor cursor;
+        */
+        int cursor_pos = 0;
         // see cpp for imp, should ONLY every use qubit_state so the default is public
         // this must be private
         void display_avg(Qubits_type & qubits, const Eigen::VectorXcd & vect);
@@ -189,12 +209,11 @@ class State_vector
 
         // -------------- constructors --------------------------
         // default case if no qubits are specified
-        State_vector() {}
+        State_vector(void) {}
 
         // new improved constructor which takes qubit leds & qubit btn position.
         State_vector(int num, std::vector<std::vector<Position> > qubit_leds, 
                 std::vector<Position> qubit_btns);
-
 
         // get qubit button that is pressed
         int get_qubit(int time = 1);
@@ -205,6 +224,9 @@ class State_vector
         void set_superpos();
 
         // use to apply gates
+        void apply(const Operator & op, std::string count = "single");
+
+        // not sure why there are so many apply functions...
         void apply(const Operator & op, int qubit);
         // two qubit version
         void apply(const Operator & op, int ctrl, int targ);
@@ -218,43 +240,26 @@ class State_vector
         // collapse the state
         void measure(void);
 
-        // make the qubit flash
-        void flash()
-        {
-            for(int i = 0; i < num_qubits; i++)
-            {
-                // if flashing check if led is on or off
-                if(qubits[i] -> flash == 1)
-                {
-                    if(qubits[i] -> led_on == true)
-                    {
-                        qubits[i] -> set_led(0,0,0); 
-                        qubits[i] -> led_on = false;
-                    }
-                    else 
-                    {
-                        qubits[i] -> set_led(); 
-                        qubits[i] -> led_on = true;
-                    }
-                }
-                // else if not flashing check led is on
-                else if(qubits[i] -> led_on == false) 
-                {
-                    qubits[i] -> set_led(); 
-                    qubits[i] -> led_on = true;
-                }
-            }
-        }
+        // function to listen for cursor position update
+        // does nothing?
+        void update_pos(int i = 0);
 
-        void stop_flash(void)
-        {
-            for(int i = 0; i < num_qubits; i++)
-            {
-                qubits[i] -> flash = 0;
-            }
-            // make sure all qubits are on 
-            flash();
-        }
+        void move_cursor(std::string direction);
+
+        void move_cursor(int new_pos);
+
+        // flash on
+        void flash_on(int qubit);
+
+        void flash_off(int qubit);
+
+        // overloading 
+        void flash(int qubit_pos);
+
+        // make the qubit flash
+        void flash(void);
+
+        void stop_flash(void);
 };
 #endif
 

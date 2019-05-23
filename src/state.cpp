@@ -19,12 +19,12 @@ void Operator::set_btn(std::shared_ptr<Button> btn_ptr_in) {btn_ptr = btn_ptr_in
 // Check if the operators button is selected.
 bool Operator::selected(void) 
 {
-    if(btn_ptr -> get_state())
-    {
-        std::cout << "Op " << name << " pressed" << std::endl;
-        return 1;
-    }
-    else { return 0;}
+    bool result = false;
+
+    while(btn_ptr -> get_state()) { result = true; }
+
+    if(result == true) { std::cout << "Op " << name << " pressed" << std::endl;}
+    return result;
 }
 
 // -------------------------- Paulis 
@@ -112,7 +112,20 @@ void Qubit::set_led(double R, double G, double B)
 }
 
 // check if button is pressed
-bool Qubit::selected(void) { return btn_ptr -> get_state();}
+bool Qubit::selected(void) 
+{
+    // 1 -> 0
+    //for(int i = 0; i < 100; i++)
+    //{}
+
+    bool result = false;
+    while(btn_ptr -> get_state())
+    {
+        result = true;
+    }
+
+    return result;
+}
 
 void Qubit::set_amps(double zero, double one, double phases)
 {
@@ -159,6 +172,9 @@ State_vector::State_vector(int num, std::vector<std::vector<Position> > qubit_le
     }
     size = pow(2, num_qubits);
     set_vacuum();
+
+    cursor_pos = 0;
+    move_cursor(cursor_pos);
 }
 
 // check all qubit btns and return the int of the qubit pressed
@@ -281,7 +297,7 @@ int State_vector::disp_cycle(int n)
     // tolerance on non-zero amplitudes
     double epsilon = 1e-5;
 
-    while(1)
+    while(1) // ???
     {
         std::cout << "counter =" << n << std::endl;
         for(int i = n; i < size; i++)
@@ -360,6 +376,26 @@ result.push_back(cycle_states);
 return result;
 }
 */
+// use to apply gates
+void State_vector::apply(const Operator & op, std::string count)
+{
+    if(count == "single"){ apply(op, cursor_pos);}
+    else if(count == "controlled")
+    {
+        int ctrl = cursor_pos;
+        int targ = ctrl; // for the loop
+
+        // update the target cursor pos
+        while(targ == ctrl){
+            update_pos();
+            targ = cursor_pos;
+        }
+        std::cout << "Ctrl " << ctrl << ", Targ " << targ << std::endl;
+        apply(op, ctrl, targ);
+    }
+    // default is single qubit gate
+    else { apply(op, cursor_pos); }
+}
 
 // use to apply gates
 void State_vector::apply(const Operator & op, int qubit)
@@ -458,7 +494,7 @@ void State_vector::single_qubit_op(const Eigen::Matrix2cd & op, int qubit){
     int bit = (1 << qubit); // The bit position corresponding to the kth qubit
     int high_incr = (bit << 1); 
     Eigen::Vector2cd temp;
-    double epsilon = 1e-5;
+    // double epsilon = 1e-5;
     /// @note this order is correct and super important!
     // Increment through the indices less than bit
     long unsigned int skipped=0, not_skipped=0; 
@@ -682,3 +718,111 @@ void State_vector::display_avg(Qubits_type & qubits, const Eigen::VectorXcd & ve
         qubits[i] -> set_led();
     }
 }
+
+// update cursor position 
+// uses physical buttons 
+// function to listen for cursor position update
+// does nothing?
+void State_vector::update_pos(int i)
+{
+    /*
+       if(qubits[1] -> selected())
+       {
+    // mov left
+    move_cursor("Left");
+    std::cout << "Moved left" << std::endl;
+    }
+    if(qubits[3] -> selected())
+    {
+    move_cursor("Right");
+    std::cout << "Moved right" << std::endl;
+    }
+    */
+}
+
+void State_vector::move_cursor(std::string direction)
+{
+    if(direction == "Left" || direction == "Right" || direction == "Up" || direction == "Down")
+    {
+        std::cout << "current pos = " << cursor_pos << ", direction " << direction << std::endl;
+        int new_pos = cursor_pos;
+
+        if(direction == "Left")
+        { 
+            // wrap 0 to num_qubits not -1
+            if(cursor_pos == 0) {new_pos = num_qubits - 1;}
+            else {new_pos = ((cursor_pos - 1) % num_qubits);}
+        }
+        else if(direction == "Right") { new_pos = ((cursor_pos + 1)%num_qubits);}
+
+        move_cursor(new_pos);
+    }
+
+}
+
+
+void State_vector::move_cursor(int new_pos)
+{
+    // turn off previous qubit
+    flash_off(cursor_pos);
+    flash_on(new_pos);
+
+    cursor_pos = new_pos;
+}
+// flash on
+void State_vector::flash_on(int qubit)
+{
+    qubits[qubit] -> flash = 1;
+    flash();
+}
+
+void State_vector::flash_off(int qubit)
+{
+    qubits[qubit] -> flash = 0;
+    flash();
+}
+// overloading 
+void State_vector::flash(int qubit_pos)
+{
+    qubits[qubit_pos] -> flash = (qubits[qubit_pos] -> flash + 1)%2;
+    flash();
+}
+
+// make the qubit flash
+void State_vector::flash()
+{
+    for(int i = 0; i < num_qubits; i++)
+    {
+        // if flashing check if led is on or off
+        if(qubits[i] -> flash == 1)
+        {
+            if(qubits[i] -> led_on == true)
+            {
+                qubits[i] -> set_led(0,0,0); 
+                qubits[i] -> led_on = false;
+            }
+            else 
+            {
+                qubits[i] -> set_led(); 
+                qubits[i] -> led_on = true;
+            }
+        }
+        // else if not flashing check led is on
+        else if(qubits[i] -> led_on == false) 
+        {
+            qubits[i] -> set_led(); 
+            qubits[i] -> led_on = true;
+        }
+    }
+}
+
+void State_vector::stop_flash(void)
+{
+    for(int i = 0; i < num_qubits; i++)
+    {
+        qubits[i] -> flash = 0;
+    }
+    // make sure all qubits are on 
+    flash();
+}
+

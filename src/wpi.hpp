@@ -23,18 +23,22 @@
  * functions
  *
  */
-class WiringPi {
-private:
-  static int setup; // Becomes 1 when wPi is initialised 
-public:
-  WiringPi() {
-    if(setup == 0) {
-      // Need to call this setup function for wiringPi before
-      // using any of its functions. Use wiringPi pin conventions
-      // (see the reference -> setup section of the wiringPi website).
-      wiringPiSetup();      
-    }
-  }
+class WiringPi 
+{
+    private:
+        static int setup; // Becomes 1 when wPi is initialised 
+
+    public:
+        WiringPi()
+        {
+            if(setup == 0)
+            {
+                // Need to call this setup function for wiringPi before
+                // using any of its functions. Use wiringPi pin conventions
+                // (see the reference -> setup section of the wiringPi website).
+                wiringPiSetup();      
+            }
+        }
 };
 
 #endif
