@@ -35,7 +35,8 @@ Alarm::Alarm(int delay_us)
     set_pointer(this);
 }
 
-// Interrupt
+/// Interrupt
+///
 void Alarm::interrupt(void) {
-  std::cout << "Timer" << std::endl;
+  
 }
