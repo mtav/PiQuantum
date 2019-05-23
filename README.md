@@ -14,7 +14,7 @@ sections. The first are a quantum version of the operations that a regular digit
 computer can do,we call these _coherent_. The second set of operations are only available
 on a quantum computer.
 
-## Implemented 
+## Implemented
 
 - 1 & 2 Measure the state
 - 1 & 4 Reset to vacuum state
@@ -22,7 +22,7 @@ on a quantum computer.
 
 - X
 - Y
-- H 
+- H
 - Control modifier (Hold this and select another gate to do a Controlled version of it)
   e.g Control + X to do CNOT
 
@@ -66,25 +66,17 @@ between the red and blue state which is why we see purple.
 
 # How it works
 
-
 # Parts list
 
 - Raspberry Pi
 - GPIO Jumper cables
-- Breadboard 
-- RGB LEDs 
+- Breadboard
+- RGB LEDs
 - Buttons
-- Shift registers for serial to parallel 
+- Shift registers for serial to parallel
 
-<<<<<<< HEAD
 # Software
 
-using the ncurses library for terminal based graphics, 
-sudo apt-get install libncurses5-dev
-
-
-
-=======
 # Running the code
 
 ## Libraries
@@ -92,9 +84,32 @@ sudo apt-get install libncurses5-dev
 ### WiringPi (for SPI interface)
 
 It might already be installed on the Raspberry Pi. If it's not, it can be install by
-cloning git://git.drogon.net/wiringPi and running ./build. The SPI interface also needs 
+cloning git://git.drogon.net/wiringPi and running ./build. The SPI interface also needs
 to be enabled in raspi-config.
->>>>>>> a55a9730bc9fa07ca33ded86cf505cc2d25a7e6c
+
+## Notes on program requirements
+
+- Multiplayer
+- Drop in/ drop out number of players
+- Multiple game modes
+- Should be able to switch between games in the program
+- GLOB to exit Program and Pi
+
+# I/O feature (For each player)
+
+- A controller object
+- Remapping Leds / Buttons
+- Reading push buttons
+- Variable Led colours
+- Flashing Leds
+
+# State_race game
+
+- Dictionary of patterns
+- Read in a list of _cool_ states to show, either randomly pick one or used qubits
+  buttons to select the state you want.
+- Save button to add a state to the file
+- Use controller to build up a state in real time
 
 J Scott, john.scott@bristol.ac.uk
 O Thomas, oliver.thomas@bristol.ac.uk
