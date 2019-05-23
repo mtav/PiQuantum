@@ -50,16 +50,20 @@ class Controller
 // controller interface
 class Controller_interface
 {
-
     private:
         std::vector<Controller> controllers;
         int num_controllers;
         
     public:
         
+        // default is 1 controller 
         Controller_interface(int num_controllers = 1);
 
-
+        // assign controller "i" button "btn" to a function 
+        // should probs be templates or something for the function, 
+        // currently this requires bind to be used.
+        template <class T>
+        bool map(int player, std::string btn, std::function<T(T)>);
 };
 
 

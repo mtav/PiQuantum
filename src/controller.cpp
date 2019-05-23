@@ -7,6 +7,15 @@
 
 #include "controller.hpp"
 
+// -------------------------------- Controller interface ---------------------
+
+
+
+
+
+
+
+// ----------------------------------- Controller ---------------------------
 
 // takes the 16 bytes read in and returns a string of the button pressed
 std::string Controller::decode_bytes(const std::vector<int> & values)
