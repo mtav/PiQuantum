@@ -39,6 +39,9 @@ int main(void)
 
     // need a game class now to read the controller manager
 
+    // small segfault here
+     // controller_manager.read_controllers();
+
     for(ever)
     {
         controller_manager.controllers[0].run_function();

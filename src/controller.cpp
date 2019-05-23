@@ -65,6 +65,23 @@ int Controller_interface::check_controllers_present(void)
 }
 
 
+int Controller_interface::read_controllers(void)
+{
+    for(int i = 0; i < (int)controllers.size(); i++)
+    {
+        player_inputs.push_back(std::async(std::launch::async, &Controller_interface::get_controller_input, this, i));
+
+    }
+}
+
+void Controller_interface::get_controller_input(int player)
+{
+    while(player_present[player])
+    {
+        controllers[player].run_function();
+    }
+}
+
 //template <class T, class U>
 bool Controller_interface::map(int player, std::string btn, std::function<void(void)> func)
 {

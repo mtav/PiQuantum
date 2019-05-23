@@ -82,6 +82,7 @@ class Controller_interface
         // returns the size of the controllers vector 
         int num_controllers(void);
 
+void get_controller_input(int player);
     public:
 
         // each controller is added to the vector of controllers 
@@ -90,7 +91,7 @@ class Controller_interface
         // vector of futures for polling each of the controllers in 
         // separate threads
         // each player has a future 
-        std::vector<std::future<bool> > player_inputs;
+        std::vector<std::future<void> > player_inputs;
 
         // 
         std::vector<bool> player_present;
@@ -106,6 +107,9 @@ class Controller_interface
         // currently this requires bind to be used.
         // template <class T, class U>
         bool map(int player, std::string btn, std::function<void(void)> func);
+
+        // start reading all controllers
+        int read_controllers(void);
 };
 
 
