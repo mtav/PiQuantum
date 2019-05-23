@@ -14,6 +14,8 @@
 #include <cstring>  // for unsigned chars...
 #include <vector> 
 
+#include <map>      // for std::map, would rather use vector but need a lookup table
+
 #include <future> // std::async and std::future
 
 #define ever ;;
@@ -33,7 +35,20 @@ class Controller
         // so it can be read and start the thread again without having to 
         // implement it in main. Not sure atm how it would work though
         std::future<std::string> input;
+
+        // each controller has a button mapping 
+        // @TODO should be templated but can't figure it out now 
+        // use map.insert(pair<type1, type2>(thing1, thing2));
+        // make a btn map
+        // Button_maps 
+        std::map<std::string, std::function<void(void)> > button_maps;
     public:
+        // each controller has output buttons stored in this vector
+        // to make MY LIFE EASIER!
+        const std::vector<std::string> buttons = 
+        { "A", "B", "X", "Y", 
+            "L_trigger", "R_trigger", "Select", "Start",
+            "Right", "Down", "Left", "Up"};
 
         // return controller path
         std::string get_loc(void);
@@ -48,6 +63,14 @@ class Controller
         // return anything but a direction
         std::string get_btn(void);
 
+        // assign controller "i" button "btn" to a function 
+        // should probs be templates or something for the function, 
+        // currently this requires bind to be used.
+        // template <class T, class U>
+        bool map(std::string btn, std::function<void(void)> func);
+
+        // execute function assigned to input 
+        void run_function(void);
 };
 
 // controller interface
@@ -56,34 +79,35 @@ class Controller_interface
     private:
         const int max_num_controllers = 4;
 
-        std::vector<Controller> controllers;
+        // returns the size of the controllers vector 
         int num_controllers(void);
 
     public:
 
+        std::vector<Controller> controllers;
         // default is 1 controller 
         Controller_interface(int num_controls = 1);
 
         // assign controller "i" button "btn" to a function 
         // should probs be templates or something for the function, 
         // currently this requires bind to be used.
-        template <class T, class U>
-            bool map(int player, std::string btn, std::function<T(U)> func);
+        // template <class T, class U>
+        bool map(int player, std::string btn, std::function<void(void)> func);
 };
 
 class Test_fn{
 
     public:
-        int test_func1(double arg)
+        void test_func1(double arg)
         {
             std::cout << "test_func1 with arg " << arg << std::endl;
-            return 0;
+            // return 0;
         }
 
-        int test_func2(void)
+        void test_func2(void)
         {
             std::cout << "test_func2" << std::endl;
-            return 2;
+            // return 2;
         }
 };
 
