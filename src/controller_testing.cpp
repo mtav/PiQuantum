@@ -49,10 +49,10 @@ int main(void)
 
     for(int j = 0; j < (int)controller_manager.num_controllers(); j++)
     {
-        for(int i = 0; i < (int)controller_manager.controllers[0].buttons.size(); i++)
+        for(int i = 0; i < (int)controller_manager.controllers[j].buttons.size(); i++)
         {
             // get the label for each button on the controller 
-            std::string btn_label = controller_manager.controllers[0].buttons[i]; 
+            std::string btn_label = controller_manager.controllers[j].buttons[i]; 
             // for controller 0 map each btn to print the letter of the btn
             controller_manager.map(j, btn_label, 
                     std::bind(&Game::print_letter, &game1, "Player " + 
