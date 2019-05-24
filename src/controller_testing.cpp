@@ -65,56 +65,9 @@ int main(void)
     // make a game object 
     Free_play game1(num_qubits, led_pos, qubit_btn_pos);
 
-        // display modes 
-        int display_mode = 0;
-        int cycle_counter = 0;
-
-
-        std::future_status flash_timer_status;
-        std::future<int> flash_timer;
-
-        int flash_trigger = 0;
-        // start thread for flashing 
-        flash_timer = std::async(std::launch::async, time_milli);
-
     for(ever)
     {
-        flash_timer_status = flash_timer.wait_for(std::chrono::nanoseconds(1));
-        if (flash_timer_status == std::future_status::ready)
-        { 
-            flash_trigger = flash_timer.get();
-            flash_timer = std::async(std::launch::async, time_milli);
-        }
-        else 
-        {
-            flash_trigger = 0;
-        }
-        // for display cycling, check if the flash timer is triggered 
-        // probably a memory problem with threading. Should investigate 
-        // @TODO Fix this 
-        // should be timer 1 then timer 0, 
-        //  if(driver -> check_dc_timer(thread_count + 1) || flash_trigger)
-        if(flash_trigger)
-        {
-
-        std::cout << "HERE?" << std::endl;
-            if(display_mode == 0) 
-            {
-                game1.players[0].state -> flash(); 
-                std::cout << "flash?" << std::endl;
-            }
-                // if in cycle mode check for all other 
-            // else if(display_mode == 1 && driver -> check_dc_timer(thread_count))
-            else if(display_mode == 1)
-            {
-                cycle_counter = game1.players[0].state -> disp_cycle(cycle_counter);
-                std::cout << "Showing state " << cycle_counter << std::endl;
-            }
-        }
-
-
-
-        //        std::this_thread::sleep_for(std::chrono::seconds(1));
+        game1.do_flashing();
     }
 
     return 0;

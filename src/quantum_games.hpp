@@ -27,6 +27,13 @@ class Player
 
         std::future<void> inputs;
         bool here = false;
+        int display_mode = 0;
+        int cycle_counter = 0;
+
+        std::future_status flash_timer_status;
+        std::future<int> flash_timer;
+        int flash_trigger = 0;
+
         // each player should have one and only one unique controller
         std::unique_ptr<Controller> unique_controller_ptr;
         std::shared_ptr<Controller> controller;
@@ -63,6 +70,13 @@ class Game
         // USE BIND TO PASS FUNCTION WITH NO ARGS
         // std::function<void(void)> func = std::bind(&Game::print_letter, &game1, "A");
 
+        // thread timer 
+        int time()
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(350));
+            return 1;
+        }
+
         Game(void) 
         {
             // looks for all the controllers connected at /dev/input/js*
@@ -81,6 +95,8 @@ class Game
                     controller_manager.map(j, btn_label, 
                             std::bind(&Game::print_letter, this, "Player " + 
                                 std::to_string(j) + " " + btn_label));
+
+                    // controller_manager.map(j, "Select", std::bind( delete this));
                 }
             }
 
@@ -245,25 +261,72 @@ class Game
                                 player_led_pos, player_btn_pos);
 
                         player_counter++;
+
+                        start_flash_timer(players[i]);
                     }
                 } // constructed each players state_vector
                 // now map the buttons to gates 
 
+                // start the flash timer
             }
-                void display(void)
+
+            // start flash timer
+            void start_flash_timer(Player & player)
+            {
+                player.flash_timer = std::async(std::launch::async, &Game::time, this);
+            }
+
+            void do_flashing(Player & player)
+            {
+                player.flash_timer_status = player.flash_timer.wait_for(std::chrono::nanoseconds(1));
+                if(player.flash_timer_status == std::future_status::ready)
                 {
-
-
+                    player.flash_trigger = player.flash_timer.get();
+                    start_flash_timer(player);
+                }
+                else
+                {
+                    player.flash_trigger = 0;
                 }
 
-                Free_play()
+                if(player.flash_trigger)
                 {
+                    if(player.display_mode == 0)
+                    {   
+                        player.state -> flash();
+                    }
+                    else if(player.display_mode == 1)
+                    {
+                        player.cycle_counter = player.state -> disp_cycle(player.cycle_counter);
+                    }
+                }
+            }
 
-                } // end of constructor 
-            };
+            void do_flashing(void)
+            {
+                for(int i = 0; i < (int)players.size(); i++)
+                {
+                    if(players[i].here)
+                    {
+                        do_flashing(players[i]);
+                    }
+                }
+            }
 
-            class Controller_function_test : Game
-        {
-        };
+            void display(void)
+            {
+
+
+            }
+
+            Free_play()
+            {
+
+            } // end of constructor 
+    };
+
+        class Controller_function_test : Game
+    {
+    };
 
 #endif // QUANTUM_GAMES_HPP
