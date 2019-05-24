@@ -15,16 +15,31 @@
 #include <thread>
 #include <chrono>
 
-int print_letter(std::string str_in)
+class Game
 {
-    std::cout << "Printing " << str_in << std::endl;
-    return 0;
-}
+    private:
+    public: 
+        std::string message = "default";
+
+        void print_message(void)
+        {
+            std::cout << message << std::endl;
+        }
+
+    int print_letter(const std::string & str_in)
+    {   
+        std::cout << "Printing " << str_in << std::endl;
+        return 0;
+    }
+};
 
 int main(void)
 {
+    // make a Game object
+    Game game1;
+
     // USE BIND TO PASS FUNCTION WITH NO ARGS
-    std::function<void(void)> func = std::bind(print_letter, "A");
+    std::function<void(void)> func = std::bind(&Game::print_letter, &game1, "A");
 
     // looks for all the controllers connected at /dev/input/js*
     // should start all of the controllers in their own threads 
@@ -40,7 +55,8 @@ int main(void)
             std::string btn_label = controller_manager.controllers[0].buttons[i]; 
             // for controller 0 map each btn to print the letter of the btn
             controller_manager.map(j, btn_label, 
-                    std::bind(print_letter, "Player " + std::to_string(j) + " " + btn_label));
+                    std::bind(&Game::print_letter, &game1, "Player " + 
+                        std::to_string(j) + " " + btn_label));
         }
     }
 
@@ -50,11 +66,19 @@ int main(void)
     // launches a thread for each controller 
     controller_manager.read_controllers();
 
+    // use this for apply on the cursor position 
+    // the cotroller thread can read the members of state so the map doesn't need to be
+    // changed per qubit, which is nice 
+    controller_manager.map(1, "B", std::bind(&Game::print_message, &game1));
+
     for(ever)
     {
-        controller_manager.map(0, "B", std::bind(print_letter, "Player 0 NEw map"));
+        game1.message = "changed?";
+        controller_manager.map(0, "B", std::bind(&Game::print_letter, &game1, "Player 0 NEw map"));
         std::this_thread::sleep_for(std::chrono::seconds(1));
-        controller_manager.map(0, "B", std::bind(print_letter, "Player 0 B"));
+
+        game1.message = "no?";
+        controller_manager.map(0, "B", std::bind(&Game::print_letter, &game1, "Player 0 B"));
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
