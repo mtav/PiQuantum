@@ -4,12 +4,11 @@ DEPDIR = .d
 
 main_SRC := main.cpp state.cpp spi.cpp interface.cpp wpi.cpp io.cpp controller.cpp
 timer_SRC := timer_test.cpp interrupts.cpp
-controller_test_SRC := controller_testing.cpp controller.cpp
-
+controller_test_SRC := quantum_games.cpp controller_testing.cpp controller.cpp 
 CC       := g++
 
 CFLAGS   := -g3 -std=c++14 -O2 -Wall -pthread #-flto
-CPPFLAGS := -I. 
+CPPFLAGS := -I. -I./eigen3/
 
 LDFLAGS  :=  
 LDLIBS   := #-lwiringPi

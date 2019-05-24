@@ -15,23 +15,7 @@
 #include <thread>
 #include <chrono>
 
-class Game
-{
-    private:
-    public: 
-        std::string message = "default";
-
-        void print_message(void)
-        {
-            std::cout << message << std::endl;
-        }
-
-    int print_letter(const std::string & str_in)
-    {   
-        std::cout << "Printing " << str_in << std::endl;
-        return 0;
-    }
-};
+#include "quantum_games.cpp"
 
 int main(void)
 {
