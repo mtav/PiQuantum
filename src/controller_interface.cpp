@@ -46,13 +46,16 @@ int main(void)
 
     // need a game class now to read the controller manager
 
-    // small segfault here
+    // small segfault here // NOT any more.
+    // launches a thread for each controller 
     controller_manager.read_controllers();
 
     for(ever)
     {
+        controller_manager.map(0, "B", std::bind(print_letter, "Player 0 NEw map"));
         std::this_thread::sleep_for(std::chrono::seconds(1));
-        //    controller_manager.controllers[0].run_function();
+        controller_manager.map(0, "B", std::bind(print_letter, "Player 0 B"));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
 
