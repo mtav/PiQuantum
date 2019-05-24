@@ -37,10 +37,13 @@ Controller_interface::Controller_interface(int num_controls)
 
         }
     }
+
+    player_present = std::vector<bool>(max_num_controllers,false);
     std::cout << "There are " << num_controllers() << " controllers connected " << std::endl;
     for(int i = 0; i < num_controllers(); i++)
     {
         std::cout << " Located at " << controllers[i].get_loc() << std::endl;
+        player_present[i] = true;
     }
 
 } // End of the controller interface constructor

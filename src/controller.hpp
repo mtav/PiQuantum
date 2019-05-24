@@ -79,21 +79,21 @@ class Controller_interface
     private:
         const int max_num_controllers = 4;
 
-        // returns the size of the controllers vector 
-        int num_controllers(void);
-
-void get_controller_input(int player);
+        void get_controller_input(int player);
     public:
 
         // each controller is added to the vector of controllers 
         std::vector<Controller> controllers;
+
+        // returns the size of the controllers vector 
+        int num_controllers(void);
 
         // vector of futures for polling each of the controllers in 
         // separate threads
         // each player has a future 
         std::vector<std::future<void> > player_inputs;
 
-        // 
+        // defined in constructor  
         std::vector<bool> player_present;
 
         // default is 1 controller 

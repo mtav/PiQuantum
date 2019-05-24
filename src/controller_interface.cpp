@@ -12,6 +12,9 @@
 #include <functional> // for passing functions 
 #include <future> 
 
+#include <thread>
+#include <chrono>
+
 int print_letter(std::string str_in)
 {
     std::cout << "Printing " << str_in << std::endl;
@@ -29,22 +32,27 @@ int main(void)
     //
     Controller_interface controller_manager;
 
-    for(int i = 0; i < (int)controller_manager.controllers[0].buttons.size(); i++)
+    for(int j = 0; j < (int)controller_manager.num_controllers(); j++)
     {
-        // get the label for each button on the controller 
-        std::string btn_label = controller_manager.controllers[0].buttons[i]; 
-        // for controller 0 map each btn to print the letter of the btn
-        controller_manager.map(0, btn_label, std::bind(print_letter, btn_label));
+        for(int i = 0; i < (int)controller_manager.controllers[0].buttons.size(); i++)
+        {
+            // get the label for each button on the controller 
+            std::string btn_label = controller_manager.controllers[0].buttons[i]; 
+            // for controller 0 map each btn to print the letter of the btn
+            controller_manager.map(j, btn_label, 
+                    std::bind(print_letter, "Player " + std::to_string(j) + " " + btn_label));
+        }
     }
 
     // need a game class now to read the controller manager
 
     // small segfault here
-     // controller_manager.read_controllers();
+    controller_manager.read_controllers();
 
     for(ever)
     {
-        controller_manager.controllers[0].run_function();
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        //    controller_manager.controllers[0].run_function();
     }
 
 
