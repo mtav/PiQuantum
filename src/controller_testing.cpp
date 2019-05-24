@@ -17,10 +17,14 @@
 
 #include "quantum_games.cpp"
 
-void player_joined(void)
+// Temp timer stuff
+
+int time_milli()
 {
-    std::cout << "Player joined" << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(350));
+    return 1;
 }
+
 
 int main(void)
 {
@@ -56,49 +60,62 @@ int main(void)
     // function buttons // e.g gates 
     std::vector<Position> func_btn_pos{ {1,0}, {1,3}, {0,1}, {0,0} };
 
+    const int num_qubits = 4;
 
-    /*
-    // make a Game object
-    Game game1;
+    // make a game object 
+    Free_play game1(num_qubits, led_pos, qubit_btn_pos);
+
+        // display modes 
+        int display_mode = 0;
+        int cycle_counter = 0;
 
 
-    game1.run();
+        std::future_status flash_timer_status;
+        std::future<int> flash_timer;
+
+        int flash_trigger = 0;
+        // start thread for flashing 
+        flash_timer = std::async(std::launch::async, time_milli);
+
     for(ever)
     {
-    
-        game1.message = "changed?";
-        game1.controller_manager.map(0, "B", std::bind(&Game::print_letter, &game1, "Player 0 NEw map"));
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-
-        game1.message = "no?";
-        game1.controller_manager.map(0, "B", std::bind(&Game::print_letter, &game1, "Player 0 B"));
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-   
+        flash_timer_status = flash_timer.wait_for(std::chrono::nanoseconds(1));
+        if (flash_timer_status == std::future_status::ready)
+        { 
+            flash_trigger = flash_timer.get();
+            flash_timer = std::async(std::launch::async, time_milli);
         }
-*/
-    Free_play game1(4, led_pos, qubit_btn_pos);
+        else 
+        {
+            flash_trigger = 0;
+        }
+        // for display cycling, check if the flash timer is triggered 
+        // probably a memory problem with threading. Should investigate 
+        // @TODO Fix this 
+        // should be timer 1 then timer 0, 
+        //  if(driver -> check_dc_timer(thread_count + 1) || flash_trigger)
+        if(flash_trigger)
+        {
 
-    //game1.map(0,"Start", player_joined);
-    
+        std::cout << "HERE?" << std::endl;
+            if(display_mode == 0) 
+            {
+                game1.players[0].state -> flash(); 
+                std::cout << "flash?" << std::endl;
+            }
+                // if in cycle mode check for all other 
+            // else if(display_mode == 1 && driver -> check_dc_timer(thread_count))
+            else if(display_mode == 1)
+            {
+                cycle_counter = game1.players[0].state -> disp_cycle(cycle_counter);
+                std::cout << "Showing state " << cycle_counter << std::endl;
+            }
+        }
 
-    
 
-    
-    for(ever)
-    {
 
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        //        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
-
-    /*
-    // method 2
-    btn1.func = std::bind( &Test_fn::test_func1, &test1, std::placeholders::_1);
-    btn1.func(5); 
-
-    // method 2 with no args 
-    btn1.func_no_options = std::bind( &Test_fn::test_func2, &test1);
-    btn1.func_no_options();
-    */
 
     return 0;
 }

@@ -87,22 +87,22 @@ class Game
             // allocate controllers to players 
             for(int i = 0; i < (int)controller_manager.num_controllers(); i++)
             {
-            players.push_back(Player{controller_manager.controllers[i]});
-            std::cout << "Added player " << i << std::endl;
-            players[i].here = false;
+                players.push_back(Player{controller_manager.controllers[i]});
+                std::cout << "Added player " << i << std::endl;
+                players[i].here = false;
             }
-            
-                  // work out how many players there should be   
-                    // make them
-                run(); // look for input from controllers 
 
-                // maps the start button to add in players 
-                num_players = get_players();
-                
-                for(int i = 0; i < (int)players.size(); i++)
-                {
-                    std::cout << "player " << i << " here " << players[i].here << std::endl;
-                }
+            // work out how many players there should be   
+            // make them
+            run(); // look for input from controllers 
+
+            // maps the start button to add in players 
+            num_players = get_players();
+
+            for(int i = 0; i < (int)players.size(); i++)
+            {
+                std::cout << "player " << i << " here " << players[i].here << std::endl;
+            }
 
         } // end of ctor
 
@@ -146,8 +146,8 @@ class Game
 
         void stop(void)
         {
-             //controller_manager.stop_read_controllers();
-             wait_for_input = false;
+            //controller_manager.stop_read_controllers();
+            wait_for_input = false;
         }
 
         // overloading map so only the game can remap buttons 
@@ -218,7 +218,7 @@ class Game
                     std::vector<Position> qubit_btn_pos) 
             {
                 int player_counter = 0;
-                for(int i = 0; i < players.size(); i++)
+                for(int i = 0; i < (int)players.size(); i++)
                 {
                     if(players[i].here)
                     {
@@ -228,7 +228,7 @@ class Game
                         std::vector<std::vector<Position> > player_led_pos = 
                             std::vector<std::vector<Position> >(led_pos.begin() + offset ,
                                     led_pos.begin() + player_qubits*(offset + 1));
-                        
+
                         std::vector<Position> player_btn_pos = 
                             std::vector<Position>(qubit_btn_pos.begin() + offset,
                                     qubit_btn_pos.begin() + (player_qubits*(offset+1)));
@@ -246,17 +246,24 @@ class Game
 
                         player_counter++;
                     }
-                }
+                } // constructed each players state_vector
+                // now map the buttons to gates 
+
             }
+                void display(void)
+                {
 
-            Free_play()
-            {
-              
-            } // end of constructor 
-    };
 
-        class Controller_function_test : Game
-    {
-    };
+                }
+
+                Free_play()
+                {
+
+                } // end of constructor 
+            };
+
+            class Controller_function_test : Game
+        {
+        };
 
 #endif // QUANTUM_GAMES_HPP
