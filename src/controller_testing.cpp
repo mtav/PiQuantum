@@ -17,55 +17,78 @@
 
 #include "quantum_games.cpp"
 
+void player_joined(void)
+{
+    std::cout << "Player joined" << std::endl;
+}
+
 int main(void)
 {
+    /// qubit leds RGB positions
+    std::vector<std::vector<Position> > led_pos{ 
+        { {0,4}, {0,2}, {0,3} }, 
+            { {0,7}, {0,5}, {0,6} },
+            { {1,4}, {1,2}, {1,3} },
+            { {1,7}, {1,5}, {1,6} },
+
+            { {0,0}, {0,0}, {0,0} },
+            { {0,0}, {0,0}, {0,0} },
+            { {0,0}, {0,0}, {0,0} },
+            { {0,0}, {0,0}, {0,0} },
+
+            { {0,0}, {0,0}, {0,0} },
+            { {0,0}, {0,0}, {0,0} },
+            { {0,0}, {0,0}, {0,0} },
+            { {0,0}, {0,0}, {0,0} },
+
+            { {0,0}, {0,0}, {0,0} },
+            { {0,0}, {0,0}, {0,0} },
+            { {0,0}, {0,0}, {0,0} },
+            { {0,0}, {0,0}, {0,0} } };
+
+    /// vector of qubit btns
+    std::vector<Position> qubit_btn_pos{ 
+        {0,2}, {1,7}, {1,1}, {1,2},
+            {0,0}, {0,0}, {0,0}, {0,0},
+            {0,0}, {0,0}, {0,0}, {0,0},
+            {0,0}, {0,0}, {0,0}, {0,0} };
+
+    // function buttons // e.g gates 
+    std::vector<Position> func_btn_pos{ {1,0}, {1,3}, {0,1}, {0,0} };
+
+
+    /*
     // make a Game object
     Game game1;
 
-    // USE BIND TO PASS FUNCTION WITH NO ARGS
-    std::function<void(void)> func = std::bind(&Game::print_letter, &game1, "A");
 
-    // looks for all the controllers connected at /dev/input/js*
-    // should start all of the controllers in their own threads 
-    // Have a method for checking how many controllers are connected etc
-    //
-    Controller_interface controller_manager;
-
-    for(int j = 0; j < (int)controller_manager.num_controllers(); j++)
-    {
-        for(int i = 0; i < (int)controller_manager.controllers[j].buttons.size(); i++)
-        {
-            // get the label for each button on the controller 
-            std::string btn_label = controller_manager.controllers[j].buttons[i]; 
-            // for controller 0 map each btn to print the letter of the btn
-            controller_manager.map(j, btn_label, 
-                    std::bind(&Game::print_letter, &game1, "Player " + 
-                        std::to_string(j) + " " + btn_label));
-        }
-    }
-
-    // need a game class now to read the controller manager
-
-    // small segfault here // NOT any more.
-    // launches a thread for each controller 
-    controller_manager.read_controllers();
-
-    // use this for apply on the cursor position 
-    // the cotroller thread can read the members of state so the map doesn't need to be
-    // changed per qubit, which is nice 
-    controller_manager.map(1, "B", std::bind(&Game::print_message, &game1));
-
+    game1.run();
     for(ever)
     {
+    
         game1.message = "changed?";
-        controller_manager.map(0, "B", std::bind(&Game::print_letter, &game1, "Player 0 NEw map"));
+        game1.controller_manager.map(0, "B", std::bind(&Game::print_letter, &game1, "Player 0 NEw map"));
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
         game1.message = "no?";
-        controller_manager.map(0, "B", std::bind(&Game::print_letter, &game1, "Player 0 B"));
+        game1.controller_manager.map(0, "B", std::bind(&Game::print_letter, &game1, "Player 0 B"));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+   
+        }
+*/
+    Free_play game1(4, led_pos, qubit_btn_pos);
+
+    //game1.map(0,"Start", player_joined);
+    
+
+    
+
+    
+    for(ever)
+    {
+
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
-
 
     /*
     // method 2

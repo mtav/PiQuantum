@@ -32,7 +32,7 @@ Controller_interface::Controller_interface(int num_controls)
         else if(controller_file)
         {
             // controller in /dev/input/jsi
-            controllers.push_back(Controller(loc));
+            controllers.push_back( std::make_shared<Controller>(loc));
             // add its button mappings 
 
         }
@@ -42,7 +42,7 @@ Controller_interface::Controller_interface(int num_controls)
     std::cout << "There are " << num_controllers() << " controllers connected " << std::endl;
     for(int i = 0; i < num_controllers(); i++)
     {
-        std::cout << " Located at " << controllers[i].get_loc() << std::endl;
+        std::cout << " Located at " << controllers[i] -> get_loc() << std::endl;
         player_present[i] = true;
     }
 
@@ -55,7 +55,7 @@ int Controller_interface::check_controllers_present(void)
     int count = 0;
     for(int i = 0; i < (int)controllers.size(); i++)
     {
-        if(controllers[i].get_input() == "UNPLUGGED")
+        if(controllers[i] -> get_input() == "UNPLUGGED")
         {
             // erase the controller 
             // @TODO Check this doesn't cause a memory leak // check threads etc.
@@ -68,7 +68,7 @@ int Controller_interface::check_controllers_present(void)
 }
 
 
-int Controller_interface::read_controllers(void)
+void Controller_interface::read_controllers(void)
 {
     for(int i = 0; i < (int)controllers.size(); i++)
     {
@@ -77,11 +77,19 @@ int Controller_interface::read_controllers(void)
     }
 }
 
+void Controller_interface::stop_read_controllers(void)
+{
+    for(int i = 0; i < player_present.size(); i++)
+    {
+        player_present[i] = false;
+    }
+}
+
 void Controller_interface::get_controller_input(int player)
 {
     while(player_present[player])
     {
-        controllers[player].run_function();
+        controllers[player] -> run_function();
     }
 }
 
@@ -93,7 +101,7 @@ bool Controller_interface::map(int player, std::string btn, std::function<void(v
     {
         // player btn do function 
         // controllers[player] 
-        controllers[player].map(btn, func);        
+        controllers[player] -> map(btn, func);        
 
     }
     return true;

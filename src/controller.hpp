@@ -17,6 +17,7 @@
 #include <map>      // for std::map, would rather use vector but need a lookup table
 
 #include <future> // std::async and std::future
+#include <memory> // for std::shared_ptr 
 
 #define ever ;;
 
@@ -54,7 +55,10 @@ class Controller
         std::string get_loc(void);
 
         // contructor taks the path to controller e.g. /dev/input/js0
-        Controller(std::string path = "/dev/input/js0");
+        Controller(std::string path);
+    
+        // default constructor
+        Controller() {};
 
         // return the next input from the controller 
         std::string get_input(void);
@@ -83,7 +87,7 @@ class Controller_interface
     public:
 
         // each controller is added to the vector of controllers 
-        std::vector<Controller> controllers;
+        std::vector<std::shared_ptr<Controller> > controllers;
 
         // returns the size of the controllers vector 
         int num_controllers(void);
@@ -109,44 +113,10 @@ class Controller_interface
         bool map(int player, std::string btn, std::function<void(void)> func);
 
         // start reading all controllers
-        int read_controllers(void);
+        void read_controllers(void);
+
+        void stop_read_controllers(void);
 };
 
-
-// Temp junk 
-// might need //
-
-class Test_fn{
-
-    public:
-        void test_func1(double arg)
-        {
-            std::cout << "test_func1 with arg " << arg << std::endl;
-            // return 0;
-        }
-
-        void test_func2(void)
-        {
-            std::cout << "test_func2" << std::endl;
-            // return 2;
-        }
-};
-
-// class for managing controller input 
-
-struct btn_mappings{
-    private:
-    public:
-        std::string name;
-        // set to a member function reference and the function takes 
-        // a object as an argument 
-        std::function<int(Test_fn &, double)> func_obj;
-
-        // second way stores the function and the reference to the object to act on
-        std::function<int(double)> func;
-
-        // same but stores member function and reference to object 
-        std::function<int(void)> func_no_options;
-};
 
 #endif 
