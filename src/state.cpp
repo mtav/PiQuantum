@@ -382,16 +382,20 @@ void State_vector::apply(const Operator & op, std::string count)
     if(count == "single"){ apply(op, cursor_pos);}
     else if(count == "controlled")
     {
-        int ctrl = cursor_pos;
+        static int ctrl = cursor_pos;
         int targ = ctrl; // for the loop
 
         // update the target cursor pos
-        while(targ == ctrl){
-            update_pos();
-            targ = cursor_pos;
-        }
+        // while(targ == ctrl){
+        //    update_pos();
+        //    targ = cursor_pos;
+        //}
+        if(cursor_pos != ctrl)
+        {
         std::cout << "Ctrl " << ctrl << ", Targ " << targ << std::endl;
         apply(op, ctrl, targ);
+        }
+        else{} //not moved yet};
     }
     // default is single qubit gate
     else { apply(op, cursor_pos); }
@@ -417,6 +421,21 @@ void State_vector::apply(const Operator & op, int ctrl, int targ)
         << " target " << targ << std::endl;
     qubits[targ] -> set_uptodate(false);
     last_selected_qubit = - 1; // to fix button bouncing in state.hpp
+}
+
+// ssssssssssssssh
+// sorry for all the overloading, but I've dont so much now I have to continue
+// because std::bind can't tell whcih is which. AAAAAAAAAAAAAr
+void State_vector::apply_single(const Operator & op)
+{
+    apply(op);
+    disp();
+}
+// WIll fix. probably @TODO fix this 
+void State_vector::apply_two(const Operator & op)
+{
+    apply(op, "controlled"); 
+    disp();
 }
 
 // ------------------- WeIrD iNdEx LoOpInG --------------------
@@ -740,7 +759,7 @@ void State_vector::update_pos(int i)
     */
 }
 
-void State_vector::move_cursor(std::string direction)
+void State_vector::move_cursor_str(std::string direction)
 {
     if(direction == "Left" || direction == "Right" || direction == "Up" || direction == "Down")
     {

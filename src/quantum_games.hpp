@@ -38,6 +38,10 @@ class Player
         std::unique_ptr<Controller> unique_controller_ptr;
         std::shared_ptr<Controller> controller;
 
+        void map(std::string btn_label, std::function<void(void)> func)
+        {
+            controller -> map(btn_label, func);
+        }
         // each player should have one and only one state_vector
         std::shared_ptr<State_vector> state;
 
@@ -262,6 +266,9 @@ class Game
 
                         player_counter++;
 
+                        // MAP CONTROLLERS
+                        controller_map(players[i]);
+
                         start_flash_timer(players[i]);
                     }
                 } // constructed each players state_vector
@@ -270,6 +277,39 @@ class Game
                 // start the flash timer
             }
 
+            void controller_map(Player & player)
+            {
+                // gates 
+                player.map("X", std::bind(&State_vector::apply_single, player.state, 
+                            Rotation_X()));
+
+                player.map("Y", std::bind(&State_vector::apply_single, player.state, 
+                            Rotation_Y()));
+
+                player.map("A", std::bind(&State_vector::apply_single, player.state, 
+                            Rotation_Z()));
+                
+                player.map("B", std::bind(&State_vector::apply_single, player.state, 
+                            Hadamard()));
+                
+                player.map("L_trigger", std::bind(&State_vector::apply_two, player.state, 
+                            Rotation_Z()));
+
+                player.map("R_trigger", std::bind(&State_vector::apply_two, player.state, 
+                            Rotation_X()));
+                
+
+                // directions 
+                player.map("Right", std::bind(&State_vector::move_cursor_str, player.state, 
+                            "Right"));
+                player.map("Left", std::bind(&State_vector::move_cursor_str, player.state, 
+                            "Left"));
+                player.map("Down", std::bind(&State_vector::move_cursor_str, player.state, 
+                            "Down"));
+                player.map("Up", std::bind(&State_vector::move_cursor_str, player.state, 
+                            "Up"));
+
+            }
             // start flash timer
             void start_flash_timer(Player & player)
             {

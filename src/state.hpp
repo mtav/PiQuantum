@@ -223,6 +223,14 @@ class State_vector
 
         void set_superpos();
 
+
+        // sorry for all the overloading, but I've dont so much now I have to continue
+        // because std::bind can't tell whcih is which. AAAAAAAAAAAAAr
+        void apply_single(const Operator & op);
+
+        // WIll fix. probably @TODO fix this 
+        void apply_two(const Operator & op);
+
         // use to apply gates
         void apply(const Operator & op, std::string count = "single");
 
@@ -244,7 +252,7 @@ class State_vector
         // does nothing?
         void update_pos(int i = 0);
 
-        void move_cursor(std::string direction);
+        void move_cursor_str(std::string direction);
 
         void move_cursor(int new_pos);
 
