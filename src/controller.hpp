@@ -77,6 +77,7 @@ class Controller
         void run_function(void);
 };
 
+/*
 // controller interface
 class Controller_interface
 {
@@ -117,6 +118,6 @@ class Controller_interface
 
         void stop_read_controllers(void);
 };
-
+*/
 
 #endif 

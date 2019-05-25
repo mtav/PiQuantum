@@ -1,7 +1,0 @@
-#Internal package file, do not edit.
-#Tue Feb 19 11:06:18 GMT 2019
-0.baseType=DIRECTORY
-0.base=/home/jrs/Documents/git/piquantum/src/android/PiQuantum/app/build/intermediates/dex/debug/mergeDexDebug/out
-0.path=classes.dex
-0.set=DEX
-count=1

@@ -9,6 +9,7 @@
 
 // -------------------------------- Controller interface ---------------------
 
+/*
 Controller_interface::Controller_interface(int num_controls)
 {
     // read /dev/input/jsX to see if controller is plugged in 
@@ -110,6 +111,7 @@ bool Controller_interface::map(int player, std::string btn, std::function<void(v
 
 
 int Controller_interface::num_controllers(void) { return (int)controllers.size();}
+*/ 
 
 // ----------------------------------- Controller ---------------------------
 

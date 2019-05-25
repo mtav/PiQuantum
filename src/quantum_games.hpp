@@ -35,22 +35,32 @@ class Player
         int flash_trigger = 0;
 
         // each player should have one and only one unique controller
-        std::unique_ptr<Controller> unique_controller_ptr;
-        std::shared_ptr<Controller> controller;
+        std::unique_ptr<Controller> controller;
+
+        // Ctor 
+        Player(std::string controller_loc)
+        {
+            // check if controller exists 
+            std::ifstream controller_file(controller_loc);
+
+            // open the file 
+            if(controller_file)
+            {
+                // make the controller 
+                controller = std::make_unique<Controller>(controller_loc);
+                here = true;
+            }
+        }
+
+
 
         void map(std::string btn_label, std::function<void(void)> func)
         {
             controller -> map(btn_label, func);
         }
         // each player should have one and only one state_vector
-        std::shared_ptr<State_vector> state;
+          std::shared_ptr<State_vector> state;
 
-        Player(){}
-
-        Player(std::shared_ptr<Controller> control_in)  : controller(control_in)
-    {
-        here = false;
-    }
 };
 
 // the game class which all others inherit from
@@ -59,9 +69,10 @@ class Game
     private:
 
         bool wait_for_input = true;
+        const int max_num_players = 4;
     public:
         // make controllers
-        Controller_interface controller_manager;
+        // Controller_interface controller_manager;
 
         // each games has the number of players in it
         int num_players;
@@ -88,28 +99,31 @@ class Game
             // Have a method for checking how many controllers are connected etc
             //
 
-            // Map buttons on every controller to defaults 
-            for(int j = 0; j < (int)controller_manager.num_controllers(); j++)
+            // Check for controllers (players) present
+            for(int i = 0; i < max_num_players; i++)
             {
-                for(int i = 0; i < (int)controller_manager.controllers[j] -> buttons.size(); i++)
-                {
-                    // get the label for each button on the controller 
-                    std::string btn_label = controller_manager.controllers[j] -> buttons[i]; 
-                    // for controller 0 map each btn to print the letter of the btn
-                    controller_manager.map(j, btn_label, 
-                            std::bind(&Game::print_letter, this, "Player " + 
-                                std::to_string(j) + " " + btn_label));
+                std::string loc = "/dev/input/js" + std::to_string(i);
+                std::ifstream controller_file(loc);
 
-                    // controller_manager.map(j, "Select", std::bind( delete this));
+                if(controller_file) // make player 
+                {
+                    players.push_back(Player(loc));
                 }
             }
+                
 
-            // allocate controllers to players 
-            for(int i = 0; i < (int)controller_manager.num_controllers(); i++)
+            // Map buttons on every controller to defaults 
+            for(int j = 0; j < (int)players.size(); j++)
             {
-                players.push_back(Player{controller_manager.controllers[i]});
-                std::cout << "Added player " << i << std::endl;
-                players[i].here = false;
+                for(int i = 0; i < (int)players[j].controller -> buttons.size(); i++)
+                {
+                    // get the label for each button on the controller 
+                    std::string btn_label = players[j].controller -> buttons[i]; 
+                    // for controller 0 map each btn to print the letter of the btn
+                    players[j].map(btn_label, std::bind(&Game::print_letter, this, 
+                                "Player " + std::to_string(j) + " " + btn_label));
+
+                }
             }
 
             // work out how many players there should be   
@@ -173,7 +187,7 @@ class Game
         // overloading map so only the game can remap buttons 
         void map(int player, std::string btn, std::function<void(void)> func)
         {
-            controller_manager.map(player, btn, func);
+            players[player].map(btn, func);
         }
 
         // FOR DEBUGINg ONLY 
@@ -193,14 +207,16 @@ class Game
         int get_players(void)
         {
             // check all currently connected controllers to see if they push start
-            for(int i = 0; i < controller_manager.num_controllers(); i++)
+            for(int i = 0; i < (int)players.size(); i++)
             { 
-                map(i, "Start", std::bind(&Game::add_players, this, i));
+                players[i].map("Start", std::bind(&Game::add_players, this, i));
             }
 
-            for(int j = 0; j < 5; j++)
+            int max_wait_time = 5;
+            for(int j = 0; j < max_wait_time; j++)
             {
-                std::cout << "Waiting for players to join, press START" << std::endl;
+                std::cout << "Waiting for players to join, press START, Time remaining " 
+                    << std::to_string(max_wait_time - j) << " seconds" << std::endl;
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             }
 
@@ -266,7 +282,7 @@ class Game
 
                         player_counter++;
 
-                        // MAP CONTROLLERS
+                        // MAP CONTROLLERS`
                         controller_map(players[i]);
 
                         start_flash_timer(players[i]);
