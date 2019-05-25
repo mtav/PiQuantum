@@ -52,14 +52,12 @@ class Player
             }
         }
 
-
-
         void map(std::string btn_label, std::function<void(void)> func)
         {
             controller -> map(btn_label, func);
         }
         // each player should have one and only one state_vector
-          std::shared_ptr<State_vector> state;
+        std::shared_ptr<State_vector> state;
 
 };
 
@@ -79,9 +77,6 @@ class Game
 
         std::vector<Player> players;
 
-        // every player has their own state-vector
-        // std::vector<State_vector> state_vectors;
-
         // USE BIND TO PASS FUNCTION WITH NO ARGS
         // std::function<void(void)> func = std::bind(&Game::print_letter, &game1, "A");
 
@@ -97,7 +92,6 @@ class Game
             // looks for all the controllers connected at /dev/input/js*
             // should start all of the controllers in their own threads 
             // Have a method for checking how many controllers are connected etc
-            //
 
             // Check for controllers (players) present
             for(int i = 0; i < max_num_players; i++)
@@ -110,7 +104,6 @@ class Game
                     players.push_back(Player(loc));
                 }
             }
-                
 
             // Map buttons on every controller to defaults 
             for(int j = 0; j < (int)players.size(); j++)
@@ -122,7 +115,6 @@ class Game
                     // for controller 0 map each btn to print the letter of the btn
                     players[j].map(btn_label, std::bind(&Game::print_letter, this, 
                                 "Player " + std::to_string(j) + " " + btn_label));
-
                 }
             }
 
@@ -158,24 +150,7 @@ class Game
             {
                 players[i].inputs = std::async(std::launch::async,
                         &Game::check_player_input, this, i);
-                // players[i].inputs = std::async(std::launch::async,
-                //        &Controller::run_function, players[i].controller);
-                // players[i].controller -> run_function();
             }
-
-
-            // small segfault here // NOT any more.
-            // launches a thread for each controller 
-            // controller_manager.read_controllers();
-
-
-            // read input, if controllers press Start make a player for them
-            // players.push_back(Player{controller_manager.controllers[i]
-
-            // use this for apply on the cursor position 
-            // the cotroller thread can read the members of state so the map doesn't need to be
-            // changed per qubit, which is nice 
-            // controller_manager.map(1, "B", std::bind(&Game::print_message, this));
         }
 
         void stop(void)
@@ -220,6 +195,7 @@ class Game
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             }
 
+            // should remap "Start" to whatever the game wants 
 
             int sum = 0;
             for(int k = 0; k < (int)players.size(); k++)
@@ -237,152 +213,148 @@ class Game
             std::cout << "Added player " << position << players[position].here << std::endl;
         }
 
-        };
+};
 
 
 
-        // Class to run the most basic quantum simulation
-        // checks how many controllers are connected and does stuff
-        class Free_play : public Game
-    {
-        private:
-        public:
+// Class to run the most basic quantum simulation
+// checks how many controllers are connected and does stuff
+class Free_play : public Game
+{
+    private:
+        typedef std::vector<std::vector<Position> > Led_positions;
+        typedef std::vector<Position> Button_positions;
 
+        int total_num_qubits;
+        Led_positions led_pos;
+        Button_positions qubit_btn_pos;
+    public:
+        // @TODO add buttons (physical not controllers) to this
+        Free_play(int num_qubits, const Led_positions & led_pos_in, const Button_positions & qubit_btn_pos_in) 
+            : total_num_qubits(num_qubits), led_pos(led_pos_in), qubit_btn_pos(qubit_btn_pos_in) 
+        {
+            allocate_players_resources();
+            // now map the buttons to gates 
 
-            // @TODO add buttons (physical not controllers) to this
-            Free_play(int num_qubits, std::vector<std::vector<Position> > led_pos,
-                    std::vector<Position> qubit_btn_pos) 
+            // start the flash timer
+        } // end of ctor 
+
+        // allocate players in the game leds, btns and make their statevectors
+
+        void allocate_players_resources(void)
+        {
+            int player_counter = 0;
+            for(int i = 0; i < (int)players.size(); i++)
             {
-                int player_counter = 0;
-                for(int i = 0; i < (int)players.size(); i++)
+                if(players[i].here)
                 {
-                    if(players[i].here)
-                    {
-                        int player_qubits = num_qubits / num_players;
-                        int offset = player_counter * player_qubits;
+                    int player_qubits = total_num_qubits / num_players;
+                    int offset = player_counter * player_qubits;
 
-                        std::vector<std::vector<Position> > player_led_pos = 
-                            std::vector<std::vector<Position> >(led_pos.begin() + offset ,
-                                    led_pos.begin() + player_qubits*(offset + 1));
+                    // Split the leds up for each player 
+                    Led_positions player_led_pos = Led_positions(led_pos.begin() + offset,
+                            led_pos.begin() + player_qubits*(offset + 1));
 
-                        std::vector<Position> player_btn_pos = 
-                            std::vector<Position>(qubit_btn_pos.begin() + offset,
-                                    qubit_btn_pos.begin() + (player_qubits*(offset+1)));
+                    // split the buttons 
+                    Button_positions player_btn_pos = Button_positions(qubit_btn_pos.begin() + 
+                            offset, qubit_btn_pos.begin() + (player_qubits*(offset+1)));
 
-                        //std::vector<std::vector<Position> > player_led_pos = 
-                        //{{ {0,4}, {0,2}, {0,3}},
-                        //{ {0,7}, {0,5}, {0,6}} };
+                    std::cout << "Player " << i << ", qubits "
+                        << player_qubits << ", Staring at " << offset << std::endl;
 
-                        //std::vector<Position> player_btn_pos = { {0,2}, {1,7}, {1,1}, {1,2}};
+                    // make the state_vector 
+                    players[i].state = std::make_shared<State_vector>(player_qubits, 
+                            player_led_pos, player_btn_pos);
 
-                        std::cout << "Qubits for player " << i << ", "
-                            << player_qubits << ", " << offset << std::endl;
-                        players[i].state = std::make_shared<State_vector>(player_qubits, 
-                                player_led_pos, player_btn_pos);
+                    player_counter++;
 
-                        player_counter++;
+                    // MAP CONTROLLERS`
+                    controller_map(players[i]);
 
-                        // MAP CONTROLLERS`
-                        controller_map(players[i]);
-
-                        start_flash_timer(players[i]);
-                    }
-                } // constructed each players state_vector
-                // now map the buttons to gates 
-
-                // start the flash timer
-            }
-
-            void controller_map(Player & player)
-            {
-                // gates 
-                player.map("X", std::bind(&State_vector::apply_single, player.state, 
-                            Rotation_X()));
-
-                player.map("Y", std::bind(&State_vector::apply_single, player.state, 
-                            Rotation_Y()));
-
-                player.map("A", std::bind(&State_vector::apply_single, player.state, 
-                            Rotation_Z()));
-                
-                player.map("B", std::bind(&State_vector::apply_single, player.state, 
-                            Hadamard()));
-                
-                player.map("L_trigger", std::bind(&State_vector::apply_two, player.state, 
-                            Rotation_Z()));
-
-                player.map("R_trigger", std::bind(&State_vector::apply_two, player.state, 
-                            Rotation_X()));
-                
-
-                // directions 
-                player.map("Right", std::bind(&State_vector::move_cursor_str, player.state, 
-                            "Right"));
-                player.map("Left", std::bind(&State_vector::move_cursor_str, player.state, 
-                            "Left"));
-                player.map("Down", std::bind(&State_vector::move_cursor_str, player.state, 
-                            "Down"));
-                player.map("Up", std::bind(&State_vector::move_cursor_str, player.state, 
-                            "Up"));
-
-            }
-            // start flash timer
-            void start_flash_timer(Player & player)
-            {
-                player.flash_timer = std::async(std::launch::async, &Game::time, this);
-            }
-
-            void do_flashing(Player & player)
-            {
-                player.flash_timer_status = player.flash_timer.wait_for(std::chrono::nanoseconds(1));
-                if(player.flash_timer_status == std::future_status::ready)
-                {
-                    player.flash_trigger = player.flash_timer.get();
-                    start_flash_timer(player);
+                    start_flash_timer(players[i]);
                 }
-                else
-                {
-                    player.flash_trigger = 0;
-                }
+            } // constructed each players state_vector
+        }
 
-                if(player.flash_trigger)
+
+        void controller_map(Player & player)
+        {
+            // gates 
+            player.map("X", std::bind(&State_vector::apply_single, player.state, Rotation_X()));
+            player.map("Y", std::bind(&State_vector::apply_single, player.state, Rotation_Y()));
+            player.map("A", std::bind(&State_vector::apply_single, player.state, Rotation_Z()));
+            player.map("B", std::bind(&State_vector::apply_single, player.state, Hadamard()));
+
+            player.map("L_trigger", std::bind(&State_vector::apply_two, player.state, Rotation_Z()));
+            player.map("R_trigger", std::bind(&State_vector::apply_two, player.state, Rotation_X()));
+            // player.map("Start", std::bind())
+            // player.map("Select", std::bind())
+
+            // directions 
+            player.map("Right", std::bind(&State_vector::move_cursor_str, player.state, "Right"));
+            player.map("Left", std::bind(&State_vector::move_cursor_str, player.state, "Left"));
+            player.map("Down", std::bind(&State_vector::move_cursor_str, player.state, "Down"));
+            player.map("Up", std::bind(&State_vector::move_cursor_str, player.state, "Up"));
+
+        }
+
+        // start flash timer
+        void start_flash_timer(Player & player)
+        {
+            player.flash_timer = std::async(std::launch::async, &Game::time, this);
+        }
+
+        void do_flashing(Player & player)
+        {
+            player.flash_timer_status = player.flash_timer.wait_for(std::chrono::nanoseconds(1));
+            if(player.flash_timer_status == std::future_status::ready)
+            {
+                player.flash_trigger = player.flash_timer.get();
+                start_flash_timer(player);
+            }
+            else
+            {
+                player.flash_trigger = 0;
+            }
+
+            if(player.flash_trigger)
+            {
+                if(player.display_mode == 0)
+                {   
+                    player.state -> flash();
+                }
+                else if(player.display_mode == 1)
                 {
-                    if(player.display_mode == 0)
-                    {   
-                        player.state -> flash();
-                    }
-                    else if(player.display_mode == 1)
-                    {
-                        player.cycle_counter = player.state -> disp_cycle(player.cycle_counter);
-                    }
+                    player.cycle_counter = player.state -> disp_cycle(player.cycle_counter);
                 }
             }
+        }
 
-            void do_flashing(void)
+        void do_flashing(void)
+        {
+            for(int i = 0; i < (int)players.size(); i++)
             {
-                for(int i = 0; i < (int)players.size(); i++)
+                if(players[i].here)
                 {
-                    if(players[i].here)
-                    {
-                        do_flashing(players[i]);
-                    }
+                    do_flashing(players[i]);
                 }
             }
+        }
 
-            void display(void)
-            {
+        void display(void)
+        {
 
 
-            }
+        }
 
-            Free_play()
-            {
+        Free_play()
+        {
 
-            } // end of constructor 
-    };
+        } // end of constructor 
+};
 
-        class Controller_function_test : Game
-    {
-    };
+class Controller_function_test : Game
+{
+};
 
 #endif // QUANTUM_GAMES_HPP

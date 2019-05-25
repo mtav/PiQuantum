@@ -1,0 +1,13 @@
+Object oriented program 
+
+Controllers
+maps inputs to function calls
+
+Players
+every player has a controller and manages their own state vector 
+
+Game class 
+has timers for showing selected qubit (flashing)
+
+The 
+
