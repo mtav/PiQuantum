@@ -1,10 +1,10 @@
-TARGETS := main controller_test timer
+TARGETS := main quantum_game timer
 
 DEPDIR = .d
 
 main_SRC := main.cpp state.cpp spi.cpp interface.cpp wpi.cpp io.cpp controller.cpp
 timer_SRC := timer_test.cpp interrupts.cpp
-controller_test_SRC := controller.cpp quantum_games.cpp controller_testing.cpp state.cpp interface.cpp wpi.cpp io.cpp spi.cpp
+quantum_game_SRC := controller.cpp quantum_games.cpp state.cpp interface.cpp wpi.cpp io.cpp spi.cpp
 
 CC       := g++
 
