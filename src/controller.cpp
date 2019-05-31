@@ -18,8 +18,8 @@ std::string Controller::decode_bytes(const std::vector<int> & values)
     // X    0 1 2 
     // Y    0 1 3
     //
-    // L    0 1 4
-    // R    0 1 5
+    // L_trigger 0 1 4
+    // R_trigger 0 1 5
     //
     // SELECT 0 1 6
     // START  0 1 7
@@ -71,7 +71,6 @@ std::string Controller::decode_bytes(const std::vector<int> & values)
             }
         }
     } // end of directions
-
     return answer;
 }
 
@@ -86,8 +85,6 @@ Controller::Controller(std::string path) : loc(path)
         // exit the program
         std::exit(errno);
     }
-    // else { std::cout << "read " << loc << std::endl; }
-
     // start thread for polling controller inputs
     // @TODO This might break stuff
     // input = std::async(std::launch::async, &Controller::get_input, this);
@@ -107,7 +104,8 @@ bool Controller::map(std::string btn, std::function<void(void)> func)
     return true;
 }
 
-
+// reads controller inputs and if a valid button is pressed run the function mapped to
+// it
 void Controller::run_function(void)
 {
     std::string in = get_input();
@@ -115,6 +113,7 @@ void Controller::run_function(void)
     else { std::cout << "nullptr function" << std::endl;}
 }
 
+// controller polling, 
 std::string Controller::get_input(void)
 {
     // vector of zeros size "size"
@@ -142,13 +141,6 @@ std::string Controller::get_input(void)
         vals.push_back(static_cast<int> (line[i]));
     }
 
-    // for debugging can be commented out 
-    for(int i = 0; i < (int)vals.size(); i++)
-    {
-        // std::cout << vals[i] << " ";
-    }
-    // std::cout << std::endl;
-
     // now use lookup table on the vals vector 
     std::string out = decode_bytes(vals);
     return out;
@@ -165,6 +157,7 @@ std::string Controller::get_direction(void)
     return result;
 }
 
+// polls until a button is pressed 
 std::string Controller::get_btn(void)
 {
     std::string result = get_input();
@@ -175,4 +168,5 @@ std::string Controller::get_btn(void)
     return result;
 }
 
+// return the location of the input e.g. /dev/input/jsX 
 std::string Controller::get_loc(void) { return loc; }

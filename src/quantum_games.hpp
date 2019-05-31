@@ -117,7 +117,8 @@ class Free_play : public Game
         Button_positions qubit_btn_pos;
     public:
         // @TODO add buttons (physical not controllers) to this
-        Free_play(int num_qubits, const Led_positions & led_pos_in, const Button_positions & qubit_btn_pos_in) 
+        Free_play(int num_qubits, const Led_positions & led_pos_in,
+                const Button_positions & qubit_btn_pos_in) 
             : total_num_qubits(num_qubits), led_pos(led_pos_in), qubit_btn_pos(qubit_btn_pos_in) 
         {
             allocate_players_resources();

@@ -78,4 +78,4 @@ class Controller
 };
 
 
-#endif 
+#endif  // CONTROLLER_HPP

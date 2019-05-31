@@ -48,6 +48,8 @@ class Led {
         void set_rgb(double red, double green, double blue); // Write RGB values
         std::vector<double> get_rgb(void); // Read RGB values
         std::vector<Position> get_positions(void);  // Return the chip and line numbers
+
+        // should have a flash attribute that changes between off and current rgb vals
 };
 
 class Button {
