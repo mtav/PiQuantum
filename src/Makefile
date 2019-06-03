@@ -1,9 +1,9 @@
-TARGETS := io-test main qubit read_controller
+TARGETS := io-test main mapping_test qubit read_controller
 
 DEPDIR = .d
 
 main_SRC := main.cpp state.cpp spi.cpp interface.cpp wpi.cpp io.cpp controller.cpp
-
+mapping_test_SRC := mapping_test.cpp spi.cpp interface.cpp wpi.cpp io.cpp
 qubit_SRC := qubit.cpp state.cpp spi.cpp interface.cpp wpi.cpp io.cpp 
 io-test_SRC := io-test.cpp spi.cpp io.cpp interface.cpp wpi.cpp 
 
@@ -11,7 +11,7 @@ read_controller_SRC := controller.cpp
 
 CC       := g++
 
-CFLAGS   := -g3 -std=c++14 -O2 -Wall -pthread #-flto
+CFLAGS   := -g3 -std=c++14 -Wall -pthread #-flto
 CPPFLAGS := -I. 
 
 LDFLAGS  :=  
