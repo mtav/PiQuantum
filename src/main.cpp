@@ -212,66 +212,74 @@ int main_loop(std::string controller_path, int num_qubits,
                     || input_str == "Down")
             {
                 state.move_cursor(input_str);
-            }
-            else if(input_str == "X")
-            {
-                state.apply(*Operators[0]);
-            }
-            else if(input_str == "A")
-            {
-                state.apply(*Operators[2]);
-            }
-            else if(input_str == "Y")
-            {
-                state.apply(*Operators[1]);
-            }
-            else if(input_str == "B")
-            {
-                state.apply(*Operators[3]);
-            }
-            // two qubit gates
-            // @TODO these block atm, but hopefully only their respective 
-            // players threads, maybe ok.
-            else if(input_str == "L_trigger")
-            {
-                // do CPHASE
-                int ctrl = state.cursor_pos;
-
-                state.move_cursor(controller.get_direction());
-                state.apply(*Operators[3], ctrl, state.cursor_pos);
-            }
-            else if(input_str == "R_trigger")
-            {
-                // do CNOT
-                int ctrl = state.cursor_pos;
-                state.move_cursor(controller.get_direction());
-                state.apply(*Operators[0], ctrl, state.cursor_pos);
-            }
-
-            else if(input_str == "Select")
-            {
-                std::cout << "reset" << std::endl;
-                state.set_vacuum();
-                display_mode = 0;
-                cycle_counter = 0;
-                state.stop_flash();
-            }
-
-            if(input_str == "Start")
-            {
-                std::cout << "display mode " << std::endl;
-                display_mode = (display_mode + 1) % 2;
-                // @TODO this, not sure about it 
-                // driver -> reset_dc_timer();
-                if(display_mode == 0) state.disp();
-            }
-            else if(input_str != "Start")
-            {  // end of gates 
-                // @TODO // currently NULL input will reset the display mode
-                std::cout << "null input here?" << std::endl;
+                if(display_mode)
+                {
                 display_mode = 0;
                 state.disp();
-                std::cout << "\n Pick a gate button " << std::endl;
+                }
+            }
+            else 
+            {
+                if(input_str == "X")
+                {
+                    state.apply(*Operators[0]);
+                }
+                else if(input_str == "A")
+                {
+                    state.apply(*Operators[2]);
+                }
+                else if(input_str == "Y")
+                {
+                    state.apply(*Operators[1]);
+                }
+                else if(input_str == "B")
+                {
+                    state.apply(*Operators[3]);
+                }
+                // two qubit gates
+                // @TODO these block atm, but hopefully only their respective 
+                // players threads, maybe ok.
+                else if(input_str == "L_trigger")
+                {
+                    // do CPHASE
+                    int ctrl = state.cursor_pos;
+
+                    state.move_cursor(controller.get_direction());
+                    state.apply(*Operators[3], ctrl, state.cursor_pos);
+                }
+                else if(input_str == "R_trigger")
+                {
+                    // do CNOT
+                    int ctrl = state.cursor_pos;
+                    state.move_cursor(controller.get_direction());
+                    state.apply(*Operators[0], ctrl, state.cursor_pos);
+                }
+
+                else if(input_str == "Select")
+                {
+                    std::cout << "reset" << std::endl;
+                    state.set_vacuum();
+                    display_mode = 0;
+                    cycle_counter = 0;
+                    state.stop_flash();
+                }
+
+                if(input_str == "Start")
+                {
+                    std::cout << "display mode " << std::endl;
+                    display_mode = (display_mode + 1) % 2;
+                    // @TODO this, not sure about it 
+                    // driver -> reset_dc_timer();
+                    if(display_mode == 0) state.disp();
+                }
+                else if(input_str != "Start")
+                {  // end of gates 
+                    // @TODO // currently NULL input will reset the display mode
+                    std::cout << "null input here?" << std::endl;
+                    display_mode = 0;
+                    state.disp();
+                    std::cout << "\n Pick a gate button " << std::endl;
+                }
             }
             // start async again for controller input
             input = std::async(std::launch::async, &Controller::get_input, &controller);

@@ -316,7 +316,8 @@ int State_vector::disp_cycle(int n)
                     // quite complicated so I'm avoiding it.
                     // @todo do phase but you'll have to find the correct
                     // index from which ever amplitude is not this one...
-                    q_state.phase = 0;
+                    // q_state.phase = 0;
+                    q_state.phase = 0.7 * qubits[j] -> get_phase();
 
                     single_state.push_back(q_state);
                 }
