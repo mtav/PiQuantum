@@ -54,7 +54,7 @@ std::string Controller::decode_bytes(const std::vector<int> & values)
             {
                 case 0 : answer = "Right"; break;
                 case 1 : answer = "Down"; break;
-                default : answer = "NULL direction"; break;
+                default : answer = "NULL"; break;
             }
         }
         // if -ve left or up
@@ -65,7 +65,7 @@ std::string Controller::decode_bytes(const std::vector<int> & values)
             {
                 case 0 : answer = "Left"; break;
                 case 1 : answer = "Up"; break;
-                default : answer = "NULL direction"; break;
+                default : answer = "NULL"; break;
             }
         }
     } // end of directions
@@ -93,6 +93,10 @@ Controller::Controller(std::string path) : loc(path)
 
 std::string Controller::get_input(void)
 {
+    std::string out = "NULL";
+
+    while(out == "NULL")
+    {
     // vector of zeros size "size"
     std::vector<char> line(size, 0);
     // give the first element of the vector as read needs a ptr to a char
@@ -119,7 +123,8 @@ std::string Controller::get_input(void)
     // std::cout << std::endl;
 
     // now use lookup table on the vals vector 
-    std::string out = decode_bytes(vals);
+    out = decode_bytes(vals);
+    }
     return out;
 }
 

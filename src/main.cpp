@@ -29,12 +29,12 @@ int main_loop(std::string controller_path, int num_qubits,
 int main(void)
 {
     /// qubit leds RGB positions
-  /*      { {0,4}, {0,2}, {0,3} }, 
+    /*      { {0,4}, {0,2}, {0,3} }, 
             { {0,7}, {0,5}, {0,6} },
             { {1,4}, {1,2}, {1,3} },
             { {1,7}, {1,5}, {1,6} },*/
     std::vector<std::vector<Position> > led_pos{ 
-            { {6,0}, {6,2}, {6,1} },
+        { {6,0}, {6,2}, {6,1} },
             { {6,3}, {6,5}, {6,4} },
             { {0,3}, {0,5}, {0,4} },
             { {0,0}, {0,2}, {0,1} },
@@ -136,7 +136,7 @@ int main(void)
     for(ever)  // better than while(1)
     {
     }
-    
+
     // could also do 
     // player1.get();
     // player2.get();
@@ -163,7 +163,7 @@ int main_loop(std::string controller_path, int num_qubits,
         std::vector<Position> qubit_btn_pos,
         std::vector<Operator*> Operators, 
         std::vector<std::shared_ptr<Button> > func_btns)
-        //std::shared_ptr<InputOutput> driver) 
+    //std::shared_ptr<InputOutput> driver) 
 {
     // std::shared_ptr<InputOutput> driver = getInputOutput();
     // make a controller object 
@@ -193,7 +193,7 @@ int main_loop(std::string controller_path, int num_qubits,
 
     int flash_trigger = 0;
     // start thread for flashing 
-        flash_timer = std::async(std::launch::async, time_milli);
+    flash_timer = std::async(std::launch::async, time_milli);
 
     for(ever)
     {
@@ -213,69 +213,65 @@ int main_loop(std::string controller_path, int num_qubits,
             {
                 state.move_cursor(input_str);
             }
-            else // functions e.g. gates 
+            else if(input_str == "X")
             {
-                std::cout << " function " << input_str << std::endl; 
-                if(input_str == "X")
-                {
-                    state.apply(*Operators[0]);
-                }
-                else if(input_str == "A")
-                {
-                    state.apply(*Operators[2]);
-                }
-                else if(input_str == "Y")
-                {
-                    state.apply(*Operators[1]);
-                }
-                else if(input_str == "B")
-                {
-                    state.apply(*Operators[3]);
-                }
-                // two qubit gates
-                // @TODO these block atm, but hopefully only their respective 
-                // players threads, maybe ok.
-                else if(input_str == "L_trigger")
-                {
-                    // do CPHASE
-                    int ctrl = state.cursor_pos;
+                state.apply(*Operators[0]);
+            }
+            else if(input_str == "A")
+            {
+                state.apply(*Operators[2]);
+            }
+            else if(input_str == "Y")
+            {
+                state.apply(*Operators[1]);
+            }
+            else if(input_str == "B")
+            {
+                state.apply(*Operators[3]);
+            }
+            // two qubit gates
+            // @TODO these block atm, but hopefully only their respective 
+            // players threads, maybe ok.
+            else if(input_str == "L_trigger")
+            {
+                // do CPHASE
+                int ctrl = state.cursor_pos;
 
-                    state.move_cursor(controller.get_direction());
-                    state.apply(*Operators[3], ctrl, state.cursor_pos);
-                }
-                else if(input_str == "R_trigger")
-                {
-                    // do CNOT
-                    int ctrl = state.cursor_pos;
-                    state.move_cursor(controller.get_direction());
-                    state.apply(*Operators[0], ctrl, state.cursor_pos);
-                }
+                state.move_cursor(controller.get_direction());
+                state.apply(*Operators[3], ctrl, state.cursor_pos);
+            }
+            else if(input_str == "R_trigger")
+            {
+                // do CNOT
+                int ctrl = state.cursor_pos;
+                state.move_cursor(controller.get_direction());
+                state.apply(*Operators[0], ctrl, state.cursor_pos);
+            }
 
-                if(input_str == "Select")
-                {
-                    std::cout << "reset" << std::endl;
-                    state.set_vacuum();
-                    display_mode = 0;
-                    cycle_counter = 0;
-                    state.stop_flash();
-                }
+            else if(input_str == "Select")
+            {
+                std::cout << "reset" << std::endl;
+                state.set_vacuum();
+                display_mode = 0;
+                cycle_counter = 0;
+                state.stop_flash();
+            }
 
-                if(input_str == "Start")
-                {
-                    std::cout << "display mode " << std::endl;
-                    display_mode = (display_mode + 1) % 2;
-                    // @TODO this, not sure about it 
-                    // driver -> reset_dc_timer();
-                    if(display_mode == 0) state.disp();
-                }
-                else if(input_str != "Start")
-                {  // end of gates 
-                    // @TODO // currently NULL input will reset the display mode
-                    std::cout << "null input here?" << std::endl;
-                    display_mode = 0;
-                    state.disp();
-                    std::cout << "\n Pick a gate button " << std::endl;
-                }
+            if(input_str == "Start")
+            {
+                std::cout << "display mode " << std::endl;
+                display_mode = (display_mode + 1) % 2;
+                // @TODO this, not sure about it 
+                // driver -> reset_dc_timer();
+                if(display_mode == 0) state.disp();
+            }
+            else if(input_str != "Start")
+            {  // end of gates 
+                // @TODO // currently NULL input will reset the display mode
+                std::cout << "null input here?" << std::endl;
+                display_mode = 0;
+                state.disp();
+                std::cout << "\n Pick a gate button " << std::endl;
             }
             // start async again for controller input
             input = std::async(std::launch::async, &Controller::get_input, &controller);
@@ -288,7 +284,7 @@ int main_loop(std::string controller_path, int num_qubits,
         // outdated, only used for physical buttons on pcb
         state.update_pos();
 
-       flash_timer_status = flash_timer.wait_for(std::chrono::nanoseconds(1));
+        flash_timer_status = flash_timer.wait_for(std::chrono::nanoseconds(1));
         if (flash_timer_status == std::future_status::ready)
         { 
             flash_trigger = flash_timer.get();
@@ -298,11 +294,11 @@ int main_loop(std::string controller_path, int num_qubits,
         {
             flash_trigger = 0;
         }
- // for display cycling, check if the flash timer is triggered 
+        // for display cycling, check if the flash timer is triggered 
         // probably a memory problem with threading. Should investigate 
         // @TODO Fix this 
         // should be timer 1 then timer 0, 
-      //  if(driver -> check_dc_timer(thread_count + 1) || flash_trigger)
+        //  if(driver -> check_dc_timer(thread_count + 1) || flash_trigger)
         if(flash_trigger)
         {
             if(display_mode == 0) { state.flash(); }
