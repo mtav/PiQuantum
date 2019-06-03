@@ -36,7 +36,7 @@ std::shared_ptr<SpiChannel> getSpiChannel(void)
 }
 
 // @todo check max/good freq for spi
-SpiChannel::SpiChannel(void) : channel(0), frequency(500000)
+SpiChannel::SpiChannel(void) : channel(0), frequency(1000000)
 {
     // Set up SPI channel
     int result = wiringPiSPISetup(channel, frequency);

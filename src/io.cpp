@@ -105,8 +105,7 @@ int InputOutput::set_leds(std::vector<unsigned char> data)
     // Check data is the right length
     if(data.size() != chips)
     {
-        std::cerr << "LED driver error: wrong number of bytes in data"
-            << std::endl;
+        std::cerr << "LED driver error: wrong number of bytes in data" << std::endl;
         abort();
     }
 
@@ -230,8 +229,9 @@ void InputOutput::interrupt(void)
         {
             write[i] &= mask[i]; // Mask the write array
         }
-        set_leds(write); // Write the data to the chip
     }
+    // @BUG this should be out of the loop 
+    set_leds(write); // Write the data to the chip
 
     // Read all the button states
     std::vector<byte> button_states = read_button_states(2);

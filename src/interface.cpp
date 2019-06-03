@@ -35,8 +35,8 @@ Led::Led(std::vector<Position> pos)
 void Led::set_rgb(double red, double green, double blue)
 {
     rgb[0] = red;
-    rgb[1] = green;
-    rgb[2] = blue;
+    rgb[1] = 0.7 * green;
+    rgb[2] = 0.7 * blue;
 }
 
 // Return the chip and line numbers
