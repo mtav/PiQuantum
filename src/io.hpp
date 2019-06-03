@@ -191,18 +191,6 @@ class InputOutput : public Alarm
 
 }; // end of InputOutput
 
-/** 
- * @brief Chip/line structure 
- *
- * @detail Store the chip and line number for 
- * a particular LED or button.
- *
- */
-typedef struct 
-{
-    int chip;
-    int line;
-} Position;
 
 /** 
  * @brief Print the chip/lines for an LED

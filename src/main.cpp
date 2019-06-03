@@ -29,26 +29,30 @@ int main_loop(std::string controller_path, int num_qubits,
 int main(void)
 {
     /// qubit leds RGB positions
-    std::vector<std::vector<Position> > led_pos{ 
-        { {0,4}, {0,2}, {0,3} }, 
+  /*      { {0,4}, {0,2}, {0,3} }, 
             { {0,7}, {0,5}, {0,6} },
             { {1,4}, {1,2}, {1,3} },
+            { {1,7}, {1,5}, {1,6} },*/
+    std::vector<std::vector<Position> > led_pos{ 
+            { {6,0}, {6,2}, {6,1} },
+            { {6,3}, {6,5}, {6,4} },
+            { {0,3}, {0,5}, {0,4} },
+            { {0,0}, {0,2}, {0,1} },
+
+            { {5,0}, {5,2}, {5,1} },
+            { {6,6}, {5,3}, {6,7} },
+            { {0,6}, {1,3}, {0,7} },
+            { {1,0}, {1,2}, {1,1} },
+
+            { {5,7}, {5,5}, {5,6} },
+            { {4,1}, {5,4}, {4,0} },
+            { {2,1}, {1,4}, {2,0} },
             { {1,7}, {1,5}, {1,6} },
 
-            { {0,0}, {0,0}, {0,0} },
-            { {0,0}, {0,0}, {0,0} },
-            { {0,0}, {0,0}, {0,0} },
-            { {0,0}, {0,0}, {0,0} },
-
-            { {0,0}, {0,0}, {0,0} },
-            { {0,0}, {0,0}, {0,0} },
-            { {0,0}, {0,0}, {0,0} },
-            { {0,0}, {0,0}, {0,0} },
-
-            { {0,0}, {0,0}, {0,0} },
-            { {0,0}, {0,0}, {0,0} },
-            { {0,0}, {0,0}, {0,0} },
-            { {0,0}, {0,0}, {0,0} } };
+            { {4,7}, {4,5}, {4,6} },
+            { {4,4}, {4,2}, {4,3} },
+            { {2,4}, {2,2}, {2,3} },
+            { {2,7}, {2,5}, {2,6} } };
 
     /// vector of qubit btns
     std::vector<Position> qubit_btn_pos{ 
@@ -84,7 +88,7 @@ int main(void)
     // std::shared_ptr<InputOutput> driver = getInputOutput();
 
     // ------------------------------- Player 1 ----------------------------------
-    int num_qubits_p1 = 2; // change me 
+    int num_qubits_p1 = 8; // change me 
 
     // Player 1  
     std::string controller1_path = "/dev/input/js0"; // might not always be this 
@@ -105,7 +109,7 @@ int main(void)
             Operators, func_btns); //, driver);
 
     // --------------------------- player 2 -------------------------------------
-    int num_qubits_p2 = 2;  // change me
+    int num_qubits_p2 = 8;  // change me
 
     // Player 2
     std::string controller2_path = "/dev/input/js1"; // might not always be this location

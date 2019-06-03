@@ -742,6 +742,9 @@ void State_vector::update_pos(int i)
 
 void State_vector::move_cursor(std::string direction)
 {
+    const int row_size = 4;
+    const int col_size = 4;
+
     if(direction == "Left" || direction == "Right" || direction == "Up" || direction == "Down")
     {
         std::cout << "current pos = " << cursor_pos << ", direction " << direction << std::endl;
@@ -750,11 +753,43 @@ void State_vector::move_cursor(std::string direction)
         if(direction == "Left")
         { 
             // wrap 0 to num_qubits not -1
-            if(cursor_pos == 0) {new_pos = num_qubits - 1;}
-            else {new_pos = ((cursor_pos - 1) % num_qubits);}
+            if((cursor_pos % col_size) == 0)
+            {
+                new_pos = cursor_pos + col_size - 1 ;
+            }
+            else
+            {
+                new_pos = cursor_pos - 1;
+            }
         }
-        else if(direction == "Right") { new_pos = ((cursor_pos + 1)%num_qubits);}
-
+        else if(direction == "Right")
+        {
+            // if next position right is at the end wrap it 
+            if(((cursor_pos + 1) % col_size) == 0)
+            {
+                new_pos = cursor_pos - col_size +  1;
+            }
+            else 
+            {
+                new_pos = cursor_pos + 1;
+            }
+        }
+        else if(direction == "Down")
+        {
+            // @TODO fix this 
+                new_pos = (cursor_pos + row_size)%num_qubits;
+        }
+        else if(direction == "Up")
+        {
+            if(cursor_pos >= row_size)
+            {
+                new_pos = cursor_pos - row_size;
+            }
+            else 
+            {
+                new_pos = num_qubits - row_size + cursor_pos;
+            }
+        }
         move_cursor(new_pos);
     }
 
