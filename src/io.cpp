@@ -36,7 +36,7 @@ Alarm::Alarm(int delay_us)
 
 // Constructor
 InputOutput::InputOutput(std::shared_ptr<SpiChannel> spi) 
-    : Alarm(800), spi(spi), chips(2), period(20), counter(0)
+    : Alarm(800), spi(spi), chips(7), period(20), counter(0)
 {
         // Timers, want 2 of them
         dc_counter.push_back(0);
