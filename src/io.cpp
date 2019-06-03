@@ -35,8 +35,10 @@ Alarm::Alarm(int delay_us)
 }
 
 // Constructor
+// // 4000 is microsecond sigalarm,
+// // period (4) is number of brightness levels for each colour e.g. 0, 0.33, 0.66, 1 
 InputOutput::InputOutput(std::shared_ptr<SpiChannel> spi) 
-    : Alarm(800), spi(spi), chips(2), period(20), counter(0)
+    : Alarm(4000), spi(spi), chips(7), period(4), counter(0)
 {
         // Timers, want 2 of them
         dc_counter.push_back(0);
