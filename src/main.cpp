@@ -222,19 +222,23 @@ int main_loop(std::string controller_path, int num_qubits,
             {
                 if(input_str == "X")
                 {
-                    state.apply(*Operators[0]);
+                    state.apply(Rotation_X());
+                    // state.apply(*Operators[0]);
                 }
                 else if(input_str == "A")
                 {
-                    state.apply(*Operators[2]);
+                    state.apply(Hadamard());
+                    // state.apply(*Operators[2]);
                 }
                 else if(input_str == "Y")
                 {
-                    state.apply(*Operators[1]);
+                    state.apply(Rotation_X(nullptr, 1, PI/2.0));
+                    // state.apply(*Operators[1]);
                 }
                 else if(input_str == "B")
                 {
-                    state.apply(*Operators[3]);
+                    state.apply(Rotation_Z(nullptr, 1, PI/2.0));
+                    //state.apply(*Operators[3]);
                 }
                 // two qubit gates
                 // @TODO these block atm, but hopefully only their respective 
