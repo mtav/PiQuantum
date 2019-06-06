@@ -33,12 +33,20 @@ bool Operator::selected(void)
 Rotation_X::Rotation_X(std::shared_ptr<Button> btn_ptr_in, int num_qubits_act_on, double theta)
     : angle(theta)
 {
+    if(theta == PI)
+    {
+        matrix << 0, 1, 1, 0;
+    }
+    else
+    {
     /*
     matrix <<  std::complex<double>(0.0,1.0) * cos(angle/2.0), sin(angle/2.0),
          sin(angle/2.0),  std::complex<double>(0.0, 1.0) * cos(angle/2.0);
     */
     // matrix << -cos(angle/2.0), sin(angle/2.0), sin(angle/2.0), -cos(angle/2.0);
     matrix << cos(angle/2.0), I_unit*sin(angle/2.0), I_unit*sin(angle/2.0), cos(angle/2.0);   
+    }
+
     name = "X";
     btn_ptr = btn_ptr_in;
     num_qubits = num_qubits_act_on;
