@@ -1,0 +1,266 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass report
+\options notitlepage
+\use_default_options true
+\begin_modules
+eqs-within-sections
+figs-within-sections
+tabs-within-sections
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding utf8
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command biber
+\index_command default
+\paperfontsize 12
+\spacing onehalf
+\use_hyperref true
+\pdf_title "PiQuantum"
+\pdf_author "Mike Taverne"
+\pdf_bookmarks true
+\pdf_bookmarksnumbered true
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks true
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize a4paper
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2.54cm
+\topmargin 2in
+\rightmargin 5.08cm
+\bottommargin 1.5in
+\headheight 2cm
+\headsep 2cm
+\footskip 2cm
+\secnumdepth 5
+\tocdepth 5
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle fancy
+\bullet 1 0 9 -1
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename SNES-controller.png
+	width 75text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+SNES controller buttons
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+X
+\emph default
+: 
+\begin_inset Formula $X=\left[\begin{array}{cc}
+0 & 1\\
+1 & 0
+\end{array}\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+Y
+\emph default
+: 
+\begin_inset Formula $T=\left[\begin{array}{cc}
+1 & 0\\
+0 & e^{i\frac{\pi}{4}}
+\end{array}\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+A
+\emph default
+: 
+\begin_inset Formula $H=\frac{1}{\sqrt{2}}\left[\begin{array}{cc}
+1 & 1\\
+1 & -1
+\end{array}\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+B
+\emph default
+: 
+\begin_inset Formula $HTH=\frac{1}{\sqrt{2}}\left[\begin{array}{cc}
+1 & 1\\
+1 & -1
+\end{array}\right]\cdot\left[\begin{array}{cc}
+1 & 0\\
+0 & e^{i\frac{\pi}{4}}
+\end{array}\right]\cdot\frac{1}{\sqrt{2}}\left[\begin{array}{cc}
+1 & 1\\
+1 & -1
+\end{array}\right]=\frac{1}{2}\left[\begin{array}{cc}
+1+e^{i\frac{\pi}{4}} & 1-e^{i\frac{\pi}{4}}\\
+1-e^{i\frac{\pi}{4}} & 1+e^{i\frac{\pi}{4}}
+\end{array}\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+R+direction
+\emph default
+: 
+\begin_inset Formula $CNOT=\left[\begin{array}{cccc}
+1 & 0 & 0 & 0\\
+0 & 1 & 0 & 0\\
+0 & 0 & 0 & 1\\
+0 & 0 & 1 & 0
+\end{array}\right]$
+\end_inset
+
+ (qbit blinking before R is pressed is the control qbit and the direction
+ specifies the adjacent qbit, which is controlled)
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+direction
+\emph default
+: switch to an adjacent qbit
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+start
+\emph default
+: cycle through all possible measurement results in the 
+\begin_inset Formula $\left|0\right\rangle $
+\end_inset
+
+,
+\begin_inset Formula $\left|1\right\rangle $
+\end_inset
+
+ basis
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+select
+\emph default
+: reset all qbits to the 
+\begin_inset Formula $\left|0\right\rangle $
+\end_inset
+
+ state
+\end_layout
+
+\end_body
+\end_document
