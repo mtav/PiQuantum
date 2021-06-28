@@ -1,5 +1,7 @@
 # The epic classical/quantum computer outreach project
 
+The new PiQuantum project is here: https://johnrscott.gitlab.io/PiQuantum/index.html
+
 ## `Where quantum information processing meets best coding practice`
 
 ![My image](https://github.com/johnrscott/PiQuantum/blob/master/hardware/prototype_front.png)
